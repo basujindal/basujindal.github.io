@@ -2,45 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//chanin.tech/about/</loc>
+    <loc>//basujindal.me/</loc>
+    <lastmod>2022-12-14T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/</loc>
+    <lastmod>2022-12-14T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/rl-notes/</loc>
+    <lastmod>2022-12-14T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/rl-tips-and-tricks/</loc>
+    <lastmod>2022-11-29T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/deep_learning_tips/</loc>
+    <lastmod>2022-05-23T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/screen-resolution/</loc>
+    <lastmod>2022-05-07T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/about/</loc>
     <lastmod>2022-04-09T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/infographics/</loc>
+    <loc>//basujindal.me/infographics/</loc>
     <lastmod>2022-04-09T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/blogs/</loc>
-    <lastmod>2022-04-08T23:15:00+07:00</lastmod>
-  </url><url>
-    <loc>//chanin.tech/</loc>
-    <lastmod>2022-04-08T23:15:00+07:00</lastmod>
-  </url><url>
-    <loc>//chanin.tech/blogs/how-to-master-streamlit-for-data-science/</loc>
-    <lastmod>2022-04-08T23:15:00+07:00</lastmod>
-  </url><url>
-    <loc>//chanin.tech/projects/</loc>
+    <loc>//basujindal.me/projects/</loc>
     <lastmod>2022-04-06T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/projects/reproducible-computational-drug-discovery/</loc>
+    <loc>//basujindal.me/projects/reproducible-computational-drug-discovery/</loc>
     <lastmod>2022-04-06T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/projects/erpred/</loc>
+    <loc>//basujindal.me/projects/erpred/</loc>
     <lastmod>2022-04-05T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/projects/acetylcholinesterase/</loc>
+    <loc>//basujindal.me/projects/acetylcholinesterase/</loc>
     <lastmod>2022-04-04T23:15:00+07:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/blogs/what-is-bioinformatics/</loc>
-    <lastmod>2022-04-03T23:15:00+07:00</lastmod>
+    <loc>//basujindal.me/blogs/docker-commands-cheatsheet/</loc>
+    <lastmod>2022-04-03T15:20:28+05:30</lastmod>
   </url><url>
-    <loc>//chanin.tech/tags/first/</loc>
+    <loc>//basujindal.me/blogs/build_dockerfile/</loc>
+    <lastmod>2021-07-23T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/tags/first/</loc>
     <lastmod>2020-09-15T11:30:03+00:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/page/</loc>
+    <loc>//basujindal.me/page/</loc>
     <lastmod>2020-09-15T11:30:03+00:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/tags/</loc>
+    <loc>//basujindal.me/tags/</loc>
     <lastmod>2020-09-15T11:30:03+00:00</lastmod>
   </url><url>
-    <loc>//chanin.tech/categories/</loc>
+    <loc>//basujindal.me/categories/</loc>
   </url>
 </urlset>

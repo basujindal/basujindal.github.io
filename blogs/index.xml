@@ -1,36 +1,69 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Blogs on Chanin Nantasenamat</title>
-    <link>//chanin.tech/blogs/</link>
-    <description>Recent content in Blogs on Chanin Nantasenamat</description>
+    <title>Blogs on Basu Jindal</title>
+    <link>//basujindal.me/blogs/</link>
+    <description>Recent content in Blogs on Basu Jindal</description>
     <image>
-      <url>//chanin.tech/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>//chanin.tech/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 08 Apr 2022 23:15:00 +0700</lastBuildDate><atom:link href="//chanin.tech/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Dec 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>How to master Streamlit for Data Science</title>
-      <link>//chanin.tech/blogs/how-to-master-streamlit-for-data-science/</link>
-      <pubDate>Fri, 08 Apr 2022 23:15:00 +0700</pubDate>
+      <title>Reinforcement Learning Notes</title>
+      <link>//basujindal.me/blogs/rl-notes/</link>
+      <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
       
-      <guid>//chanin.tech/blogs/how-to-master-streamlit-for-data-science/</guid>
-      <description>Preview The essential Streamlit for all your data science needs To build a web app you’d typically use such Python web frameworks as Django and Flask. But the steep learning curve and the big time investment for implementing these apps present a major hurdle.
-Streamlit makes the app creation process as simple as writing Python scripts!
-In this article, you’ll learn how to master Streamlit when getting started with data science.</description>
+      <guid>//basujindal.me/blogs/rl-notes/</guid>
+      <description>Every time I return to RL after a long time, I find myself looking for resources to revise the basics. So I finally decided to create notes which try to cover all the important concepts. Enjoy!</description>
     </item>
     
     <item>
-      <title>What Is Bioinformatics</title>
-      <link>//chanin.tech/blogs/what-is-bioinformatics/</link>
-      <pubDate>Sun, 03 Apr 2022 23:15:00 +0700</pubDate>
+      <title>Reinforcement Learning Tips and Tricks</title>
+      <link>//basujindal.me/blogs/rl-tips-and-tricks/</link>
+      <pubDate>Tue, 29 Nov 2022 15:20:28 +0530</pubDate>
       
-      <guid>//chanin.tech/blogs/what-is-bioinformatics/</guid>
-      <description>Introduction So you probably have heard of the term Bioinformatics before, but did not get the chance to learn more about what it is and what it can do.
-In this article, I will be giving you a brief high-level overview of this exciting field of Bioinformatics. Thus, the article will be comprehensible to those coming from biology or computer backgrounds alike.
-As a biologist, I have self-taught myself data science and coding (R and Python) after several years of persistence (initially quitting a couple of times the coding concept just kind of clicked at some point in time).</description>
+      <guid>//basujindal.me/blogs/rl-tips-and-tricks/</guid>
+      <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;#39;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm. </description>
+    </item>
+    
+    <item>
+      <title>Tricks of the Trade: Deep Learning</title>
+      <link>//basujindal.me/blogs/deep_learning_tips/</link>
+      <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
+      <description>Creating a new Neural Architecture is not an easy task as it requires a lot of trial and error to find out the optimal hyper parameters, selecting the number of layers, type of normalization, etc. Also it can be very frustrating to see a non-decreasing loss, low validation accuracy or a bunch of NaNs in the output. Here are a few tips to keep in mind while creating, training or debugging a model.</description>
+    </item>
+    
+    <item>
+      <title>Screen Resolutions Explained!</title>
+      <link>//basujindal.me/blogs/screen-resolution/</link>
+      <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/screen-resolution/</guid>
+      <description>A quick guide on screen resolutions.</description>
+    </item>
+    
+    <item>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/blogs/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
+    </item>
+    
+    <item>
+      <title>How to make a Dockerfile</title>
+      <link>//basujindal.me/blogs/build_dockerfile/</link>
+      <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/build_dockerfile/</guid>
+      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
     </item>
     
   </channel>

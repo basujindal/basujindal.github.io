@@ -1,92 +1,123 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Chanin Nantasenamat</title>
-    <link>//chanin.tech/</link>
-    <description>Recent content on Chanin Nantasenamat</description>
+    <title>Basu Jindal</title>
+    <link>//basujindal.me/</link>
+    <description>Recent content on Basu Jindal</description>
     <image>
-      <url>//chanin.tech/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>//chanin.tech/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 08 Apr 2022 23:15:00 +0700</lastBuildDate><atom:link href="//chanin.tech/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Dec 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reinforcement Learning Notes</title>
+      <link>//basujindal.me/blogs/rl-notes/</link>
+      <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/rl-notes/</guid>
+      <description>Every time I return to RL after a long time, I find myself looking for resources to revise the basics. So I finally decided to create notes which try to cover all the important concepts. Enjoy!</description>
+    </item>
+    
+    <item>
+      <title>Reinforcement Learning Tips and Tricks</title>
+      <link>//basujindal.me/blogs/rl-tips-and-tricks/</link>
+      <pubDate>Tue, 29 Nov 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/rl-tips-and-tricks/</guid>
+      <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;#39;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm. </description>
+    </item>
+    
+    <item>
+      <title>Tricks of the Trade: Deep Learning</title>
+      <link>//basujindal.me/blogs/deep_learning_tips/</link>
+      <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
+      <description>Creating a new Neural Architecture is not an easy task as it requires a lot of trial and error to find out the optimal hyper parameters, selecting the number of layers, type of normalization, etc. Also it can be very frustrating to see a non-decreasing loss, low validation accuracy or a bunch of NaNs in the output. Here are a few tips to keep in mind while creating, training or debugging a model.</description>
+    </item>
+    
+    <item>
+      <title>Screen Resolutions Explained!</title>
+      <link>//basujindal.me/blogs/screen-resolution/</link>
+      <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/screen-resolution/</guid>
+      <description>A quick guide on screen resolutions.</description>
+    </item>
+    
     <item>
       <title>About</title>
-      <link>//chanin.tech/about/</link>
+      <link>//basujindal.me/about/</link>
       <pubDate>Sat, 09 Apr 2022 23:15:00 +0700</pubDate>
       
-      <guid>//chanin.tech/about/</guid>
-      <description>In my daytime, I work as a Developer Advocate at a US Tech company.
-At night, I&amp;rsquo;m a content creator developing tutorials in data science for the following platforms:
- 📺 YouTube: Data Professor, Coding Professor 📝 Medium Blogs. 💻 GitHub  In my previous role, I was an Associate Professor of Bioinformatics carrying out research in computational drug discovery:
- Google Scholar ORCID SCOPUS ResearchGate GitHub: chaninn, chaninlab  You can also connect with me at the following social platforms:</description>
+      <guid>//basujindal.me/about/</guid>
+      <description>I am Graduate student at the University of California, San Diego in the dept. of a Electrical &amp;amp; Computer Engineering. I did by undergrad from Indian Institute of Technology, Madras, India. 🇮🇳 🇺🇸
+My interest lies in the broad field of Deep Learning for NLP &amp;amp; Computer Vision. Both fields are very diverse but ideas borrowed from one has shown great results in the other many a times. During my free time I like to tinker with hardware and web applications and reverse engineer them.</description>
     </item>
     
     <item>
       <title>Infographics</title>
-      <link>//chanin.tech/infographics/</link>
+      <link>//basujindal.me/infographics/</link>
       <pubDate>Sat, 09 Apr 2022 23:15:00 +0700</pubDate>
       
-      <guid>//chanin.tech/infographics/</guid>
+      <guid>//basujindal.me/infographics/</guid>
       <description>I also create hand-drawn infographics and illustrations to summarize the key concepts in data science, machine learning and bioinformatics.</description>
     </item>
     
     <item>
-      <title>How to master Streamlit for Data Science</title>
-      <link>//chanin.tech/blogs/how-to-master-streamlit-for-data-science/</link>
-      <pubDate>Fri, 08 Apr 2022 23:15:00 +0700</pubDate>
-      
-      <guid>//chanin.tech/blogs/how-to-master-streamlit-for-data-science/</guid>
-      <description>Preview The essential Streamlit for all your data science needs To build a web app you’d typically use such Python web frameworks as Django and Flask. But the steep learning curve and the big time investment for implementing these apps present a major hurdle.
-Streamlit makes the app creation process as simple as writing Python scripts!
-In this article, you’ll learn how to master Streamlit when getting started with data science.</description>
-    </item>
-    
-    <item>
       <title>Towards reproducible computational drug discovery</title>
-      <link>//chanin.tech/projects/reproducible-computational-drug-discovery/</link>
+      <link>//basujindal.me/projects/reproducible-computational-drug-discovery/</link>
       <pubDate>Wed, 06 Apr 2022 23:15:00 +0700</pubDate>
       
-      <guid>//chanin.tech/projects/reproducible-computational-drug-discovery/</guid>
+      <guid>//basujindal.me/projects/reproducible-computational-drug-discovery/</guid>
       <description>Abstract The reproducibility of experiments has been a long standing impediment for further scientific progress. Computational methods have been instrumental in drug discovery efforts owing to its multifaceted utilization for data collection, pre-processing, analysis and inference. This article provides an in-depth coverage on the reproducibility of computational drug discovery. This review explores the following topics: (1) the current state-of-the-art on reproducible research, (2) research documentation (e.g. electronic laboratory notebook, Jupyter notebook, etc.</description>
     </item>
     
     <item>
       <title>ERpred: a web server for the prediction of subtype-specific estrogen receptor antagonists</title>
-      <link>//chanin.tech/projects/erpred/</link>
+      <link>//basujindal.me/projects/erpred/</link>
       <pubDate>Tue, 05 Apr 2022 23:15:00 +0700</pubDate>
       
-      <guid>//chanin.tech/projects/erpred/</guid>
+      <guid>//basujindal.me/projects/erpred/</guid>
       <description>Abstract Estrogen receptors alpha and beta (ERα and ERβ) are responsible for breast cancer metastasis through their involvement of clinical outcomes. Estradiol and hormone replacement therapy targets both ERs, but this often leads to an increased risk of breast and endometrial cancers as well as thromboembolism. A major challenge is posed for the development of compounds possessing ER subtype specificity. Herein, we present a large-scale classification structure-activity relationship (CSAR) study of inhibitors from the ChEMBL database which consisted of an initial set of 11,618 compounds for ERα and 7,810 compounds for ERβ.</description>
     </item>
     
     <item>
       <title>Probing the origins of human acetylcholinesterase inhibition via QSAR modeling and molecular docking</title>
-      <link>//chanin.tech/projects/acetylcholinesterase/</link>
+      <link>//basujindal.me/projects/acetylcholinesterase/</link>
       <pubDate>Mon, 04 Apr 2022 23:15:00 +0700</pubDate>
       
-      <guid>//chanin.tech/projects/acetylcholinesterase/</guid>
+      <guid>//basujindal.me/projects/acetylcholinesterase/</guid>
       <description>Abstract Alzheimer’s disease (AD) is a chronic neurodegenerative disease which leads to the gradual loss of neuronal cells. Several hypotheses for AD exists (e.g., cholinergic, amyloid, tau hypotheses, etc.). As per the cholinergic hypothesis, the deficiency of choline is responsible for AD; therefore, the inhibition of AChE is a lucrative therapeutic strategy for the treatment of AD. Acetylcholinesterase (AChE) is an enzyme that catalyzes the breakdown of the neurotransmitter acetylcholine that is essential for cognition and memory.</description>
     </item>
     
     <item>
-      <title>What Is Bioinformatics</title>
-      <link>//chanin.tech/blogs/what-is-bioinformatics/</link>
-      <pubDate>Sun, 03 Apr 2022 23:15:00 +0700</pubDate>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/blogs/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
       
-      <guid>//chanin.tech/blogs/what-is-bioinformatics/</guid>
-      <description>Introduction So you probably have heard of the term Bioinformatics before, but did not get the chance to learn more about what it is and what it can do.
-In this article, I will be giving you a brief high-level overview of this exciting field of Bioinformatics. Thus, the article will be comprehensible to those coming from biology or computer backgrounds alike.
-As a biologist, I have self-taught myself data science and coding (R and Python) after several years of persistence (initially quitting a couple of times the coding concept just kind of clicked at some point in time).</description>
+      <guid>//basujindal.me/blogs/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
+    </item>
+    
+    <item>
+      <title>How to make a Dockerfile</title>
+      <link>//basujindal.me/blogs/build_dockerfile/</link>
+      <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/build_dockerfile/</guid>
+      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
     </item>
     
     <item>
       <title>My 1st post</title>
-      <link>//chanin.tech/page/</link>
+      <link>//basujindal.me/page/</link>
       <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
       
-      <guid>//chanin.tech/page/</guid>
+      <guid>//basujindal.me/page/</guid>
       <description>Desc Text.</description>
     </item>
     
