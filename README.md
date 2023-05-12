@@ -1,1 +1,0 @@
-# basujindal.me
