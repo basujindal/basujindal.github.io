@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>CV on Basu Jindal</title>
+    <link>//basujindal.me/categories/cv/</link>
+    <description>Recent content in CV on Basu Jindal</description>
+    <image>
+      <url>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="//basujindal.me/categories/cv/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CV Notes</title>
+      <link>//basujindal.me/inprogress/_2023-02-09-cv_notes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/inprogress/_2023-02-09-cv_notes/</guid>
+      <description>There is a lot of maths behind CV which we take for granted, this post aims to explore it.
+ Increasing image size Deconvolution   Inverse of Convolution, if we know the final image and the convolution matrix we can get the original image back using Inverse Fourier Transformation.
+  https://www.youtube.com/watch?v=f-IINpceX6k
+  UpSampling2D  It is simple interpolation with no learnable parameters. It can either be nearest, which means just repeating the values or something like bilinear interpolation, bicubic, etc.</description>
+    </item>
+    
+  </channel>
+</rss>

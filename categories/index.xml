@@ -10,5 +10,50 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="//basujindal.me/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Computer Vision</title>
+      <link>//basujindal.me/categories/computer-vision/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/categories/computer-vision/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CV</title>
+      <link>//basujindal.me/categories/cv/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/categories/cv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Diffusion</title>
+      <link>//basujindal.me/categories/diffusion/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/categories/diffusion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GAN</title>
+      <link>//basujindal.me/categories/gan/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/categories/gan/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>NLP</title>
+      <link>//basujindal.me/categories/nlp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/categories/nlp/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

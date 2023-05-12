@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>GAN on Basu Jindal</title>
+    <link>//basujindal.me/categories/gan/</link>
+    <description>Recent content in GAN on Basu Jindal</description>
+    <image>
+      <url>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="//basujindal.me/categories/gan/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Image generation using Deep Learning</title>
+      <link>//basujindal.me/inprogress/_2023-01-17-generative_models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/inprogress/_2023-01-17-generative_models/</guid>
+      <description>Oh GAN, here we go again.
+ Some math background Likelihood Function  If the data samples are given, what is the &amp;ldquo;likelihood&amp;rdquo; of the parameters $\theta$ of our model. Like if n coit tosses are given what is the likelihood that the p(H) = 0.5. Likelihood(L) $ L(\theta| \boldsymbol x) = P(\boldsymbol x| \theta)$ Here $\boldsymbol x$ is the observed data In MLE we find the $\theta$ that maximizes the probabilty of our observation.</description>
+    </item>
+    
+  </channel>
+</rss>
