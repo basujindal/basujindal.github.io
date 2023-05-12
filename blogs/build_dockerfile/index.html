@@ -21,7 +21,11 @@ FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&#34;/root/miniconda3/
 <noscript>
 <style>#theme-toggle,.top-link{display:none}</style>
 <style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
-</noscript><meta property="og:title" content="How to make a Dockerfile">
+</noscript>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:!0},{left:'\\[',right:'\\]',display:!0},{left:'$',right:'$',display:!1},{left:'\\(',right:'\\)',display:!1}]})"></script>
+<meta property="og:title" content="How to make a Dockerfile">
 <meta property="og:description" content="Dockerfile Create a file in your project folder named Dockerfile with the following contents
 FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&#34;/root/miniconda3/bin:${PATH}&#34; ARG PATH=&#34;/root/miniconda3/bin:${PATH}&#34; WORKDIR /root RUN apt update && \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \ mkdir /.conda && \ sh Miniconda3-latest-Linux-x86_64.sh -b && \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.">
 <meta property="og:type" content="article">
