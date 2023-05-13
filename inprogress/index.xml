@@ -9,7 +9,17 @@
       <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sun, 03 Apr 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/inprogress/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
+    </item>
+    
     <item>
       <title>CV Notes</title>
       <link>//basujindal.me/inprogress/_2023-02-09-cv_notes/</link>
@@ -59,17 +69,6 @@ Frobenius Inner Product and Norm Norm is basically root of sum of squares of all
       
       <guid>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</guid>
       <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
-    </item>
-    
-    <item>
-      <title>NLP Notes (aimed to be math intensive)</title>
-      <link>//basujindal.me/inprogress/_2023-01-17-nlp_basics/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2023-01-17-nlp_basics/</guid>
-      <description>As a AI chatbot &amp;hellip;
- Beam Search   Currently used in Text generation, TTS, etc.
-  While choosing the nth word, the probabilities of choosing all the previous words kept in mind. Formally, let $S_0, S_1, \dots, S_n$ be the states of a sequence, and let $P(S_i|S_{i-1}, S_{i-2}, \dots, S_0)$ be the probability of state $S_i$ given the previous states. The goal of beam search is to find the sequence of states $S^* = (S_0^, S_1^, \dots, S_n^)$ that maximizes the probability $P(S) = \prod_{i=1}^n P(S_i^|S_{i-1}^, S_{i-2}^, \dots, S_0^)$.</description>
     </item>
     
     <item>

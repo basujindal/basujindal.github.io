@@ -20,9 +20,6 @@
     <loc>//basujindal.me/blogs/screen-resolution/</loc>
     <lastmod>2022-05-07T15:20:28+05:30</lastmod>
   </url><url>
-    <loc>//basujindal.me/about/</loc>
-    <lastmod>2022-04-09T23:15:00+07:00</lastmod>
-  </url><url>
     <loc>//basujindal.me/infographics/</loc>
     <lastmod>2022-04-09T23:15:00+07:00</lastmod>
   </url><url>
@@ -41,6 +38,12 @@
     <loc>//basujindal.me/blogs/docker-commands-cheatsheet/</loc>
     <lastmod>2022-04-03T15:20:28+05:30</lastmod>
   </url><url>
+    <loc>//basujindal.me/inprogress/docker-commands-cheatsheet/</loc>
+    <lastmod>2022-04-03T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/</loc>
+    <lastmod>2022-04-03T15:20:28+05:30</lastmod>
+  </url><url>
     <loc>//basujindal.me/blogs/build_dockerfile/</loc>
     <lastmod>2021-07-23T15:20:28+05:30</lastmod>
   </url><url>
@@ -52,6 +55,8 @@
   </url><url>
     <loc>//basujindal.me/tags/</loc>
     <lastmod>2020-09-15T11:30:03+00:00</lastmod>
+  </url><url>
+    <loc>//basujindal.me/about/</loc>
   </url><url>
     <loc>//basujindal.me/categories/</loc>
   </url><url>
@@ -71,8 +76,6 @@
   </url><url>
     <loc>//basujindal.me/inprogress/_2023-01-17-generative_models/</loc>
   </url><url>
-    <loc>//basujindal.me/inprogress/</loc>
-  </url><url>
     <loc>//basujindal.me/inprogress/_2022-10-07-linear-algebra/</loc>
   </url><url>
     <loc>//basujindal.me/inprogress/_2022-10-06-optimizing-deep-learning-models/</loc>
@@ -80,10 +83,6 @@
     <loc>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</loc>
   </url><url>
     <loc>//basujindal.me/tags/nlp/</loc>
-  </url><url>
-    <loc>//basujindal.me/categories/nlp/</loc>
-  </url><url>
-    <loc>//basujindal.me/inprogress/_2023-01-17-nlp_basics/</loc>
   </url><url>
     <loc>//basujindal.me/tags/probability/</loc>
   </url><url>

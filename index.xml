@@ -48,16 +48,6 @@
     </item>
     
     <item>
-      <title>About</title>
-      <link>//basujindal.me/about/</link>
-      <pubDate>Sat, 09 Apr 2022 23:15:00 +0700</pubDate>
-      
-      <guid>//basujindal.me/about/</guid>
-      <description>I am Graduate student at the University of California, San Diego in the dept. of a Electrical &amp;amp; Computer Engineering. I did by undergrad from Indian Institute of Technology, Madras, India. 🇮🇳 🇺🇸
-My interest lies in the broad field of Deep Learning for NLP &amp;amp; Computer Vision. Both fields are very diverse but ideas borrowed from one has shown great results in the other many a times. During my free time I like to tinker with hardware and web applications and reverse engineer them.</description>
-    </item>
-    
-    <item>
       <title>Infographics</title>
       <link>//basujindal.me/infographics/</link>
       <pubDate>Sat, 09 Apr 2022 23:15:00 +0700</pubDate>
@@ -103,6 +93,15 @@ My interest lies in the broad field of Deep Learning for NLP &amp;amp; Computer 
     </item>
     
     <item>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/inprogress/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
+    </item>
+    
+    <item>
       <title>How to make a Dockerfile</title>
       <link>//basujindal.me/blogs/build_dockerfile/</link>
       <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
@@ -119,6 +118,16 @@ FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/minicon
       
       <guid>//basujindal.me/page/</guid>
       <description>Desc Text.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>//basujindal.me/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/about/</guid>
+      <description>I am Graduate student at the University of California, San Diego in the Dept. of Electrical &amp;amp; Computer Engineering. I did by undergrad from Indian Institute of Technology, Madras, India. 🇮🇳 🇺🇸
+My interest lies in the broad field of Deep Learning for NLP &amp;amp; Computer Vision. Both fields are very diverse but ideas borrowed from one has shown great results in the other many a times. During my free time I like to tinker with hardware and web applications and reverse engineer them.</description>
     </item>
     
     <item>
@@ -170,17 +179,6 @@ Frobenius Inner Product and Norm Norm is basically root of sum of squares of all
       
       <guid>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</guid>
       <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
-    </item>
-    
-    <item>
-      <title>NLP Notes (aimed to be math intensive)</title>
-      <link>//basujindal.me/inprogress/_2023-01-17-nlp_basics/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2023-01-17-nlp_basics/</guid>
-      <description>As a AI chatbot &amp;hellip;
- Beam Search   Currently used in Text generation, TTS, etc.
-  While choosing the nth word, the probabilities of choosing all the previous words kept in mind. Formally, let $S_0, S_1, \dots, S_n$ be the states of a sequence, and let $P(S_i|S_{i-1}, S_{i-2}, \dots, S_0)$ be the probability of state $S_i$ given the previous states. The goal of beam search is to find the sequence of states $S^* = (S_0^, S_1^, \dots, S_n^)$ that maximizes the probability $P(S) = \prod_{i=1}^n P(S_i^|S_{i-1}^, S_{i-2}^, \dots, S_0^)$.</description>
     </item>
     
     <item>
