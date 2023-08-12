@@ -144,7 +144,7 @@ $ Q_t = r_t + \gamma r_{t + 1} + \gamma^2 r_{t + 2} + \ldots \ = \sum_{i = t}^T 
 <p>Model based mothod implies we have a model (or an approximation) which we can use to do look ahead like Tree search, like the games of chess. Value based method requires a model while Q Learning and Policy gradient methods are model free.</p>
 <h2 id=markov-chain>Markov Chain<a hidden class=anchor aria-hidden=true href=#markov-chain>#</a></h2>
 <p>A Sequence of processes where the next state is only dependent on the current state and the action we take and is independent of all previous states and actions.</p>
-<p><img loading=lazy src=/assets/img/2022-11-26-20-50-45.png alt>
+<p><img loading=lazy src=../images/2022-11-26-20-50-45.png alt>
 </p>
 <h3 id=value-function--vs->Value function $ V(s) $<a hidden class=anchor aria-hidden=true href=#value-function--vs->#</a></h3>
 <p>Gives the value of being in a state. If we are in a state $ s_t $, to take an action, we find the values of all the possible next states and choose the state with the max value.</p>
@@ -152,7 +152,7 @@ $ Q_t = r_t + \gamma r_{t + 1} + \gamma^2 r_{t + 2} + \ldots \ = \sum_{i = t}^T 
 <p>Off policy $ TD(0) $: We update our Q value after each step using: $ Q(s,a) = (1-\alpha)Q(s,a) + \alpha(r + max(Q(s', a'))) $
 Here for the next action, i.e. the bootstrap action (a'), we follow the different policy, i.e only greedy to update our Q value, that is why its off policy.</p>
 <p>If using NN and gradient Descent, the Q Value update algorithm is modified as follows:
-<img loading=lazy src=/assets/img/2022-11-26-21-22-00.png alt>
+<img loading=lazy src=../images/2022-11-26-21-22-00.png alt>
 </p>
 <h2 id=sarsa-state-action-reward-state-action>SARSA (State-Action-Reward-State-Action)<a hidden class=anchor aria-hidden=true href=#sarsa-state-action-reward-state-action>#</a></h2>
 <p>On policy TD(0): We update our Q value after each step using: $ Q(s,a) = (1-\alpha)Q(s,a) + \alpha(r + Q(s', a'')) $
@@ -175,7 +175,7 @@ Here for the next action, i.e. the bootstrap action (a''), we follow the same po
 </li>
 </ul>
 <h2 id=policy-based-methods>Policy Based Methods<a hidden class=anchor aria-hidden=true href=#policy-based-methods>#</a></h2>
-<p><img loading=lazy src=/assets/img/2022-11-26-20-45-40.png alt>
+<p><img loading=lazy src=../images/2022-11-26-20-45-40.png alt>
 </p>
 <ul>
 <li>
