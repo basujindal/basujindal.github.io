@@ -11,17 +11,6 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="//basujindal.me/tags/deep-learning/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Linear Algebra Notes</title>
-      <link>//basujindal.me/inprogress/_2022-10-07-linear-algebra/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2022-10-07-linear-algebra/</guid>
-      <description>The dimension d of a vector space V is the cardinality of its bases  Inner Product and Norm Inner product is a fn that transforms two vectors into a value in field which norm takes a single vector to the field.
-Matrix Trace of Matrix $ tr(ABC) = tr(BCA) = tr(CAB) $
-Frobenius Inner Product and Norm Norm is basically root of sum of squares of all elements in the matrix just like a vector norm.</description>
-    </item>
-    
-    <item>
       <title>Need for Speed: Optimizing Deep Learning Models</title>
       <link>//basujindal.me/inprogress/_2022-10-06-optimizing-deep-learning-models/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -37,17 +26,6 @@ Frobenius Inner Product and Norm Norm is basically root of sum of squares of all
       
       <guid>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</guid>
       <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
-    </item>
-    
-    <item>
-      <title>Probability &amp; Statistics</title>
-      <link>//basujindal.me/inprogress/_2022-10-07-bayesian-statistics/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2022-10-07-bayesian-statistics/</guid>
-      <description>Recall, Precision &amp;amp; F1 score Recall (R) R = TP/(TP + FN) i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
-Precision (P) P = TP/(TP + FP) i.e. How precise you were in identifying positive cases.
-Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
     </item>
     
   </channel>

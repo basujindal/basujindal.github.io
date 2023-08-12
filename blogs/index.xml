@@ -10,16 +10,7 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 03 Apr 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Large Language Models</title>
-      <link>//basujindal.me/blogs/llm/</link>
-      <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/llm/</guid>
-      <description>Notes on LLMs</description>
-    </item>
-    
+    <lastBuildDate>Wed, 14 Dec 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reinforcement Learning Notes</title>
       <link>//basujindal.me/blogs/rl-notes/</link>
@@ -63,16 +54,6 @@
       
       <guid>//basujindal.me/blogs/docker-commands-cheatsheet/</guid>
       <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
-    </item>
-    
-    <item>
-      <title>How to make a Dockerfile</title>
-      <link>//basujindal.me/blogs/build_dockerfile/</link>
-      <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/build_dockerfile/</guid>
-      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
-FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
     </item>
     
   </channel>

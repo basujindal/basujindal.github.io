@@ -10,26 +10,15 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 Apr 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 23 Jul 2021 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Docker Commands Cheat Sheet</title>
-      <link>//basujindal.me/inprogress/docker-commands-cheatsheet/</link>
-      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      <title>How to make a Dockerfile</title>
+      <link>//basujindal.me/inprogress/build_dockerfile/</link>
+      <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
       
-      <guid>//basujindal.me/inprogress/docker-commands-cheatsheet/</guid>
-      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
-    </item>
-    
-    <item>
-      <title>CV Notes</title>
-      <link>//basujindal.me/inprogress/_2023-02-09-cv_notes/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2023-02-09-cv_notes/</guid>
-      <description>There is a lot of maths behind CV which we take for granted, this post aims to explore it.
- Increasing image size Deconvolution   Inverse of Convolution, if we know the final image and the convolution matrix we can get the original image back using Inverse Fourier Transformation.
-  https://www.youtube.com/watch?v=f-IINpceX6k
-  UpSampling2D  It is simple interpolation with no learnable parameters. It can either be nearest, which means just repeating the values or something like bilinear interpolation, bicubic, etc.</description>
+      <guid>//basujindal.me/inprogress/build_dockerfile/</guid>
+      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
     </item>
     
     <item>
@@ -40,17 +29,6 @@
       <guid>//basujindal.me/inprogress/_2023-01-17-generative_models/</guid>
       <description>Oh GAN, here we go again.
  Some math background Likelihood Function  If the data samples are given, what is the &amp;ldquo;likelihood&amp;rdquo; of the parameters $\theta$ of our model. Like if n coit tosses are given what is the likelihood that the p(H) = 0.5. Likelihood(L) $ L(\theta| \boldsymbol x) = P(\boldsymbol x| \theta)$ Here $\boldsymbol x$ is the observed data In MLE we find the $\theta$ that maximizes the probabilty of our observation.</description>
-    </item>
-    
-    <item>
-      <title>Linear Algebra Notes</title>
-      <link>//basujindal.me/inprogress/_2022-10-07-linear-algebra/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2022-10-07-linear-algebra/</guid>
-      <description>The dimension d of a vector space V is the cardinality of its bases  Inner Product and Norm Inner product is a fn that transforms two vectors into a value in field which norm takes a single vector to the field.
-Matrix Trace of Matrix $ tr(ABC) = tr(BCA) = tr(CAB) $
-Frobenius Inner Product and Norm Norm is basically root of sum of squares of all elements in the matrix just like a vector norm.</description>
     </item>
     
     <item>
@@ -69,17 +47,6 @@ Frobenius Inner Product and Norm Norm is basically root of sum of squares of all
       
       <guid>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</guid>
       <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
-    </item>
-    
-    <item>
-      <title>Probability &amp; Statistics</title>
-      <link>//basujindal.me/inprogress/_2022-10-07-bayesian-statistics/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/inprogress/_2022-10-07-bayesian-statistics/</guid>
-      <description>Recall, Precision &amp;amp; F1 score Recall (R) R = TP/(TP + FN) i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
-Precision (P) P = TP/(TP + FP) i.e. How precise you were in identifying positive cases.
-Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
     </item>
     
   </channel>
