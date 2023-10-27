@@ -10,7 +10,16 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 03 Sep 2022 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 03 Apr 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Image generative models</title>
+      <link>//basujindal.me/inprogress/generative-models/</link>
+      <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/generative-models/</guid>
+      <description>GAN</description>
+    </item>
+    
     <item>
       <title>Misc</title>
       <link>//basujindal.me/inprogress/notes/</link>
