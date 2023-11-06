@@ -3,10 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//basujindal.me/</loc>
-    <lastmod>2023-04-03T15:20:28+05:30</lastmod>
+    <lastmod>2023-10-25T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/</loc>
-    <lastmod>2023-04-03T15:20:28+05:30</lastmod>
+    <lastmod>2023-10-25T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/linux-essentials/</loc>
+    <lastmod>2023-10-25T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/maths/</loc>
+    <lastmod>2023-10-05T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/generative-models/</loc>
     <lastmod>2023-04-03T15:20:28+05:30</lastmod>
@@ -22,9 +28,6 @@
   </url><url>
     <loc>//basujindal.me/blogs/rl-tips-and-tricks/</loc>
     <lastmod>2022-11-29T15:20:28+05:30</lastmod>
-  </url><url>
-    <loc>//basujindal.me/blogs/maths/</loc>
-    <lastmod>2022-09-03T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/notes/</loc>
     <lastmod>2022-09-03T15:20:28+05:30</lastmod>
@@ -58,9 +61,9 @@
   </url><url>
     <loc>//basujindal.me/tags/deep-learning/</loc>
   </url><url>
-    <loc>//basujindal.me/inprogress/_2022-10-06-optimizing-deep-learning-models/</loc>
+    <loc>//basujindal.me/inprogress/optimizing-deep-learning-models/</loc>
   </url><url>
-    <loc>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</loc>
+    <loc>//basujindal.me/inprogress/neural-architecture-search/</loc>
   </url><url>
     <loc>//basujindal.me/tags/nlp/</loc>
   </url>

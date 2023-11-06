@@ -10,7 +10,25 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 03 Apr 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Oct 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Essentials</title>
+      <link>//basujindal.me/blogs/linux-essentials/</link>
+      <pubDate>Wed, 25 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/linux-essentials/</guid>
+      <description>Snippets for Linux</description>
+    </item>
+    
+    <item>
+      <title>Maths for ML</title>
+      <link>//basujindal.me/blogs/maths/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/maths/</guid>
+      <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it. This blog is a collection of all the math concepts that I have come across while learning ML.</description>
+    </item>
+    
     <item>
       <title>Large Language Models</title>
       <link>//basujindal.me/blogs/llm/</link>
@@ -36,15 +54,6 @@
       
       <guid>//basujindal.me/blogs/rl-tips-and-tricks/</guid>
       <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;rsquo;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm.</description>
-    </item>
-    
-    <item>
-      <title>Maths for ML</title>
-      <link>//basujindal.me/blogs/maths/</link>
-      <pubDate>Sat, 03 Sep 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/maths/</guid>
-      <description>Maths for ML</description>
     </item>
     
     <item>

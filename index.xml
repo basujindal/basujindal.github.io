@@ -10,7 +10,25 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 03 Apr 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Oct 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Essentials</title>
+      <link>//basujindal.me/blogs/linux-essentials/</link>
+      <pubDate>Wed, 25 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/linux-essentials/</guid>
+      <description>Snippets for Linux</description>
+    </item>
+    
+    <item>
+      <title>Maths for ML</title>
+      <link>//basujindal.me/blogs/maths/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/maths/</guid>
+      <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it. This blog is a collection of all the math concepts that I have come across while learning ML.</description>
+    </item>
+    
     <item>
       <title>Image generative models</title>
       <link>//basujindal.me/inprogress/generative-models/</link>
@@ -45,15 +63,6 @@
       
       <guid>//basujindal.me/blogs/rl-tips-and-tricks/</guid>
       <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;rsquo;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm.</description>
-    </item>
-    
-    <item>
-      <title>Maths for ML</title>
-      <link>//basujindal.me/blogs/maths/</link>
-      <pubDate>Sat, 03 Sep 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/maths/</guid>
-      <description>Maths for ML</description>
     </item>
     
     <item>
@@ -123,19 +132,19 @@ My interest lies in the field of Deep Learning for NLP, Computer Vision &amp;amp
     
     <item>
       <title>Need for Speed: Optimizing Deep Learning Models</title>
-      <link>//basujindal.me/inprogress/_2022-10-06-optimizing-deep-learning-models/</link>
+      <link>//basujindal.me/inprogress/optimizing-deep-learning-models/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>//basujindal.me/inprogress/_2022-10-06-optimizing-deep-learning-models/</guid>
+      <guid>//basujindal.me/inprogress/optimizing-deep-learning-models/</guid>
       <description>Huang et al. showed that mixed precision training is 1.5x to 5.5x faster over float32 on V100 GPUs, and an additional 1.3x to 2.5x faster on A100 GPUs on a variety of networks. On very large networks the need for mixed precision is even more evident. Narayanan et al. reports that it would take 34 days to train GPT-3 175B on 1024 A100 GPUs (with a batch size of 1536), but it’s estimated it would take over a year using float32!</description>
     </item>
     
     <item>
       <title>Neural Architecture Search</title>
-      <link>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</link>
+      <link>//basujindal.me/inprogress/neural-architecture-search/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>//basujindal.me/inprogress/_2022-12-01-neural-architecture-search/</guid>
+      <guid>//basujindal.me/inprogress/neural-architecture-search/</guid>
       <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
     </item>
     
