@@ -4,10 +4,6 @@
     <title>Blogs on Basu Jindal</title>
     <link>//basujindal.me/blogs/</link>
     <description>Recent content in Blogs on Basu Jindal</description>
-    <image>
-      <url>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>//basujindal.me/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
-    </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 25 Oct 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
