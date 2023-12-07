@@ -6,7 +6,16 @@
     <description>Recent content in Inprogresses on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 03 Apr 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Nov 2023 16:19:18 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>F*ck DSA :)</title>
+      <link>//basujindal.me/inprogress/dsa/</link>
+      <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/dsa/</guid>
+      <description>Common techniques to solve DSA problems</description>
+    </item>
+    
     <item>
       <title>Image generative models</title>
       <link>//basujindal.me/inprogress/generative-models/</link>

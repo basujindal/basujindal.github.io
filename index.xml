@@ -6,7 +6,28 @@
     <description>Recent content on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Oct 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Dec 2023 16:33:18 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linear Algebra</title>
+      <link>//basujindal.me/blogs/linal/</link>
+      <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
+      
+      <guid>//basujindal.me/blogs/linal/</guid>
+      <description>Linear Algebra Inner Product and Norm Inner product is a fn that transforms two vectors into a value in field which norm takes a single vector to the field.
+Trace of Matrix $ tr(ABC) = tr(BCA) = tr(CAB) $
+Frobenius Inner Product and Norm Norm is basically root of sum of squares of all elements in the matrix just like a vector norm.
+The Frobenius inner product between two matrices $X, Y \in \mathbb{R}^{m \times n}$ is:</description>
+    </item>
+    
+    <item>
+      <title>F*ck DSA :)</title>
+      <link>//basujindal.me/inprogress/dsa/</link>
+      <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/dsa/</guid>
+      <description>Common techniques to solve DSA problems</description>
+    </item>
+    
     <item>
       <title>Linux Essentials</title>
       <link>//basujindal.me/blogs/linux-essentials/</link>
@@ -17,12 +38,23 @@
     </item>
     
     <item>
-      <title>Maths for ML</title>
-      <link>//basujindal.me/blogs/maths/</link>
-      <pubDate>Thu, 05 Oct 2023 15:20:28 +0530</pubDate>
+      <title>Probability &amp; Statistics for Machine Learning</title>
+      <link>//basujindal.me/blogs/prob/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
       
-      <guid>//basujindal.me/blogs/maths/</guid>
+      <guid>//basujindal.me/blogs/prob/</guid>
       <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it. This blog is a collection of all the math concepts that I have come across while learning ML.</description>
+    </item>
+    
+    <item>
+      <title>Random concepts for ML</title>
+      <link>//basujindal.me/blogs/math/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/blogs/math/</guid>
+      <description>Evaluating the model Recall (R) $R = \frac{TP}{TP + FN}$ i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
+Precision (P) $P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.
+Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
     </item>
     
     <item>
