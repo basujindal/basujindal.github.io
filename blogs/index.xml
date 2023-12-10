@@ -13,10 +13,20 @@
       <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/linal/</guid>
-      <description>Linear Algebra Inner Product and Norm Inner product is a fn that transforms two vectors into a value in field which norm takes a single vector to the field.
-Trace of Matrix $ tr(ABC) = tr(BCA) = tr(CAB) $
-Frobenius Inner Product and Norm Norm is basically root of sum of squares of all elements in the matrix just like a vector norm.
-The Frobenius inner product between two matrices $X, Y \in \mathbb{R}^{m \times n}$ is:</description>
+      <description>Inner Product and Norm Inner product is a function that takes two vectors and returns a scalar. It is also called scalar product. It is denoted by $\langle x, y \rangle$.
+$$\langle x, y \rangle = c$$
+where $c$ is a scalar, $x \in \mathbb{R}^n$ and $y \in \mathbb{R}^n$.
+The properties of inner product are:
+$\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \rangle = \langle x, y \rangle + \langle x, z \rangle$ aka linearity $\langle \alpha x, y \rangle = \alpha \langle x, y \rangle$ aka homogeneity $\langle x, x \rangle \geq 0$ and $\langle x, x \rangle = 0$ iff $x = 0$ Inner product is not always defined as dot product.</description>
+    </item>
+    
+    <item>
+      <title>F*ck DSA :)</title>
+      <link>//basujindal.me/blogs/dsa/</link>
+      <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/blogs/dsa/</guid>
+      <description>Common techniques to solve DSA problems</description>
     </item>
     
     <item>
