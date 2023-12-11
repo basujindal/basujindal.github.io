@@ -6,7 +6,20 @@
     <description>Recent content in Inprogresses on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Nov 2023 16:19:18 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Dec 2023 16:33:18 -0800</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linear Algebra</title>
+      <link>//basujindal.me/inprogress/linal/</link>
+      <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
+      
+      <guid>//basujindal.me/inprogress/linal/</guid>
+      <description>Inner Product and Norm Inner product is a function that takes two vectors and returns a scalar. It is also called scalar product. It is denoted by $\langle x, y \rangle$.
+$$\langle x, y \rangle = c$$
+where $c$ is a scalar, $x \in \mathbb{R}^n$ and $y \in \mathbb{R}^n$.
+The properties of inner product are:
+$\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \rangle = \langle x, y \rangle + \langle x, z \rangle$ aka linearity $\langle \alpha x, y \rangle = \alpha \langle x, y \rangle$ aka homogeneity $\langle x, x \rangle \geq 0$ and $\langle x, x \rangle = 0$ iff $x = 0$ Inner product is not always defined as dot product.</description>
+    </item>
+    
     <item>
       <title>F*ck DSA :)</title>
       <link>//basujindal.me/inprogress/dsa/</link>

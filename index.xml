@@ -9,10 +9,10 @@
     <lastBuildDate>Sun, 03 Dec 2023 16:33:18 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linear Algebra</title>
-      <link>//basujindal.me/blogs/linal/</link>
+      <link>//basujindal.me/inprogress/linal/</link>
       <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
       
-      <guid>//basujindal.me/blogs/linal/</guid>
+      <guid>//basujindal.me/inprogress/linal/</guid>
       <description>Inner Product and Norm Inner product is a function that takes two vectors and returns a scalar. It is also called scalar product. It is denoted by $\langle x, y \rangle$.
 $$\langle x, y \rangle = c$$
 where $c$ is a scalar, $x \in \mathbb{R}^n$ and $y \in \mathbb{R}^n$.
