@@ -22,10 +22,10 @@ $\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \ra
     
     <item>
       <title>F*ck DSA :)</title>
-      <link>//basujindal.me/blogs/dsa/</link>
+      <link>//basujindal.me/inprogress/dsa/</link>
       <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
       
-      <guid>//basujindal.me/blogs/dsa/</guid>
+      <guid>//basujindal.me/inprogress/dsa/</guid>
       <description>Common techniques to solve DSA problems</description>
     </item>
     
@@ -49,10 +49,10 @@ $\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \ra
     
     <item>
       <title>Random concepts for ML</title>
-      <link>//basujindal.me/blogs/math/</link>
+      <link>//basujindal.me/inprogress/math/</link>
       <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
       
-      <guid>//basujindal.me/blogs/math/</guid>
+      <guid>//basujindal.me/inprogress/math/</guid>
       <description>Evaluating the model Recall (R) $R = \frac{TP}{TP + FN}$ i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
 Precision (P) $P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.
 Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
