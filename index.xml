@@ -39,11 +39,20 @@ $\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \ra
     </item>
     
     <item>
-      <title>Probability &amp; Statistics for Machine Learning</title>
-      <link>//basujindal.me/blogs/prob/</link>
+      <title>Parameter Estimation</title>
+      <link>//basujindal.me/blogs/paraest/</link>
       <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
       
-      <guid>//basujindal.me/blogs/prob/</guid>
+      <guid>//basujindal.me/blogs/paraest/</guid>
+      <description>Estimating the parameters of a distribution given the data is a fundamental problem in statistics. In this blog, we will look at different methods to estimate the parameters of a distribution given the data. We will also look at the different assumptions we make about the noise and the parameters.</description>
+    </item>
+    
+    <item>
+      <title>Probability &amp; Statistics for Machine Learning</title>
+      <link>//basujindal.me/blogs/probstat/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/blogs/probstat/</guid>
       <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it.</description>
     </item>
     
@@ -60,11 +69,11 @@ Covid RTPCR Test has high precision and low recall. This means if the test resul
     
     <item>
       <title>Image generative models</title>
-      <link>//basujindal.me/inprogress/generative-models/</link>
+      <link>//basujindal.me/blogs/generative-models/</link>
       <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
       
-      <guid>//basujindal.me/inprogress/generative-models/</guid>
-      <description>GAN</description>
+      <guid>//basujindal.me/blogs/generative-models/</guid>
+      <description>Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, where $ x_i \in \mathbb{R}^d $. We want to find a process that can generate new data points $ x $ that are similar to the data points in $ X $. In the case of images, we want to learn a model that can generate new images that are similar to the images in the dataset, we call them as generative models.</description>
     </item>
     
     <item>
