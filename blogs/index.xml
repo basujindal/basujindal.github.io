@@ -40,7 +40,7 @@
       <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/blogs/generative-models/</guid>
-      <description>Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, where $ x_i \in \mathbb{R}^d $. We want to find a process that can generate new data points $ x $ that are similar to the data points in $ X $. In the case of images, we want to learn a model that can generate new images that are similar to the images in the dataset, we call them as generative models.</description>
+      <description>Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, where $ x_i \in \mathbb{R}^d $. We want to find a process that can generate new data points $ x $ that are similar to the data points in $ X $. In the case of images, we want to learn a model that can generate new images that are similar to the images in the dataset.</description>
     </item>
     
     <item>
