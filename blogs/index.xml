@@ -6,7 +6,16 @@
     <description>Recent content in Blogs on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Oct 2023 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 26 Dec 2023 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/blogs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Image generative models</title>
+      <link>//basujindal.me/blogs/generative-models/</link>
+      <pubDate>Tue, 26 Dec 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/blogs/generative-models/</guid>
+      <description>Generative Models Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, where $ x_i \in \mathbb{R}^d $. We want to find a process that can generate new data points $ x $ that are similar to the data points in $ X $. In the case of images, we want to learn a model that can generate new images that are similar to the images in the dataset.</description>
+    </item>
+    
     <item>
       <title>Linux Essentials</title>
       <link>//basujindal.me/blogs/linux-essentials/</link>
@@ -32,15 +41,6 @@
       
       <guid>//basujindal.me/blogs/probstat/</guid>
       <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it.</description>
-    </item>
-    
-    <item>
-      <title>Image generative models</title>
-      <link>//basujindal.me/blogs/generative-models/</link>
-      <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/generative-models/</guid>
-      <description>Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, where $ x_i \in \mathbb{R}^d $. We want to find a process that can generate new data points $ x $ that are similar to the data points in $ X $. In the case of images, we want to learn a model that can generate new images that are similar to the images in the dataset.</description>
     </item>
     
     <item>
