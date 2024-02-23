@@ -23,11 +23,12 @@ Generative Models Let us say we have a dataset $ X = {x_1, x_2, \dots, x_n} $, w
       <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
       
       <guid>//basujindal.me/inprogress/linal/</guid>
-      <description>Inner Product and Norm Inner product is a function that takes two vectors and returns a scalar. It is also called scalar product. It is denoted by $\langle x, y \rangle$.
-$$\langle x, y \rangle = c$$
-where $c$ is a scalar, $x \in \mathbb{R}^n$ and $y \in \mathbb{R}^n$.
-The properties of inner product are:
-$\langle x, y \rangle = \langle y, x \rangle$ aka symmetry $\langle x, y + z \rangle = \langle x, y \rangle + \langle x, z \rangle$ aka linearity $\langle \alpha x, y \rangle = \alpha \langle x, y \rangle$ aka homogeneity $\langle x, x \rangle \geq 0$ and $\langle x, x \rangle = 0$ iff $x = 0$ Inner product is not always defined as dot product.</description>
+      <description>Linear and Affine Functions If $f$ is a linear function,
+$$f(\alpha x + \beta y) = \alpha f(x) + \beta f(y)$$
+The above is equivalent to saying: $$f(ax) = af(x)$$ $$f(x+y) = f(x) + f(y)$$
+where $\alpha, \beta \in \mathbb{R}$ and $x, y \in \mathbb{R}^n$.
+If $f$ is an affine function, there is an additional constrain that $\alpha + \beta = 1$.
+To prove that any function $f$ satisfying the above properties is linear, we will show that $f$ can be represented as $f(x) = mx$, where $m$ is a constant, and that it satisfies the conditions for a linear function over the real numbers.</description>
     </item>
     
     <item>
