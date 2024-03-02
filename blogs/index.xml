@@ -14,8 +14,9 @@
       
       <guid>//basujindal.me/blogs/diffusion/</guid>
       <description>Stable Diffusion took the world by storm due to its ability to generate high quality images and due to the fact that it was open sourced by Stability AI. However, the maths behind it is fairly complex and this blog aims to simplify it.
+Before understanding Diffusion Models, we need to understand a type of generative model called Energy Based Models.
 Energy Based Models Recommended reading:
-How to Train Your Energy-Based Models https://www.youtube.com/watch?v=8TcNXi3A5DI Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $.</description>
+How to Train Your Energy-Based Models https://www.</description>
     </item>
     
     <item>
@@ -71,15 +72,6 @@ Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_
       
       <guid>//basujindal.me/blogs/rl-notes/</guid>
       <description>Every time I return to RL after a long time, I find myself looking for resources to revise the basics. So I finally decided to create notes which try to cover all the important concepts. Enjoy!</description>
-    </item>
-    
-    <item>
-      <title>Reinforcement Learning Tips and Tricks</title>
-      <link>//basujindal.me/blogs/rl-tips-and-tricks/</link>
-      <pubDate>Tue, 29 Nov 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/rl-tips-and-tricks/</guid>
-      <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;rsquo;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm.</description>
     </item>
     
     <item>
