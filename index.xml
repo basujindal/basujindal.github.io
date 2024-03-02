@@ -6,15 +6,24 @@
     <description>Recent content on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 26 Dec 2023 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Feb 2024 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Diffusion Models</title>
+      <link>//basujindal.me/blogs/diffusion/</link>
+      <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/blogs/diffusion/</guid>
+      <description>Let us understand the beautiful maths behind the popoular Stable Diffusion.
+Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. Our goal is to learn an energy function $ E_\theta(x) $ that should be low for the images in the dataset and high for all other images. Here $\theta$ are the parameters of the energy function. These functions, similar to pdfs, can be used to model and generate new data points.</description>
+    </item>
+    
     <item>
       <title>Image generative models</title>
       <link>//basujindal.me/blogs/generative-models/</link>
       <pubDate>Tue, 26 Dec 2023 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/generative-models/</guid>
-      <description>This blog is an attempt to explain the different types of generative models and the mathematics behind them.
-Generative Models Introduction Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $. This is the problem of generative modeling.</description>
+      <description>The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it. Generative Models Introduction Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $.</description>
     </item>
     
     <item>

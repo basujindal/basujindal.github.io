@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//basujindal.me/</loc>
-    <lastmod>2023-12-26T15:20:28-08:00</lastmod>
+    <lastmod>2024-02-27T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/</loc>
-    <lastmod>2023-12-26T15:20:28-08:00</lastmod>
+    <lastmod>2024-02-27T15:20:28-08:00</lastmod>
+  </url><url>
+    <loc>//basujindal.me/blogs/diffusion/</loc>
+    <lastmod>2024-02-27T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/generative-models/</loc>
     <lastmod>2023-12-26T15:20:28-08:00</lastmod>
