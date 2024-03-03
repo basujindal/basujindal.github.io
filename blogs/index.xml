@@ -25,7 +25,7 @@ How to Train Your Energy-Based Models https://www.</description>
       <pubDate>Tue, 26 Dec 2023 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/generative-models/</guid>
-      <description>The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.
+      <description>The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.
 Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $.</description>
     </item>
     
@@ -71,7 +71,7 @@ Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_
       <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/blogs/rl-notes/</guid>
-      <description>Every time I return to RL after a long time, I find myself looking for resources to revise the basics. So I finally decided to create notes which try to cover all the important concepts. Enjoy!</description>
+      <description>Notes on Reinforcement Learning</description>
     </item>
     
     <item>
