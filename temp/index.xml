@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Temps on Basu Jindal</title>
+    <link>//basujindal.me/temp/</link>
+    <description>Recent content in Temps on Basu Jindal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Feb 2024 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/temp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Diffusion Models</title>
+      <link>//basujindal.me/temp/diffusion/</link>
+      <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/diffusion/</guid>
+      <description>Stable Diffusion took the world by storm due to its ability to generate high quality images and due to the fact that it was open sourced by Stability AI. However, the maths behind it is fairly complex and this blog aims to simplify it.
+Before understanding Diffusion Models, we need to understand a type of generative model called Energy Based Models.
+Energy Based Models Recommended reading:
+How to Train Your Energy-Based Models https://www.</description>
+    </item>
+    
+    <item>
+      <title>Image generative models</title>
+      <link>//basujindal.me/temp/generative-models/</link>
+      <pubDate>Tue, 26 Dec 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/generative-models/</guid>
+      <description>The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.
+Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $.</description>
+    </item>
+    
+    <item>
+      <title>Linear Algebra</title>
+      <link>//basujindal.me/temp/linal/</link>
+      <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/linal/</guid>
+      <description>Linear and Affine Functions If $f$ is a linear function,
+$$f(\alpha x + \beta y) = \alpha f(x) + \beta f(y)$$
+The above is equivalent to saying: $$f(ax) = af(x)$$ $$f(x+y) = f(x) + f(y)$$
+where $\alpha, \beta \in \mathbb{R}$ and $x, y \in \mathbb{R}^n$.
+If $f$ is an affine function, there is an additional constrain that $\alpha + \beta = 1$.
+To prove that any function $f$ satisfying the above properties is linear, we will show that $f$ can be represented as $f(x) = mx$, where $m$ is a constant, and that it satisfies the conditions for a linear function over the real numbers.</description>
+    </item>
+    
+    <item>
+      <title>Allegories for machine learning</title>
+      <link>//basujindal.me/temp/allegories/</link>
+      <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/allegories/</guid>
+      <description>Allegories in literature and life</description>
+    </item>
+    
+    <item>
+      <title>F*ck DSA :)</title>
+      <link>//basujindal.me/temp/dsa/</link>
+      <pubDate>Sat, 25 Nov 2023 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/dsa/</guid>
+      <description>Common techniques to solve DSA problems</description>
+    </item>
+    
+    <item>
+      <title>Linux Essentials</title>
+      <link>//basujindal.me/temp/linux-essentials/</link>
+      <pubDate>Wed, 25 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/linux-essentials/</guid>
+      <description>Collection of helpful commands for Debian based systems</description>
+    </item>
+    
+    <item>
+      <title>Parameter Estimation</title>
+      <link>//basujindal.me/temp/paraest/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/paraest/</guid>
+      <description>Estimating the parameters of a distribution given the data is a fundamental problem in statistics. In this blog, we will look at different methods to estimate the parameters of a distribution given the data. We will also look at the different assumptions we make about the noise and the parameters.</description>
+    </item>
+    
+    <item>
+      <title>Probability &amp; Statistics for Machine Learning</title>
+      <link>//basujindal.me/temp/probstat/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/probstat/</guid>
+      <description>Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it.</description>
+    </item>
+    
+    <item>
+      <title>Random concepts for ML</title>
+      <link>//basujindal.me/temp/math/</link>
+      <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/temp/math/</guid>
+      <description>Evaluating the model Recall (R) $R = \frac{TP}{TP + FN}$ i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
+Precision (P) $P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.
+Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
+    </item>
+    
+    <item>
+      <title>Large Language Models</title>
+      <link>//basujindal.me/temp/llm/</link>
+      <pubDate>Mon, 03 Apr 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/llm/</guid>
+      <description>Notes on LLMs</description>
+    </item>
+    
+    <item>
+      <title>Reinforcement Learning Notes</title>
+      <link>//basujindal.me/temp/rl-notes/</link>
+      <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/rl-notes/</guid>
+      <description>Notes on Reinforcement Learning</description>
+    </item>
+    
+    <item>
+      <title>Reinforcement Learning Tips and Tricks</title>
+      <link>//basujindal.me/temp/rl-tips-and-tricks/</link>
+      <pubDate>Tue, 29 Nov 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/rl-tips-and-tricks/</guid>
+      <description>Reinforcement Learning can do wonders but selecting the best algorithm and then tuning it&amp;rsquo;s hyper-parameters is not an easy task. This blog post aims at making the process easier by listing out a few general suggestions and a list of hyper-parameters to tune for each algorithm.</description>
+    </item>
+    
+    <item>
+      <title>Classical Computer Vision</title>
+      <link>//basujindal.me/temp/classicalcv/</link>
+      <pubDate>Sat, 03 Sep 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/classicalcv/</guid>
+      <description>CV sits at the intersection of signal processing, heuristics, ML, physics, and optimization. This is a collection of notes on the subject.&amp;#34;</description>
+    </item>
+    
+    <item>
+      <title>Deep Learning Notes</title>
+      <link>//basujindal.me/temp/deep_learning_tips/</link>
+      <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/deep_learning_tips/</guid>
+      <description>Creating a new Neural Architecture is not an easy task as it requires a lot of trial and error to find out the optimal hyper parameters, selecting the number of layers, type of normalization, etc. Also it can be very frustrating to see a non-decreasing loss, low validation accuracy or a bunch of NaNs in the output. Here are a few tips to keep in mind while creating, training or debugging a model.</description>
+    </item>
+    
+    <item>
+      <title>Screen Resolutions Explained!</title>
+      <link>//basujindal.me/temp/screen-resolution/</link>
+      <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/screen-resolution/</guid>
+      <description>A quick guide on screen resolutions.</description>
+    </item>
+    
+    <item>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/temp/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
+    </item>
+    
+    <item>
+      <title>How to make a Dockerfile</title>
+      <link>//basujindal.me/temp/build_dockerfile/</link>
+      <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/temp/build_dockerfile/</guid>
+      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
+    </item>
+    
+    <item>
+      <title>Need for Speed: Optimizing Deep Learning Models</title>
+      <link>//basujindal.me/temp/optimizing-deep-learning-models/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/temp/optimizing-deep-learning-models/</guid>
+      <description>Huang et al. showed that mixed precision training is 1.5x to 5.5x faster over float32 on V100 GPUs, and an additional 1.3x to 2.5x faster on A100 GPUs on a variety of networks. On very large networks the need for mixed precision is even more evident. Narayanan et al. reports that it would take 34 days to train GPT-3 175B on 1024 A100 GPUs (with a batch size of 1536), but it’s estimated it would take over a year using float32!</description>
+    </item>
+    
+    <item>
+      <title>Neural Architecture Search</title>
+      <link>//basujindal.me/temp/neural-architecture-search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//basujindal.me/temp/neural-architecture-search/</guid>
+      <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
+    </item>
+    
+  </channel>
+</rss>
