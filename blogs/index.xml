@@ -13,10 +13,10 @@
       <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/diffusion/</guid>
-      <description>Stable Diffusion took the world by storm due to its ability to generate high quality images and due to the fact that it was open sourced by Stability AI. However, the maths behind it is fairly complex and this blog aims to simplify it.
+      <description>Stable Diffusion was one of the first Open-Souce Text to Image model that could generate high quality images. However, the maths behind it is fairly complex and this blog aims to simplify it.
 Before understanding Diffusion Models, we need to understand a type of generative model called Energy Based Models.
 Energy Based Models Recommended reading:
-How to Train Your Energy-Based Models https://www.</description>
+How to Train Your Energy-Based Models https://www.youtube.com/watch?v=8TcNXi3A5DI Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $.</description>
     </item>
     
     <item>
