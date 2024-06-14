@@ -9,12 +9,12 @@
     <lastBuildDate>Tue, 27 Feb 2024 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CUDA</title>
-      <link>//basujindal.me/blogs/cuda/</link>
+      <link>//basujindal.me/inprogress/cuda/</link>
       <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
       
-      <guid>//basujindal.me/blogs/cuda/</guid>
+      <guid>//basujindal.me/inprogress/cuda/</guid>
       <description>GPUs go brrrr&amp;hellip;
-Resources Practice exercises and lecture by NVIDIA and OLCF https://www.olcf.ornl.gov/cuda-training-series/ https://github.com/olcf/cuda-training-series/tree/master/exercises
+Resources Practice exercises and lecture by NVIDIA and OLCF https://www.olcf.ornl.gov/cuda-training-series/ (https://www.youtube.com/playlist?app=desktop&amp;amp;list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj) https://github.com/olcf/cuda-training-series/tree/master/exercises
 CUDA Mode Discord https://github.com/cuda-mode/lectures
 NVIDIA CUDA C Programming Guide https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability
 Book Programming Massively Parallel Processors: A Hands-on Approach by David B. Kirk and Wen-mei W. Hwu 4th Edition
