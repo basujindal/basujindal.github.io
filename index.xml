@@ -197,15 +197,6 @@ FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/minicon
     </item>
     
     <item>
-      <title></title>
-      <link>//basujindal.me/map/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>//basujindal.me/map/</guid>
-      <description>&lt;!DOCTYPE html&gt; Redirecting... If you are not redirected, click here.</description>
-    </item>
-    
-    <item>
       <title>About</title>
       <link>//basujindal.me/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
