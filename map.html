@@ -54,23 +54,21 @@
 
 
         fetch('https://server.basujindal.me/map_logs')
-        // fetch('https://jsonplaceholder.typicode.com/todos/1')
             .then(response => response.json())
             .then(data => {
                 var logs = data.logs;
                 var uv = data.unique_visitors;
-                console.log(logs);
-                // addMarkers(logs, uv);
-            
+                console.log(logs);            
 
-            logs.forEach(function(log) {
-                if (log.latitude && log.longitude) {
+            for(i = 0; i < logs.length; i++){
+                var log = logs[i];
+                if (logs.latitude && log.longitude) {
                     var marker = L.marker([log.latitude, log.longitude]).addTo(map);
                     if (log.message) {
                         marker.bindPopup(log.message).openPopup();
                     }
                 }
-            });
+            };
 
             // Update unique visitors count
             document.getElementById('uniqueVisitors').textContent = uv;
