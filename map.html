@@ -43,8 +43,8 @@
         <div class="visitor-count">Unique Visitors = <span id="uniqueVisitors"></span></div>
     </div>
     <div id="map"></div>
+
     <script>
-        console.log("fukme")
         var map = L.map('map').setView([0, 0], 2); // Center the map
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -56,13 +56,12 @@
         fetch('https://server.basujindal.me/map_logs')
             .then(response => response.json())
             .then(data => {
-                var logs = data.logs;
+                var logs = JSON.parse(data.logs);
                 var uv = data.unique_visitors;
-                console.log(logs);            
 
             for(i = 0; i < logs.length; i++){
                 var log = logs[i];
-                if (logs.latitude && log.longitude) {
+                if (log.latitude && log.longitude) {
                     var marker = L.marker([log.latitude, log.longitude]).addTo(map);
                     if (log.message) {
                         marker.bindPopup(log.message).openPopup();
@@ -76,7 +75,7 @@
         });
     </script>
 
-<script>
+    <script>
 
     function getQueryParam(param) {
         var queryString = window.location.search;
@@ -103,9 +102,7 @@
         fpPromise
         .then(fp => fp.get())
         .then(fingerprint => {
-    
-        // console.log(fingerprint.visitorId)
-    
+        
         const data = { latitude, longitude, val, url, fingerprint};
         const options = {
             method: 'POST',
@@ -117,15 +114,16 @@
     
         postData(serverUrl, options)
             .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
+                console.log(data);
             });
     
         })
       
     }
     
-    // sendData(0, 0);
+    sendData(0, 0);
 
 </script>
+
 </body>
 </html>
