@@ -3,7 +3,19 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//basujindal.me/</loc>
-    <lastmod>2024-02-27T15:20:28-08:00</lastmod>
+    <lastmod>2024-07-28T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/parallel_train/</loc>
+    <lastmod>2024-07-28T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/</loc>
+    <lastmod>2024-07-28T15:20:28+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/system_design/</loc>
+    <lastmod>2024-07-24T16:19:18+05:30</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/quant/</loc>
+    <lastmod>2024-07-17T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/</loc>
     <lastmod>2024-02-27T15:20:28-08:00</lastmod>
@@ -12,9 +24,6 @@
     <lastmod>2024-02-27T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/diffusion/</loc>
-    <lastmod>2024-02-27T15:20:28-08:00</lastmod>
-  </url><url>
-    <loc>//basujindal.me/inprogress/</loc>
     <lastmod>2024-02-27T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/generative-models/</loc>

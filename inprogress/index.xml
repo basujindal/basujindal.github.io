@@ -6,7 +6,36 @@
     <description>Recent content in Inprogresses on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 27 Feb 2024 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 Jul 2024 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Distributed training</title>
+      <link>//basujindal.me/inprogress/parallel_train/</link>
+      <pubDate>Sun, 28 Jul 2024 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/parallel_train/</guid>
+      <description>Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
+Introduction With the development of deep learning, there is an increasing demand for parallel training. This is because that model and datasets are getting larger and larger and training time becomes a nightmare if we stick to single-GPU training. In this section, we will provide a brief overview of existing methods to parallelize training.
+Data Parallel Data parallel is the most common form of parallelism due to its simplicity.</description>
+    </item>
+    
+    <item>
+      <title>System Design</title>
+      <link>//basujindal.me/inprogress/system_design/</link>
+      <pubDate>Wed, 24 Jul 2024 16:19:18 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/system_design/</guid>
+      <description>Lets design a system</description>
+    </item>
+    
+    <item>
+      <title>Quantization</title>
+      <link>//basujindal.me/inprogress/quant/</link>
+      <pubDate>Wed, 17 Jul 2024 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/inprogress/quant/</guid>
+      <description>Quantization methods for deep learning models</description>
+    </item>
+    
     <item>
       <title>CUDA</title>
       <link>//basujindal.me/inprogress/cuda/</link>
