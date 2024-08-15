@@ -13,7 +13,8 @@
       <pubDate>Sun, 28 Jul 2024 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/inprogress/parallel_train/</guid>
-      <description>Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
+      <description>Recommended Readings:
+https://huggingface.co/docs/transformers/v4.15.0/en/parallelism Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
 Introduction With the development of deep learning, there is an increasing demand for parallel training. This is because that model and datasets are getting larger and larger and training time becomes a nightmare if we stick to single-GPU training. In this section, we will provide a brief overview of existing methods to parallelize training.
 Data Parallel Data parallel is the most common form of parallelism due to its simplicity.</description>
     </item>

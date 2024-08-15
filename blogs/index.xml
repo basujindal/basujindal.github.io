@@ -80,7 +80,8 @@ Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_
       <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
-      <description>Creating a new Neural Architecture is not an easy task as it requires a lot of trial and error to find out the optimal hyper parameters, selecting the number of layers, type of normalization, etc. Also it can be very frustrating to see a non-decreasing loss, low validation accuracy or a bunch of NaNs in the output. Here are a few tips to keep in mind while creating, training or debugging a model.</description>
+      <description>Deep Learning notes and tips that I have gathered over time. This is a living document and will be updated as I learn more.
+Useful Links Google Tuning Playbook Efficient Training on a Single GPU [http://karpathy.github.io/2019/04/25/recipe/](Deep Learning Recipe by Andrej Karpathy) General points Try to over fit a small batch, a decent model should almost every time able to fit a small batch, if it fails something is wrong with the model or the data.</description>
     </item>
     
     <item>

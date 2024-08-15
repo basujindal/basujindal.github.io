@@ -13,7 +13,8 @@
       <pubDate>Sun, 28 Jul 2024 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/inprogress/parallel_train/</guid>
-      <description>Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
+      <description>Recommended Readings:
+https://huggingface.co/docs/transformers/v4.15.0/en/parallelism Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
 Introduction With the development of deep learning, there is an increasing demand for parallel training. This is because that model and datasets are getting larger and larger and training time becomes a nightmare if we stick to single-GPU training. In this section, we will provide a brief overview of existing methods to parallelize training.
 Data Parallel Data parallel is the most common form of parallelism due to its simplicity.</description>
     </item>
@@ -185,7 +186,8 @@ Covid RTPCR Test has high precision and low recall. This means if the test resul
       <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
-      <description>Creating a new Neural Architecture is not an easy task as it requires a lot of trial and error to find out the optimal hyper parameters, selecting the number of layers, type of normalization, etc. Also it can be very frustrating to see a non-decreasing loss, low validation accuracy or a bunch of NaNs in the output. Here are a few tips to keep in mind while creating, training or debugging a model.</description>
+      <description>Deep Learning notes and tips that I have gathered over time. This is a living document and will be updated as I learn more.
+Useful Links Google Tuning Playbook Efficient Training on a Single GPU [http://karpathy.github.io/2019/04/25/recipe/](Deep Learning Recipe by Andrej Karpathy) General points Try to over fit a small batch, a decent model should almost every time able to fit a small batch, if it fails something is wrong with the model or the data.</description>
     </item>
     
     <item>
