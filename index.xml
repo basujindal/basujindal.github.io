@@ -233,8 +233,8 @@ FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/minicon
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>//basujindal.me/about/</guid>
-      <description>Hi! I am Basu Jindal, a graduate student at the University of California, San Diego in the Dept. of Electrical &amp;amp; Computer Engineering. I did my undergrad from Indian Institute of Technology, Madras, India. 🇮🇳 🇺🇸
-Currently, I am working on Generative AI with a focus on inference optimizing and quantization. During my free time I like to tinker with hardware and web applications and reverse engineer them (I found a bug in the grades portal of my undergrad university once 😅 that allowed one to download grades of any student).</description>
+      <description>Hi! I am Basu Jindal, a graduate student at the University of California, San Diego in the Dept. of Electrical &amp;amp; Computer Engineering. I did my undergrad from Indian Institute of Technology, Madras, India.
+Currently, I am working on Generative AI with a focus on inference optimizing. During my free time I like to tinker with hardware and web applications and reverse engineer them (I found a bug in the grades portal of my undergrad university once that allowed one to download grades of any student).</description>
     </item>
     
     <item>
