@@ -6,17 +6,35 @@
     <description>Recent content on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 28 Jul 2024 15:20:28 +0530</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 24 Jan 2025 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deep Space Astrophotography</title>
+      <link>//basujindal.me/inprogress/deekspaceastro/</link>
+      <pubDate>Fri, 24 Jan 2025 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/inprogress/deekspaceastro/</guid>
+      <description>&lt;h3 id=&#34;bortle-scale&#34;&gt;Bortle Scale&lt;/h3&gt;
+&lt;p&gt;The Bortle Scale is a way to measure the quality of the night sky. It ranges from 1 to 9, with 1 being the darkest sky and 9 being the most light polluted.&lt;/p&gt;
+&lt;p&gt;To plan my dark sky trips, I look at the light pollution map to find a rental property with a low number on the Bortle Scale (Bortle 4 and under is ideal).&lt;/p&gt;
+&lt;h2 id=&#34;technical-terms&#34;&gt;Technical Terms&lt;/h2&gt;
+&lt;p&gt;Aperture: The diameter of the lens or mirror that collects light. The larger the aperture, the more light the telescope can gather, and the fainter the objects it can see. For Astrophotography, a larger aperture is generally better.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Distributed training</title>
       <link>//basujindal.me/inprogress/parallel_train/</link>
       <pubDate>Sun, 28 Jul 2024 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/inprogress/parallel_train/</guid>
-      <description>Recommended Readings:
-https://huggingface.co/docs/transformers/v4.15.0/en/parallelism Mofified version of https://colossalai.org/docs/concepts/paradigms_of_parallelism/
-Introduction With the development of deep learning, there is an increasing demand for parallel training. This is because that model and datasets are getting larger and larger and training time becomes a nightmare if we stick to single-GPU training. In this section, we will provide a brief overview of existing methods to parallelize training.
-Data Parallel Data parallel is the most common form of parallelism due to its simplicity.</description>
+      <description>&lt;p&gt;Recommended Readings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://huggingface.co/docs/transformers/v4.15.0/en/parallelism&#34;&gt;https://huggingface.co/docs/transformers/v4.15.0/en/parallelism&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Mofified version of &lt;a href=&#34;https://colossalai.org/docs/concepts/paradigms_of_parallelism/&#34;&gt;https://colossalai.org/docs/concepts/paradigms_of_parallelism/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Introduction
+With the development of deep learning, there is an increasing demand for parallel training. This is because that model and datasets are getting larger and larger and training time becomes a nightmare if we stick to single-GPU training. In this section, we will provide a brief overview of existing methods to parallelize training.&lt;/p&gt;
+&lt;h2 id=&#34;data-parallel&#34;&gt;Data Parallel&lt;/h2&gt;
+&lt;p&gt;Data parallel is the most common form of parallelism due to its simplicity. In data parallel training, the dataset is split into several shards, each shard is allocated to a device. This is equivalent to parallelize the training process along the batch dimension. Each device will hold a full copy of the model replica and trains on the dataset shard allocated. After back-propagation, the gradients of the model will be all-reduced so that the model parameters on different devices can stay synchronized.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -43,13 +61,22 @@ Data Parallel Data parallel is the most common form of parallelism due to its si
       <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/inprogress/cuda/</guid>
-      <description>GPUs go brrrr&amp;hellip;
-Resources Practice exercises and lecture by NVIDIA and OLCF https://www.olcf.ornl.gov/cuda-training-series/ (https://www.youtube.com/playlist?app=desktop&amp;amp;list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj) https://github.com/olcf/cuda-training-series/tree/master/exercises
-CUDA Mode Discord https://github.com/cuda-mode/lectures
-NVIDIA CUDA C Programming Guide https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability
-Book Programming Massively Parallel Processors: A Hands-on Approach by David B. Kirk and Wen-mei W. Hwu 4th Edition
-CUDA Toolkit documentation https://docs.nvidia.com/cuda/index.html
-Streaming Multiprocessor (SM) It is similar to CPU core HW. The threads of a thread block execute concurrently on one multiprocessor. As thread blocks terminate, new blocks are launched on the vacated multiprocessors.</description>
+      <description>&lt;p&gt;GPUs go brrrr&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+&lt;h3 id=&#34;practice-exercises-and-lecture-by-nvidia-and-olcf&#34;&gt;Practice exercises and lecture by NVIDIA and OLCF&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.olcf.ornl.gov/cuda-training-series/&#34;&gt;https://www.olcf.ornl.gov/cuda-training-series/&lt;/a&gt; (&lt;a href=&#34;https://www.youtube.com/playlist?app=desktop&amp;amp;list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj&#34;&gt;https://www.youtube.com/playlist?app=desktop&amp;amp;list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj&lt;/a&gt;)
+&lt;a href=&#34;https://github.com/olcf/cuda-training-series/tree/master/exercises&#34;&gt;https://github.com/olcf/cuda-training-series/tree/master/exercises&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;cuda-mode-discord&#34;&gt;CUDA Mode Discord&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/cuda-mode/lectures&#34;&gt;https://github.com/cuda-mode/lectures&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;nvidia-cuda-c-programming-guide&#34;&gt;NVIDIA CUDA C Programming Guide&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability&#34;&gt;https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;book&#34;&gt;Book&lt;/h3&gt;
+&lt;p&gt;Programming Massively Parallel Processors: A Hands-on Approach by David B. Kirk and Wen-mei W. Hwu 4th Edition&lt;/p&gt;
+&lt;h3 id=&#34;cuda-toolkit-documentation&#34;&gt;CUDA Toolkit documentation&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.nvidia.com/cuda/index.html&#34;&gt;https://docs.nvidia.com/cuda/index.html&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;streaming-multiprocessor-sm&#34;&gt;Streaming Multiprocessor (SM)&lt;/h2&gt;
+&lt;p&gt;It is similar to CPU core HW. The threads of a thread block execute concurrently on one multiprocessor. As thread blocks terminate, new blocks are launched on the vacated multiprocessors.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -58,10 +85,7 @@ Streaming Multiprocessor (SM) It is similar to CPU core HW. The threads of a thr
       <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/diffusion/</guid>
-      <description>Stable Diffusion was one of the first Open-Souce Text to Image model that could generate high quality images. However, the maths behind it is fairly complex and this blog aims to simplify it.
-Before understanding Diffusion Models, we need to understand a type of generative model called Energy Based Models.
-Energy Based Models Recommended reading:
-How to Train Your Energy-Based Models https://www.youtube.com/watch?v=8TcNXi3A5DI Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $.</description>
+      <description>A simplified explanation of the mathematics behind Stable Diffusion, one of the first open-source text-to-image models.</description>
     </item>
     
     <item>
@@ -70,8 +94,12 @@ How to Train Your Energy-Based Models https://www.youtube.com/watch?v=8TcNXi3A5D
       <pubDate>Tue, 26 Dec 2023 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/generative-models/</guid>
-      <description>The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.
-Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $.</description>
+      <description>&lt;p&gt;The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;!-- Oh GAN, here we go again. --&gt;
+&lt;!--
+GAN models are known for potentially unstable training and less diversity in generation due to their adversarial training nature. VAE relies on a surrogate loss, i.e. they define an intractable density function with latent z: Cannot optimize directly, derive and optimize lower bound on likelihood instead. --&gt;
+&lt;p&gt;Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can &amp;ldquo;generate&amp;rdquo; new data points $ x $ that are similar to images in $ X $.s&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -80,12 +108,16 @@ Let us say we have an image dataset $X = \{ x_1, x_2, \dots, x_n \}$, where $ x_
       <pubDate>Sun, 03 Dec 2023 16:33:18 -0800</pubDate>
       
       <guid>//basujindal.me/inprogress/linal/</guid>
-      <description>Linear and Affine Functions If $f$ is a linear function,
-$$f(\alpha x + \beta y) = \alpha f(x) + \beta f(y)$$
-The above is equivalent to saying: $$f(ax) = af(x)$$ $$f(x+y) = f(x) + f(y)$$
-where $\alpha, \beta \in \mathbb{R}$ and $x, y \in \mathbb{R}^n$.
-If $f$ is an affine function, there is an additional constrain that $\alpha + \beta = 1$.
-To prove that any function $f$ satisfying the above properties is linear, we will show that $f$ can be represented as $f(x) = mx$, where $m$ is a constant, and that it satisfies the conditions for a linear function over the real numbers.</description>
+      <description>&lt;hr&gt;
+&lt;h2 id=&#34;linear-and-affine-functions&#34;&gt;Linear and Affine Functions&lt;/h2&gt;
+&lt;p&gt;If $f$ is a linear function,&lt;/p&gt;
+&lt;p&gt;$$f(\alpha x + \beta y) = \alpha f(x) + \beta f(y)$$&lt;/p&gt;
+&lt;p&gt;The above is equivalent to saying:
+$$f(ax) = af(x)$$
+$$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
+&lt;p&gt;where $\alpha, \beta \in \mathbb{R}$ and $x, y \in \mathbb{R}^n$.&lt;/p&gt;
+&lt;p&gt;If $f$ is an affine function, there is an additional constrain that $\alpha + \beta = 1$.&lt;/p&gt;
+&lt;p&gt;To prove that any function $f$ satisfying the above properties is linear, we will show that $f$ can be represented as $f(x) = mx$, where $m$ is a constant, and that it satisfies the conditions for a linear function over the real numbers.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -139,9 +171,12 @@ To prove that any function $f$ satisfying the above properties is linear, we wil
       <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/inprogress/math/</guid>
-      <description>Evaluating the model Recall (R) $R = \frac{TP}{TP + FN}$ i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values
-Precision (P) $P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.
-Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.</description>
+      <description>&lt;h2 id=&#34;evaluating-the-model&#34;&gt;Evaluating the model&lt;/h2&gt;
+&lt;h3 id=&#34;recall-r&#34;&gt;Recall (R)&lt;/h3&gt;
+&lt;p&gt;$R =  \frac{TP}{TP + FN}$ i.e. number of true values &amp;ldquo;recalled&amp;rdquo; out of total true values&lt;/p&gt;
+&lt;h3 id=&#34;precision-p&#34;&gt;Precision (P)&lt;/h3&gt;
+&lt;p&gt;$P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.&lt;/p&gt;
+&lt;p&gt;Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -186,8 +221,7 @@ Covid RTPCR Test has high precision and low recall. This means if the test resul
       <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
-      <description>Deep Learning notes and tips that I have gathered over time. This is a living document and will be updated as I learn more.
-Useful Links Google Tuning Playbook Efficient Training on a Single GPU [http://karpathy.github.io/2019/04/25/recipe/](Deep Learning Recipe by Andrej Karpathy) General points Try to over fit a small batch, a decent model should almost every time able to fit a small batch, if it fails something is wrong with the model or the data.</description>
+      <description>A collection of practical tips and best practices for deep learning, covering model training, optimization, and deployment.</description>
     </item>
     
     <item>
@@ -214,8 +248,55 @@ Useful Links Google Tuning Playbook Efficient Training on a Single GPU [http://k
       <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/inprogress/build_dockerfile/</guid>
-      <description>Dockerfile Create a file in your project folder named Dockerfile with the following contents
-FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; ARG PATH=&amp;#34;/root/miniconda3/bin:${PATH}&amp;#34; WORKDIR /root RUN apt update &amp;amp;&amp;amp; \ apt install -y \ htop \ python3-dev \ wget \ gcc \ libopenmpi-dev \ cmake \ zlib1g-dev \ libjpeg-dev \ libsdl2-dev \ xvfb RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &amp;amp;&amp;amp; \ mkdir /.conda &amp;amp;&amp;amp; \ sh Miniconda3-latest-Linux-x86_64.sh -b &amp;amp;&amp;amp; \ rm -f Miniconda3-latest-Linux-x86_64.sh RUN conda create -y -n myenv python=3.</description>
+      <description>&lt;h2 id=&#34;dockerfile&#34;&gt;Dockerfile&lt;/h2&gt;
+&lt;p&gt;Create a file in your project folder named &lt;code&gt;Dockerfile&lt;/code&gt; with the following contents&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;FROM nvidia&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;cuda:&lt;span style=&#34;color:#ae81ff&#34;&gt;10.2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;cudnn7&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;runtime&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;ubuntu18&lt;span style=&#34;color:#ae81ff&#34;&gt;.04&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ENV PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/root/miniconda3/bin:$&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{PATH}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ARG PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/root/miniconda3/bin:$&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{PATH}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;WORKDIR &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;RUN apt update &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    apt install &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;y \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    htop \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    python3&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;dev \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    wget \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    gcc \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    libopenmpi&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;dev \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    cmake \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    zlib1g&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;dev \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    libjpeg&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;dev \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    libsdl2&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;dev \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    xvfb
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;RUN wget https:&lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt;repo&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;anaconda&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;com&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;miniconda&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;Miniconda3&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;latest&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;Linux&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;x86_64&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sh &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    mkdir &lt;span style=&#34;color:#f92672&#34;&gt;/.&lt;/span&gt;conda &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    sh Miniconda3&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;latest&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;Linux&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;x86_64&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sh &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;b &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    rm &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;f Miniconda3&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;latest&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;Linux&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;x86_64&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;RUN conda create &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;y &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;n myenv python&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3.8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ADD requirements&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;txt &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;requirements&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;RUN &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;bin&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;bash &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;source activate myenv &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;amp;&amp;amp; pip install -r requirements.txt&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Copy files in current path to workdir&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;COPY &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# CMD is executed when docker container is started&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# CMD [&amp;#34;/bin/bash&amp;#34;, &amp;#34;ping google.com&amp;#34;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CMD bash
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;create-a-docker-image-from-the-docker-file&#34;&gt;Create a docker image from the docker file&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;docker build -t image_name:tag /path/to/Dockerfile/&lt;/li&gt;
+&lt;li&gt;eg: &lt;code&gt;docker build -t my_python_image:1.0 /home/light/my_project&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;from&#34;&gt;FROM&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Can select a prebult image to build upon&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -233,8 +314,8 @@ FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04 ENV PATH=&amp;#34;/root/minicon
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>//basujindal.me/about/</guid>
-      <description>Hi! I am Basu Jindal, a graduate student at the University of California, San Diego in the Dept. of Electrical &amp;amp; Computer Engineering. I did my undergrad from Indian Institute of Technology, Madras, India.
-Currently, I am working on Generative AI with a focus on inference optimizing. During my free time I like to tinker with hardware and web applications and reverse engineer them (I found a bug in the grades portal of my undergrad university once that allowed one to download grades of any student).</description>
+      <description>&lt;p&gt;Hi! I am Basu Jindal, a graduate student at the University of California, San Diego in the Dept. of Electrical &amp;amp; Computer Engineering. I did my undergrad from Indian Institute of Technology, Madras, India.&lt;/p&gt;
+&lt;p&gt;Currently, I am working on Generative AI with a focus on inference optimizing. During my free time I like to tinker with hardware and web applications and reverse engineer them (I found a bug in the grades portal of my undergrad university once that allowed one to download grades of any student).&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -243,7 +324,7 @@ Currently, I am working on Generative AI with a focus on inference optimizing. D
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>//basujindal.me/inprogress/optimizing-deep-learning-models/</guid>
-      <description>Huang et al. showed that mixed precision training is 1.5x to 5.5x faster over float32 on V100 GPUs, and an additional 1.3x to 2.5x faster on A100 GPUs on a variety of networks. On very large networks the need for mixed precision is even more evident. Narayanan et al. reports that it would take 34 days to train GPT-3 175B on 1024 A100 GPUs (with a batch size of 1536), but it’s estimated it would take over a year using float32!</description>
+      <description>&lt;p&gt;Huang et al. showed that mixed precision training is 1.5x to 5.5x faster over float32 on V100 GPUs, and an additional 1.3x to 2.5x faster on A100 GPUs on a variety of networks. On very large networks the need for mixed precision is even more evident. Narayanan et al. reports that it would take 34 days to train GPT-3 175B on 1024 A100 GPUs (with a batch size of 1536), but it’s estimated it would take over a year using float32!&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -252,7 +333,8 @@ Currently, I am working on Generative AI with a focus on inference optimizing. D
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>//basujindal.me/inprogress/neural-architecture-search/</guid>
-      <description>NAS One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results.</description>
+      <description>&lt;h1 id=&#34;nas&#34;&gt;NAS&lt;/h1&gt;
+&lt;p&gt;One of the key challenges in designing deep learning models is finding the task specific architecture. This involves choosing the number of layers, the number of neurons per layer, and the connections between different layers. Typically, this is done through a process of trial and error, where the researcher trains multiple architectures to find the best among. This can be time-consuming and may not always yield the best possible results. There are various methods to automatically find a better architecture using RL, evolution techniques, Gradient Descent, etc. Google claims to use NAS in BERT, Google Pixel 6a face recognition, Waymo to get better accuracy and speed.&lt;/p&gt;</description>
     </item>
     
   </channel>
