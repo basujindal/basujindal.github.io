@@ -9,10 +9,10 @@
     <lastBuildDate>Fri, 24 Jan 2025 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deep Space Astrophotography</title>
-      <link>//basujindal.me/inprogress/deekspaceastro/</link>
+      <link>//basujindal.me/inprogress/deep-space-astro/</link>
       <pubDate>Fri, 24 Jan 2025 15:20:28 -0800</pubDate>
       
-      <guid>//basujindal.me/inprogress/deekspaceastro/</guid>
+      <guid>//basujindal.me/inprogress/deep-space-astro/</guid>
       <description>&lt;h3 id=&#34;bortle-scale&#34;&gt;Bortle Scale&lt;/h3&gt;
 &lt;p&gt;The Bortle Scale is a way to measure the quality of the night sky. It ranges from 1 to 9, with 1 being the darkest sky and 9 being the most light polluted.&lt;/p&gt;
 &lt;p&gt;To plan my dark sky trips, I look at the light pollution map to find a rental property with a low number on the Bortle Scale (Bortle 4 and under is ideal).&lt;/p&gt;
@@ -21,11 +21,11 @@
     </item>
     
     <item>
-      <title>Distributed training</title>
-      <link>//basujindal.me/inprogress/parallel_train/</link>
+      <title>Distributed Training</title>
+      <link>//basujindal.me/inprogress/multi-gpu/</link>
       <pubDate>Sun, 28 Jul 2024 15:20:28 +0530</pubDate>
       
-      <guid>//basujindal.me/inprogress/parallel_train/</guid>
+      <guid>//basujindal.me/inprogress/multi-gpu/</guid>
       <description>&lt;p&gt;Recommended Readings:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://huggingface.co/docs/transformers/v4.15.0/en/parallelism&#34;&gt;https://huggingface.co/docs/transformers/v4.15.0/en/parallelism&lt;/a&gt;&lt;/li&gt;
@@ -39,10 +39,10 @@ With the development of deep learning, there is an increasing demand for paralle
     
     <item>
       <title>System Design</title>
-      <link>//basujindal.me/inprogress/system_design/</link>
+      <link>//basujindal.me/inprogress/system-design/</link>
       <pubDate>Wed, 24 Jul 2024 16:19:18 +0530</pubDate>
       
-      <guid>//basujindal.me/inprogress/system_design/</guid>
+      <guid>//basujindal.me/inprogress/system-design/</guid>
       <description>Lets design a system</description>
     </item>
     
@@ -148,11 +148,20 @@ $$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
     </item>
     
     <item>
+      <title>Screen Resolutions Explained!</title>
+      <link>//basujindal.me/inprogress/screen-resolution/</link>
+      <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/screen-resolution/</guid>
+      <description>A quick guide on screen resolutions.</description>
+    </item>
+    
+    <item>
       <title>How to make a Dockerfile</title>
-      <link>//basujindal.me/inprogress/build_dockerfile/</link>
+      <link>//basujindal.me/inprogress/dockerfile/</link>
       <pubDate>Fri, 23 Jul 2021 15:20:28 +0530</pubDate>
       
-      <guid>//basujindal.me/inprogress/build_dockerfile/</guid>
+      <guid>//basujindal.me/inprogress/dockerfile/</guid>
       <description>&lt;h2 id=&#34;dockerfile&#34;&gt;Dockerfile&lt;/h2&gt;
 &lt;p&gt;Create a file in your project folder named &lt;code&gt;Dockerfile&lt;/code&gt; with the following contents&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;FROM nvidia&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;cuda:&lt;span style=&#34;color:#ae81ff&#34;&gt;10.2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;cudnn7&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;runtime&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;ubuntu18&lt;span style=&#34;color:#ae81ff&#34;&gt;.04&lt;/span&gt;

@@ -13,7 +13,7 @@
       <pubDate>Tue, 27 Feb 2024 15:20:28 -0800</pubDate>
       
       <guid>//basujindal.me/blogs/diffusion/</guid>
-      <description>A simplified explanation of the mathematics behind Stable Diffusion, one of the first open-source text-to-image models.</description>
+      <description>A detailed explanation of the mathematics behind Stable Diffusion, one of the first open-source text-to-image models.</description>
     </item>
     
     <item>
@@ -82,15 +82,6 @@ GAN models are known for potentially unstable training and less diversity in gen
       
       <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
       <description>A collection of practical tips and best practices for deep learning, covering model training, optimization, and deployment.</description>
-    </item>
-    
-    <item>
-      <title>Screen Resolutions Explained!</title>
-      <link>//basujindal.me/blogs/screen-resolution/</link>
-      <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/screen-resolution/</guid>
-      <description>A quick guide on screen resolutions.</description>
     </item>
     
     <item>
