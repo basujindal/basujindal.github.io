@@ -310,22 +310,21 @@ $$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
     </item>
     
     <item>
-      <title>My 1st post</title>
-      <link>//basujindal.me/page/</link>
-      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
-      
-      <guid>//basujindal.me/page/</guid>
-      <description>Desc Text.</description>
-    </item>
-    
-    <item>
       <title>About</title>
       <link>//basujindal.me/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>//basujindal.me/about/</guid>
       <description>&lt;p&gt;Hi! I am Basu Jindal, currently working as a ML Engineer at Apple. I received my Master&amp;rsquo;s degree from the University of California, San Diego and my B.Tech from Indian Institute of Technology, Madras, India.&lt;/p&gt;
-&lt;p&gt;Currently, I am working on Generative AI with a focus on inference optimizing. During my free time I like to tinker with hardware and web applications and reverse engineer them (I found a bug in the grades portal of my undergrad university once that allowed one to download grades of any student).&lt;/p&gt;</description>
+&lt;p&gt;Currently, I am working on Generative AI with a focus on inference optimizing.
+A few of my hobbies are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;//basujindal.me/photography&#34;&gt;Photography&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Reverse engineering web applications (Among other things, I once won a hackathon to bypass online liveliness checker, found a bug in the grades portal of my undergrad university that allowed one to download grades of any student)&lt;/li&gt;
+&lt;li&gt;Indoor bouldering&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/basujindal/&#34;&gt;&lt;strong&gt;GitHub&lt;/strong&gt;&lt;/a&gt;  &lt;a href=&#34;https://twitter.com/basujindal&#34;&gt;&lt;strong&gt;Twitter&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
