@@ -31,15 +31,6 @@ GAN models are known for potentially unstable training and less diversity in gen
     </item>
     
     <item>
-      <title>Linux Essentials</title>
-      <link>//basujindal.me/blogs/linux-essentials/</link>
-      <pubDate>Wed, 25 Oct 2023 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/linux-essentials/</guid>
-      <description>Collection of helpful commands for Debian based systems</description>
-    </item>
-    
-    <item>
       <title>Parameter Estimation</title>
       <link>//basujindal.me/blogs/paraest/</link>
       <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
@@ -64,33 +55,6 @@ GAN models are known for potentially unstable training and less diversity in gen
       
       <guid>//basujindal.me/blogs/llm/</guid>
       <description>Notes on LLMs</description>
-    </item>
-    
-    <item>
-      <title>Reinforcement Learning Notes</title>
-      <link>//basujindal.me/blogs/rl-notes/</link>
-      <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/rl-notes/</guid>
-      <description>Notes on Reinforcement Learning</description>
-    </item>
-    
-    <item>
-      <title>Deep Learning Notes</title>
-      <link>//basujindal.me/blogs/deep_learning_tips/</link>
-      <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/deep_learning_tips/</guid>
-      <description>A collection of practical tips and best practices for deep learning, covering model training, optimization, and deployment.</description>
-    </item>
-    
-    <item>
-      <title>Docker Commands Cheat Sheet</title>
-      <link>//basujindal.me/blogs/docker-commands-cheatsheet/</link>
-      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
-      
-      <guid>//basujindal.me/blogs/docker-commands-cheatsheet/</guid>
-      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
     </item>
     
   </channel>

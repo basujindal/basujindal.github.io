@@ -6,7 +6,17 @@
     <description>Recent content in Inprogresses on Basu Jindal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Jan 2025 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 31 Jul 2025 15:20:28 -0800</lastBuildDate><atom:link href="//basujindal.me/inprogress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Backpacking Camp Muir</title>
+      <link>//basujindal.me/inprogress/hiking_muir/</link>
+      <pubDate>Thu, 31 Jul 2025 15:20:28 -0800</pubDate>
+      
+      <guid>//basujindal.me/inprogress/hiking_muir/</guid>
+      <description>&lt;h3 id=&#34;backpacking-at-camp-muir&#34;&gt;Backpacking at Camp Muir&lt;/h3&gt;
+&lt;p&gt;Washinnton or the PNW area is known for its accessible and breathtaking hikes.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Deep Space Astrophotography</title>
       <link>//basujindal.me/inprogress/deep-space-astro/</link>
@@ -116,6 +126,15 @@ $$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
     </item>
     
     <item>
+      <title>Linux Essentials</title>
+      <link>//basujindal.me/inprogress/linux-essentials/</link>
+      <pubDate>Wed, 25 Oct 2023 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/linux-essentials/</guid>
+      <description>Collection of helpful commands for Debian based systems</description>
+    </item>
+    
+    <item>
       <title>Random concepts for ML</title>
       <link>//basujindal.me/inprogress/math/</link>
       <pubDate>Thu, 05 Oct 2023 15:20:28 -0800</pubDate>
@@ -127,6 +146,15 @@ $$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
 &lt;h3 id=&#34;precision-p&#34;&gt;Precision (P)&lt;/h3&gt;
 &lt;p&gt;$P = \frac{TP}{TP + FP}$ i.e. How precise you were in identifying positive cases.&lt;/p&gt;
 &lt;p&gt;Covid RTPCR Test has high precision and low recall. This means if the test result is Covid positive, there is a high chance that it is correct but if it says negative, nothing can said with certainty.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Reinforcement Learning Notes</title>
+      <link>//basujindal.me/inprogress/rl-notes/</link>
+      <pubDate>Wed, 14 Dec 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/rl-notes/</guid>
+      <description>Notes on Reinforcement Learning</description>
     </item>
     
     <item>
@@ -148,12 +176,30 @@ $$f(x+y) = f(x) + f(y)$$&lt;/p&gt;
     </item>
     
     <item>
+      <title>Deep Learning Notes</title>
+      <link>//basujindal.me/inprogress/deep_learning_tips/</link>
+      <pubDate>Mon, 23 May 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/deep_learning_tips/</guid>
+      <description>A collection of practical tips and best practices for deep learning, covering model training, optimization, and deployment.</description>
+    </item>
+    
+    <item>
       <title>Screen Resolutions Explained!</title>
       <link>//basujindal.me/inprogress/screen-resolution/</link>
       <pubDate>Sat, 07 May 2022 15:20:28 +0530</pubDate>
       
       <guid>//basujindal.me/inprogress/screen-resolution/</guid>
       <description>A quick guide on screen resolutions.</description>
+    </item>
+    
+    <item>
+      <title>Docker Commands Cheat Sheet</title>
+      <link>//basujindal.me/inprogress/docker-commands-cheatsheet/</link>
+      <pubDate>Sun, 03 Apr 2022 15:20:28 +0530</pubDate>
+      
+      <guid>//basujindal.me/inprogress/docker-commands-cheatsheet/</guid>
+      <description>Docker can be used to quickly try out a new software stack with lot of dependencies but one is generally forced to google the essential docker commands and arguments every time a new container is to be launched. This cheat sheet aims to list the important steps to build and launch a docker container and the arguments used with it. Hope it helps!</description>
     </item>
     
     <item>

@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//basujindal.me/</loc>
-    <lastmod>2025-01-24T15:20:28-08:00</lastmod>
+    <loc>//basujindal.me/inprogress/hiking_muir/</loc>
+    <lastmod>2025-07-31T15:20:28-08:00</lastmod>
   </url><url>
-    <loc>//basujindal.me/inprogress/deep-space-astro/</loc>
-    <lastmod>2025-01-24T15:20:28-08:00</lastmod>
+    <loc>//basujindal.me/</loc>
+    <lastmod>2025-07-31T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/</loc>
+    <lastmod>2025-07-31T15:20:28-08:00</lastmod>
+  </url><url>
+    <loc>//basujindal.me/inprogress/deep-space-astro/</loc>
     <lastmod>2025-01-24T15:20:28-08:00</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/multi-gpu/</loc>
@@ -41,7 +44,7 @@
     <loc>//basujindal.me/inprogress/dsa/</loc>
     <lastmod>2023-11-25T16:19:18+05:30</lastmod>
   </url><url>
-    <loc>//basujindal.me/blogs/linux-essentials/</loc>
+    <loc>//basujindal.me/inprogress/linux-essentials/</loc>
     <lastmod>2023-10-25T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/blogs/paraest/</loc>
@@ -56,7 +59,7 @@
     <loc>//basujindal.me/blogs/llm/</loc>
     <lastmod>2023-04-03T15:20:28+05:30</lastmod>
   </url><url>
-    <loc>//basujindal.me/blogs/rl-notes/</loc>
+    <loc>//basujindal.me/inprogress/rl-notes/</loc>
     <lastmod>2022-12-14T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/rl-tips-and-tricks/</loc>
@@ -65,13 +68,13 @@
     <loc>//basujindal.me/inprogress/classicalcv/</loc>
     <lastmod>2022-09-03T15:20:28+05:30</lastmod>
   </url><url>
-    <loc>//basujindal.me/blogs/deep_learning_tips/</loc>
+    <loc>//basujindal.me/inprogress/deep_learning_tips/</loc>
     <lastmod>2022-05-23T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/screen-resolution/</loc>
     <lastmod>2022-05-07T15:20:28+05:30</lastmod>
   </url><url>
-    <loc>//basujindal.me/blogs/docker-commands-cheatsheet/</loc>
+    <loc>//basujindal.me/inprogress/docker-commands-cheatsheet/</loc>
     <lastmod>2022-04-03T15:20:28+05:30</lastmod>
   </url><url>
     <loc>//basujindal.me/inprogress/dockerfile/</loc>
@@ -99,5 +102,7 @@
     <loc>//basujindal.me/inprogress/neural-architecture-search/</loc>
   </url><url>
     <loc>//basujindal.me/tags/nlp/</loc>
+  </url><url>
+    <loc>//basujindal.me/photography/</loc>
   </url>
 </urlset>
