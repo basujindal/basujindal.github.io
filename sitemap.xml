@@ -16,4 +16,28 @@
     <loc>https://basujindal.github.io/job_search.html</loc>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://basujindal.github.io/diffchecker.html</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://basujindal.github.io/blogs/post.html?p=LLM</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://basujindal.github.io/blogs/post.html?p=diffusion</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://basujindal.github.io/blogs/post.html?p=Generative-Models</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://basujindal.github.io/blogs/post.html?p=paraest</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://basujindal.github.io/blogs/post.html?p=probstat</loc>
+    <priority>0.6</priority>
+  </url>
 </urlset>

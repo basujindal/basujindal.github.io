@@ -3,17 +3,9 @@ title: Diffusion Models
 date: 2024-02-27
 ---
 
-Stable Diffusion was one of the first Open-Souce Text to Image model that could generate high quality images. However, the maths behind it is fairly complex and this blog aims to simplify it.
-
----
-
-Before understanding Diffusion Models, we need to understand a type of generative model called Energy Based Models.
+Before diving into current SoTA Diffusion Models, we need to understand a type of generative model called Energy Based Models.
 
 ## Energy Based Models
-
-Recommended reading:
-- [How to Train Your Energy-Based Models](https://arxiv.org/pdf/2101.03288.pdf)
-- https://www.youtube.com/watch?v=8TcNXi3A5DI
 
 Let us say we have an image dataset $X = \\{ x_1, x_2, \dots, x_n \\}$, where $ x_i \in \mathbb{R}^d $. Our goal is to learn an energy function $ E_\theta(x) $ that should be low for the images in the dataset and high for all other images. Here $\theta$ are the parameters of the energy function. These functions, similar to pdfs, can be used to model and generate new data points.
 
@@ -164,10 +156,6 @@ Song et al., 2021) and diffusion models are one example of them.
 
 ## Diffusion Models(DM)
 
-Recommended reading:
-- https://lilianweng.github.io/posts/2021-07-11-diffusion-models/
-- https://huggingface.co/blog/annotated-diffusion
-
 Diffusion based models have multiple interpretations, we will first derive them using ELBO similar to VAEs and then using Score Matching.
 
 In the parameter estimation blog, we looked at various methods to estimate $x$ given $y = f(x) + noise$. Usually the noise is assumed to be Gaussian with small variance. Now what if we repeat the process of adding noise to the input(image) multiple ($n$) times and then try to estimate all the images in the sequence given the last image. As the number of noise adding steps increases, the image will become more and more blurry and as $ n \to \infty $, the image becomes an isotropic Gaussian distribution. The process is called diffusion. Now what if we can reverse the process and instead of adding noise, we remove it, creating an image purely from noise? This is called the reverse diffusion process.
@@ -259,3 +247,11 @@ The authors showed that the model can be trained in the same way DDPM was traine
 
 <!--
 $$ t{\tau_{t-1}} = \frac{1}{\tau}1 + \underbrace{t_\text{direction pointing to $x_t{\tau_t}$} +\sigma_{\tau_t}\epsilon_t} $$ -->
+
+## References & Recommended reading
+
+- [How to Train Your Energy-Based Models](https://arxiv.org/pdf/2101.03288.pdf)
+- https://www.youtube.com/watch?v=8TcNXi3A5DI
+
+- https://lilianweng.github.io/posts/2021-07-11-diffusion-models/
+- https://huggingface.co/blog/annotated-diffusion

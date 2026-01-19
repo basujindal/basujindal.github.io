@@ -1,0 +1,106 @@
+# basujindal.me
+
+## Adding a New Blog Post
+
+### 1. Create the Markdown File
+
+Create a new file in `/blogs/md/` with the naming format `POST_NAME.md`:
+
+```markdown
+---
+title: "Your Post Title"
+date: YYYY-MM-DD
+---
+
+## Section Title
+
+Your content here...
+```
+
+**Supported features:**
+- **Math equations**: Use `$inline$` or `$$display$$` (LaTeX via KaTeX)
+- **Code blocks**: Use fenced code blocks with language identifier for syntax highlighting
+- **Images**: Reference as `![Alt text](../images/filename.png)`
+
+### 2. Add Images (if needed)
+
+Place any images in `/blogs/images/` and reference them in your markdown:
+
+```markdown
+![Description](../images/your-image.png)
+```
+
+### 3. Add Blog Card to Listing Page
+
+Edit `/blogs.html` and add a new card inside the `blog-grid` div:
+
+```html
+<a href="blogs/post.html?p=POST_NAME" class="blog-card">
+  <div class="blog-card-content">
+    <time datetime="YYYY-MM-DD">Mon D, YYYY</time>
+    <h2>Your Post Title</h2>
+    <p>Brief description of the post</p>
+  </div>
+  <span class="blog-card-arrow">&rarr;</span>
+</a>
+```
+
+Replace `POST_NAME` with your markdown filename (without `.md`).
+
+### 4. Update Sitemap
+
+Add the new post to `sitemap.xml`:
+
+```xml
+<url>
+  <loc>https://basujindal.github.io/blogs/post.html?p=POST_NAME</loc>
+  <priority>0.6</priority>
+</url>
+```
+
+### 5. Deploy
+
+Commit and push to `main` branch. GitHub Actions will automatically deploy.
+
+---
+
+## Adding a New Photo
+
+### 1. Add the Image File
+
+Place your image in the `/Photos/` directory. Supported formats: `.jpg`, `.png`
+
+### 2. Add Gallery Entry
+
+Edit `/photography.html` and add a new figure inside the gallery:
+
+```html
+<figure class="gallery-item"
+        data-src="Photos/YourImage.jpg"
+        data-title="Photo Title"
+        data-description="Description of the photo"
+        data-camera="Camera Model"
+        data-lens="Lens Model"
+        data-settings="ISO, Aperture, etc."
+        data-location="Location"
+        data-date="YYYY-MM-DD"
+        data-alt="Alt text for accessibility">
+  <img src="Photos/YourImage.jpg" alt="Alt text" loading="lazy">
+  <figcaption><h3>Photo Title</h3></figcaption>
+</figure>
+```
+
+### 3. Deploy
+
+Commit and push to `main` branch.
+
+---
+
+## Draft/In-Progress Content
+
+For work-in-progress posts, use the `/inprogress/` directory instead:
+- Markdown files go in `/inprogress/md/`
+- Images go in `/inprogress/images/`
+- Access via `inprogress/post.html?p=POST_NAME`
+
+Move to `/blogs/` when ready to publish.

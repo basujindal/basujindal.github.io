@@ -3,15 +3,7 @@ title: "Image generative models"
 date: 2023-12-26
 ---
 
-The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.
-
----
-
-<!-- Oh GAN, here we go again. -->
-<!--
-GAN models are known for potentially unstable training and less diversity in generation due to their adversarial training nature. VAE relies on a surrogate loss, i.e. they define an intractable density function with latent z: Cannot optimize directly, derive and optimize lower bound on likelihood instead. -->
-
-Let us say we have an image dataset $X = \\{ x_1, x_2, \dots, x_n \\}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can "generate" new data points $ x $ that are similar to images in $ X $.s
+The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it. Let us say we have an image dataset $X = \\{ x_1, x_2, \dots, x_n \\}$, where $ x_i \in \mathbb{R}^d $. We want to find a process that can "generate" new data points $ x $ that are similar to images in $ X $.s
 
 One of the ways to generate new images is to sample them from a parametric probability distribution $p_\theta(x)$, that has a higher sampling probability for the data points in the dataset. If given large enough data, we can estimate the parameters of the distribution using maximum likelihood estimation and then sample new data points from the distribution.
 

@@ -9,12 +9,8 @@ The number of words per token depends on the tokenization method and the languag
 
 Visualize GPT-3 tokenization: https://platform.openai.com/tokenizer
 
-Suggested Reading https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
-
 ## Decoding Strategies
 
-Suggested Reading
-- [Blog by Hugging Face](https://huggingface.co/blog/how-to-generate)
 
 ### Greedy Decoding
 
@@ -110,9 +106,6 @@ where $N$ is the number of words in the test set and $P(w_i)$ is the probability
 
 For a LLM, we use a sliding window of size equal to the max input length of the model to calculate the perplexity. As an example, to calculate the perplexity of the word "over",in the sentence "The quick brown fox jumps over the lazy dog", we use the previous 5 words "The quick brown fox jumps" as the context and calculate the probability of the word "over" given the previous words. Perplexity on the WikiTest-2 dataset is oftem used to evaluate the performance of LLMs.
 
-Recommended Reading:
-- https://huggingface.co/transformers/v4.2.2/perplexity.html
-- https://thegradient.pub/understanding-evaluation-metrics-for-language-models/
 
 ## Positional Embeddings
 
@@ -169,10 +162,14 @@ $$ A_{ij} = Q_i^T K_j = X_i^T W_q^T R_i^T R^d_j W_k X_j $$
 $ R_i^T R_j = R_{j-i} $ is only dependent on the relative position of the words in the sequence and can be computed in advance for all relative positions.
 
 
-## Suggested Readings
+## Reference & Suggested Readings
 
 - Surveys of LLMs https://arxiv.org/abs/2303.18223
 - Nice details about training: https://arxiv.org/pdf/2304.03208.pdf
 - Training cost and time requirements: https://www.mosaicml.com/blog/billion-parameter-gpt-training-made-easy
 - Tips to train LLMs https://wandb.ai/craiyon/report/reports/A-Recipe-for-Training-Large-Models--VmlldzozNjc4MzQz
 - Decoding stratigies: https://blog.allenai.org/a-guide-to-language-model-sampling-in-allennlp-3b1239274bc3
+- https://huggingface.co/transformers/v4.2.2/perplexity.html
+- https://thegradient.pub/understanding-evaluation-metrics-for-language-models/
+- https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+- [Blog by Hugging Face](https://huggingface.co/blog/how-to-generate)
