@@ -6,29 +6,14 @@
   <title>Photography - Basu Jindal</title>
   <meta name="description" content="Astrophotography by Basu Jindal">
   <link rel="stylesheet" href="css/style.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXG86X3Q6C"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QXG86X3Q6C');</script>
 </head>
 <body>
   <div class="container">
-    <header>
-      <a href="/" class="logo">
-        <img src="images/coding.png" alt="Logo">
-        Basu Jindal
-      </a>
-      <nav>
-        <a href="/about.html">About</a>
-        <a href="/blogs.html">Blogs</a>
-        <!-- <a href="/inprogress.html">In Progress</a> -->
-        <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
-        <a href="/photography.html">Photography</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-      </nav>
-    </header>
+    <header></header>
 
     <main>
-      <h1>Photography</h1>
-      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Astrophotography and landscapes</p>
+      <h1>Astrophotography</h1>
+      <!-- <p style="color: var(--text-secondary); margin-bottom: 1rem;">Astrophotography and landscapes</p> -->
 
       <div class="gallery" id="gallery">
         <figure class="gallery-item"
@@ -60,20 +45,6 @@
         </figure>
 
         <figure class="gallery-item"
-                data-src="Photos/Camp Muir.png"
-                data-title="Mount Adams"
-                data-description="Mount Adams, WA, shot from Camp Muir Basecamp, Mount Rainier National Park."
-                data-camera="Nikon Z6"
-                data-lens="Nikkor Z 24-70mm f/4 S"
-                data-settings="ISO 640 70mm f/4"
-                data-location="Camp Muir, Mount Rainier National Park"
-                data-date="2025-07-25"
-                data-alt="Mount Adams">
-          <img src="Photos/Camp Muir.png" alt="Mount Adams" loading="lazy">
-          <figcaption><h3>Mount Adams</h3></figcaption>
-        </figure>
-
-        <figure class="gallery-item"
                 data-src="Photos/Milkyway at Shaasta.jpg"
                 data-title="Milkyway"
                 data-description="Milkyway, shot from Fowler's Campground, Mount Shaasta."
@@ -91,6 +62,7 @@
       <!-- Lightbox -->
       <div class="lightbox" id="lightbox" aria-hidden="true">
         <button class="close" id="lb-close" aria-label="Close">&times;</button>
+        <button class="fullscreen-toggle" id="lb-fullscreen" aria-label="Toggle fullscreen">&#x26F6;</button>
         <div class="lightbox-content">
           <img id="lb-img" alt="">
           <div class="lightbox-details">
@@ -104,10 +76,9 @@
       </div>
     </main>
 
-    <footer>
-      <p>&copy; 2025 Basu Jindal</p>
-    </footer>
+    <footer></footer>
   </div>
+  <script src="js/components.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -8,51 +8,26 @@
   <meta name="keywords" content="Blog, Portfolio, AI, Machine Learning">
   <meta name="author" content="Basu Jindal">
   <link rel="stylesheet" href="css/style.css">
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXG86X3Q6C"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-QXG86X3Q6C');
-  </script>
 </head>
 <body>
   <div class="container">
-    <header>
-      <a href="/" class="logo">
-        <img src="images/coding.png" alt="Logo">
-        Basu Jindal
-      </a>
-      <nav>
-        <a href="/about.html">About</a>
-        <a href="/blogs.html">Blogs</a>
-        <!-- <a href="/inprogress.html">In Progress</a> -->
-        <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
-        <a href="/photography.html">Photography</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-      </nav>
-    </header>
+    <header></header>
 
     <main>
-      <section class="profile">
-        <img src="images/basu.png" alt="Basu Jindal">
-        <h1>Hello!</h1>
-        <p><strong>Welcome to my website</strong></p>
-        <div class="profile-buttons">
-          <a href="blogs.html" class="btn">Blogs</a>
-        </div>
-        <div class="social-links">
-          <a href="https://www.linkedin.com/in/basujindal/" target="_blank" aria-label="LinkedIn">in</a>
-          <a href="https://github.com/basujindal" target="_blank" aria-label="GitHub">GH</a>
+      <section class="hero">
+        <div class="hero-content">
+          <img src="images/basu.png" alt="Basu Jindal" class="hero-avatar">
+          <div class="hero-text">
+            <h1>Hello!</h1>
+            <p class="hero-bio">Welcome to my site. Currently I spend my days at Apple, making large language models run faster. When I'm not optimizing inference, you might find me chasing galaxies and Nebulae</p>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>&copy; 2025 Basu Jindal</p>
-    </footer>
+    <footer></footer>
   </div>
+  <script src="js/components.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

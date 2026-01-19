@@ -6,62 +6,66 @@
   <title>Blogs - Basu Jindal</title>
   <meta name="description" content="Blog posts on AI, ML, and more by Basu Jindal">
   <link rel="stylesheet" href="css/style.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXG86X3Q6C"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QXG86X3Q6C');</script>
 </head>
 <body>
   <div class="container">
-    <header>
-      <a href="/" class="logo">
-        <img src="images/coding.png" alt="Logo">
-        Basu Jindal
-      </a>
-      <nav>
-        <a href="/about.html">About</a>
-        <a href="/blogs.html">Blogs</a>
-        <!-- <a href="/inprogress.html">In Progress</a> -->
-        <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
-        <a href="/photography.html">Photography</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-      </nav>
-    </header>
+    <header></header>
 
     <main>
-      <h1 style="margin-bottom: 2rem;">Blogs</h1>
+      <h1 class="page-title">Blogs</h1>
+      <p class="page-subtitle">Notes on AI, ML, and more</p>
 
-      <ul class="blog-list">
-        <li class="blog-item">
-          <h2><a href="blogs/post.html?p=LLM">Large Language Models</a></h2>
-          <time>April 3, 2023</time>
-          <p>Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.</p>
-        </li>
-        <li class="blog-item">
-          <h2><a href="blogs/post.html?p=diffusion">Diffusion Models</a></h2>
-          <time>2023</time>
-          <p>Understanding diffusion models for generative AI.</p>
-        </li>
-        <li class="blog-item">
-          <h2><a href="blogs/post.html?p=Generative-Models">Generative Models</a></h2>
-          <time>2023</time>
-          <p>Overview of generative AI models.</p>
-        </li>
-        <li class="blog-item">
-          <h2><a href="blogs/post.html?p=paraest">Parameter Estimation</a></h2>
-          <time>2023</time>
-          <p>Notes on parameter estimation techniques.</p>
-        </li>
-        <li class="blog-item">
-          <h2><a href="blogs/post.html?p=probstat">Probability & Statistics</a></h2>
-          <time>2023</time>
-          <p>Foundations of probability and statistics.</p>
-        </li>
-      </ul>
+      <div class="blog-grid">
+        <a href="blogs/post.html?p=LLM" class="blog-card">
+          <div class="blog-card-content">
+            <time datetime="2023-04-03">Apr 3, 2023</time>
+            <h2>Large Language Models</h2>
+            <p>Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.</p>
+          </div>
+          <span class="blog-card-arrow">&rarr;</span>
+        </a>
+
+        <a href="blogs/post.html?p=diffusion" class="blog-card">
+          <div class="blog-card-content">
+            <time datetime="2023-03-15">Mar 15, 2023</time>
+            <h2>Diffusion Models</h2>
+            <p>Understanding diffusion models for generative AI.</p>
+          </div>
+          <span class="blog-card-arrow">&rarr;</span>
+        </a>
+
+        <a href="blogs/post.html?p=Generative-Models" class="blog-card">
+          <div class="blog-card-content">
+            <time datetime="2023-02-20">Feb 20, 2023</time>
+            <h2>Generative Models</h2>
+            <p>Overview of generative AI models.</p>
+          </div>
+          <span class="blog-card-arrow">&rarr;</span>
+        </a>
+
+        <a href="blogs/post.html?p=paraest" class="blog-card">
+          <div class="blog-card-content">
+            <time datetime="2023-01-10">Jan 10, 2023</time>
+            <h2>Parameter Estimation</h2>
+            <p>Notes on parameter estimation techniques.</p>
+          </div>
+          <span class="blog-card-arrow">&rarr;</span>
+        </a>
+
+        <a href="blogs/post.html?p=probstat" class="blog-card">
+          <div class="blog-card-content">
+            <time datetime="2022-12-05">Dec 5, 2022</time>
+            <h2>Probability & Statistics</h2>
+            <p>Foundations of probability and statistics.</p>
+          </div>
+          <span class="blog-card-arrow">&rarr;</span>
+        </a>
+      </div>
     </main>
 
-    <footer>
-      <p>&copy; 2025 Basu Jindal</p>
-    </footer>
+    <footer></footer>
   </div>
+  <script src="js/components.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
