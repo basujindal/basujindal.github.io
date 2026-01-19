@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading... - Basu Jindal</title>
+  <meta name="description" content="Blog post by Basu Jindal">
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- KaTeX for math -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <!-- Highlight.js for code -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXG86X3Q6C"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QXG86X3Q6C');</script>
+  <style>
+    .loading { text-align: center; padding: 3rem; color: var(--text-secondary); }
+    .error { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <img src="../images/coding.png" alt="Logo">
+        Basu Jindal
+      </a>
+      <nav>
+        <a href="/about.html">About</a>
+        <a href="/blogs.html">Blogs</a>
+        <!-- <a href="/inprogress.html">In Progress</a> -->
+        <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
+        <a href="/photography.html">Photography</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+      </nav>
+    </header>
+
+    <main>
+      <article id="content">
+        <div class="loading">Loading post...</div>
+      </article>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Basu Jindal</p>
+    </footer>
+  </div>
+
+  <!-- Marked.js for markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- KaTeX -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- Highlight.js -->
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <!-- Shared post rendering logic -->
+  <script src="../js/post.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

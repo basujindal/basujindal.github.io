@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photography - Basu Jindal</title>
+  <meta name="description" content="Astrophotography by Basu Jindal">
+  <link rel="stylesheet" href="css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXG86X3Q6C"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QXG86X3Q6C');</script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" class="logo">
+        <img src="images/coding.png" alt="Logo">
+        Basu Jindal
+      </a>
+      <nav>
+        <a href="/about.html">About</a>
+        <a href="/blogs.html">Blogs</a>
+        <!-- <a href="/inprogress.html">In Progress</a> -->
+        <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
+        <a href="/photography.html">Photography</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Photography</h1>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Astrophotography and landscapes</p>
+
+      <div class="gallery" id="gallery">
+        <figure class="gallery-item"
+                data-src="Photos/Orion Nebula.png"
+                data-title="Orion Nebula"
+                data-description="Orion Nebula aka Messier 42, tracked with Skywatcher Star Adventurer GTi. 39 Light frames for 30s exposure each."
+                data-camera="Sony Alpha7R III"
+                data-lens="E 50-400mm f/4.5-6.3 A067"
+                data-settings="ISO 100mm f/6.3"
+                data-location="Snoqualmie Pass, WA"
+                data-date="2025-01-25"
+                data-alt="Orion Nebula">
+          <img src="Photos/Orion Nebula.png" alt="Orion Nebula" loading="lazy">
+          <figcaption><h3>Orion Nebula</h3></figcaption>
+        </figure>
+
+        <figure class="gallery-item"
+                data-src="Photos/Pleaides.png"
+                data-title="Pleaides"
+                data-description="Pleaides aka Messier 45, tracked with Skywatcher Star Adventurer GTi. 130 Light, 9 Dark frames for 30s exposure each."
+                data-camera="Sony Alpha7R III"
+                data-lens="E 50-400mm f/4.5-6.3 A067"
+                data-settings="ISO 400mm f/6.3"
+                data-location="Snoqualmie Pass, WA"
+                data-date="2025-02-28"
+                data-alt="Pleaides">
+          <img src="Photos/Pleaides.png" alt="Pleaides" loading="lazy">
+          <figcaption><h3>Pleaides</h3></figcaption>
+        </figure>
+
+        <figure class="gallery-item"
+                data-src="Photos/Camp Muir.png"
+                data-title="Mount Adams"
+                data-description="Mount Adams, WA, shot from Camp Muir Basecamp, Mount Rainier National Park."
+                data-camera="Nikon Z6"
+                data-lens="Nikkor Z 24-70mm f/4 S"
+                data-settings="ISO 640 70mm f/4"
+                data-location="Camp Muir, Mount Rainier National Park"
+                data-date="2025-07-25"
+                data-alt="Mount Adams">
+          <img src="Photos/Camp Muir.png" alt="Mount Adams" loading="lazy">
+          <figcaption><h3>Mount Adams</h3></figcaption>
+        </figure>
+
+        <figure class="gallery-item"
+                data-src="Photos/Milkyway at Shaasta.jpg"
+                data-title="Milkyway"
+                data-description="Milkyway, shot from Fowler's Campground, Mount Shaasta."
+                data-camera="Nikon Z6"
+                data-lens="Rokinon 14mm f/2.8"
+                data-settings="30s ISO 6400 14mm f/2.8"
+                data-location="Fowler's Campground, Near Mount Shaasta"
+                data-date="2025-08-29"
+                data-alt="Milkyway">
+          <img src="Photos/Milkyway at Shaasta.jpg" alt="Milkyway" loading="lazy">
+          <figcaption><h3>Milkyway</h3></figcaption>
+        </figure>
+      </div>
+
+      <!-- Lightbox -->
+      <div class="lightbox" id="lightbox" aria-hidden="true">
+        <button class="close" id="lb-close" aria-label="Close">&times;</button>
+        <div class="lightbox-content">
+          <img id="lb-img" alt="">
+          <div class="lightbox-details">
+            <h3 id="lb-title"></h3>
+            <p id="lb-desc"></p>
+            <ul class="meta-list" id="lb-meta"></ul>
+          </div>
+        </div>
+        <button class="nav prev" id="lb-prev" aria-label="Previous">&#10094;</button>
+        <button class="nav next" id="lb-next" aria-label="Next">&#10095;</button>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Basu Jindal</p>
+    </footer>
+  </div>
+  <script src="js/main.js"></script>
+</body>
+</html>
