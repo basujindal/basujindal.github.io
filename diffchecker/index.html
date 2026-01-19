@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diff Checker - Basu Jindal</title>
+  <meta name="description" content="Compare text and see differences highlighted">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header></header>
+
+    <main>
+      <h1 class="page-title">Diff Checker</h1>
+      <p class="page-subtitle">Compare text and see differences highlighted</p>
+
+      <div class="toolbar">
+        <div class="stats">
+          <span class="added-count">+ <span id="added-count">0</span> added</span>
+          <span class="removed-count">- <span id="removed-count">0</span> removed</span>
+          <span class="unchanged-count"><span id="unchanged-count">0</span> unchanged</span>
+        </div>
+        <div class="toggle-container">
+          <label for="char-diff-toggle">Character-level diff</label>
+          <div class="toggle">
+            <input type="checkbox" id="char-diff-toggle">
+            <span class="toggle-slider"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="diff-container">
+    <div class="panel">
+      <div class="panel-header">Original Text</div>
+      <textarea id="text1" placeholder="Paste original text here..."></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">Modified Text</div>
+      <textarea id="text2" placeholder="Paste modified text here..."></textarea>
+    </div>
+    <div class="diff-panel">
+      <div class="panel-header">Diff Result</div>
+      <div class="diff-output" id="diff-output">
+        <div class="line line-unchanged">Paste text in both panels to see the diff...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <footer></footer>
+  </div>
+  <script src="../js/components.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="diff.js"></script>
+</body>
+</html>

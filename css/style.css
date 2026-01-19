@@ -12,15 +12,15 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0f172a;
-  --text: #e2e8f0;
-  --text-secondary: #94a3b8;
+  --bg: #121212;
+  --text: #e4e4e7;
+  --text-secondary: #a1a1aa;
   --accent: #60a5fa;
   --accent-hover: #93c5fd;
-  --border: #334155;
-  --code-bg: #1e293b;
-  --card-bg: #1e293b;
-  --shadow: rgba(0,0,0,0.3);
+  --border: #2e2e2e;
+  --code-bg: #1e1e1e;
+  --card-bg: #1a1a1a;
+  --shadow: rgba(0,0,0,0.4);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -566,6 +566,117 @@ footer {
   .blog-card-content p {
     font-size: 0.85rem;
   }
+}
+
+/* Job Search Form */
+.job-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.job-search-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.job-search-date {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.job-search-add {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.job-search-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.job-search-form label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.job-search-form input[type="date"],
+.job-search-form input[type="text"],
+.job-search-form select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.job-search-form input:focus,
+.job-search-form select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.job-search-submit {
+  align-self: flex-start;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+}
+
+.job-search-url {
+  word-break: break-all;
+  padding: 1rem;
+  background: var(--code-bg);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.job-search-url:empty {
+  display: none;
+}
+
+/* Job Search Fieldsets */
+.job-search-form fieldset {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  background: var(--card-bg);
+}
+
+.job-search-form fieldset legend {
+  padding: 0 0.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.job-search-form fieldset > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.25rem 0.5rem 0.25rem 0;
+}
+
+.job-search-form fieldset input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.job-search-form fieldset label {
+  cursor: pointer;
+  color: var(--text);
 }
 
 @media (max-width: 600px) {

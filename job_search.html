@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Search - Basu Jindal</title>
+  <meta name="description" content="Job search tool for finding AI/ML positions">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header></header>
+
+    <main>
+      <h1 class="page-title">Search Jobs</h1>
+      <p class="page-subtitle">Generate Google search queries for job postings</p>
+
+      <form id="searchForm" class="job-search-form" onsubmit="return false;">
+        <div class="job-search-controls">
+          <div class="job-search-date">
+            <label for="afterDate">Show jobs posted after:</label>
+            <input type="date" id="afterDate" name="afterDate">
+          </div>
+
+          <div class="job-search-add">
+            <label for="optionCategory">Category:</label>
+            <select id="optionCategory"></select>
+            <label for="newOption">New Option:</label>
+            <input type="text" id="newOption" name="newOption" placeholder="Add new option">
+            <div class="job-search-buttons">
+              <button type="button" onclick="addOption()" class="btn btn-secondary">Add</button>
+              <button type="button" onclick="clearLocalStorage()" class="btn btn-secondary">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          const date = new Date();
+          date.setDate(date.getDate() - 2);
+          document.getElementById('afterDate').value = date.toISOString().split('T')[0];
+        </script>
+
+        <button type="button" onclick="generateSearch()" class="btn job-search-submit">Generate Search</button>
+      </form>
+
+      <p id="searchUrl" class="job-search-url"></p>
+    </main>
+
+    <footer></footer>
+  </div>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/jobSearch.js"></script>
+</body>
+</html>

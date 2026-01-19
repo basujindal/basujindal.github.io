@@ -2,7 +2,8 @@
 (function() {
   // Determine if we're in a subdirectory
   const isSubdir = window.location.pathname.includes('/blogs/') ||
-                   window.location.pathname.includes('/inprogress/');
+                   window.location.pathname.includes('/inprogress/') ||
+                   window.location.pathname.includes('/diffchecker/');
   const basePath = isSubdir ? '..' : '.';
 
   // Header HTML
@@ -13,8 +14,9 @@
     </a>
     <nav>
       <a href="/blogs.html">Blogs</a>
-      <a href="https://jobs.basujindal.me/" target="_blank">Search Jobs</a>
-      <a href="/photography.html">Photography</a>
+      <a href="/diffchecker/">Diff Checker</a>
+      <a href="/job_search.html">Search Jobs</a>
+      <a href="/photography.html">Astro Photography</a>
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
     </nav>
   `;
@@ -58,7 +60,9 @@
       if (linkPath === pagePath ||
           (pagePath.startsWith('blogs') && href.includes('blogs.html')) ||
           (pagePath.startsWith('photography') && href.includes('photography.html')) ||
-          (pagePath.startsWith('inprogress') && href.includes('inprogress.html'))) {
+          (pagePath.startsWith('inprogress') && href.includes('inprogress.html')) ||
+          (pagePath.startsWith('diffchecker') && href.includes('diffchecker')) ||
+          (pagePath.startsWith('job_search') && href.includes('job_search.html'))) {
         link.classList.add('active');
       }
     }
