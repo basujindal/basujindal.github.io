@@ -1,10 +1,6 @@
 ---
 title: Diffusion Models
-date: 2024-02-27T15:20:28-08:00
-description: A detailed explanation of the mathematics behind Stable Diffusion, one of the first open-source text-to-image models.
-showtoc: true
-draft: false
-math: true
+date: 2024-02-27
 ---
 
 Stable Diffusion was one of the first Open-Souce Text to Image model that could generate high quality images. However, the maths behind it is fairly complex and this blog aims to simplify it.

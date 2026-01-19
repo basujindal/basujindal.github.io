@@ -1,16 +1,6 @@
 ---
 title: "Image generative models"
-date: 2023-12-26 15:20:28 -0800
-summary: ""
-description:
-cover:
-  image:
-  alt:
-  caption:
-  relative: true
-showtoc: true
-draft: false
-math: true
+date: 2023-12-26
 ---
 
 The mathematics behind generative models is a complex combination of Probability, Statistics, Thermodynamics, Optimization, Linear Algebra, and Information Theory. Let is try to wrap our heads around it.

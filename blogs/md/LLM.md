@@ -1,37 +1,7 @@
 ---
 title: "Large Language Models"
-date: 2023-04-03 15:20:28 +0530
-summary: "Notes on LLMs"
-description:
-cover:
-  image:
-  alt:
-  caption:
-  relative: true
-showtoc: true
-draft: false
-comments: true
-math: true
-comments: true
+date: 2023-04-03
 ---
-
-As an AI Language model ...
-
----
-
-<!-- ## Chinchilla Scaling Laws (DeepMind)
-
-Recommends to train on 20 tokens per model parameter. But recent models are trained on much larger token to parameter ratio and seem to violate the scaling laws.
-
-![image](../images/training_tokens.png)
-
-Keeping the original 300B tokens, GPT-3 should have been only 15B parameters (300B tokens ÷ 20). This is around 11× smaller in terms of model size or, to get to the original 175B parameters, GPT-3 should have used 3,500B (3.5T) tokens (175B parameters x 20. 3.5T tokens is about 4-6TB of data, depending on tokenization and tokens per byte). This is around 11× larger in terms of data needed.
-
-![image](../images/chinchilla_heat_map.png)
-
-1 token ~ 4 characters of text or ~ 0.75 words. This means that 100 tokens are roughly equivalent to 75 words. Also, 1000 words ~ 2kB (2 kilo Byte)
-
-This imples, to train 1 Billion parameter model, we need 20 billion tokens ~ 15 billion words ~ 30GB (Giga Bytes) of data. So GPT-3 175B should be trained on 175*30GB = 5 TB of data. -->
 
 ## Tokenization
 

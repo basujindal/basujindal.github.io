@@ -1,16 +1,6 @@
 ---
 title: "Probability & Statistics for Machine Learning"
-date: 2023-10-05 15:20:28 -0800
-summary: "Machine Learning deals with mathematically modelling real-world data. So it is important to have a good understanding of the math behind it. "
-description:
-cover:
-  image:
-  alt:
-  caption:
-  relative: true
-showtoc: true
-draft: false
-math: true
+date: 2023-10-05
 ---
 
 Let us have a look at some of the important concepts in Probability and Statistics that are used in Machine Learning. The order of the topics is not important and the topics are not exhaustive.

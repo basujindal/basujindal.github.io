@@ -18,8 +18,6 @@
       let content = text;
       let title = postName;
       let date = '';
-      let showToc = false;
-
       const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
       if (fmMatch) {
         const frontMatter = fmMatch[1];
@@ -30,26 +28,21 @@
 
         const dateMatch = frontMatter.match(/date:\s*(\S+)/);
         if (dateMatch) date = dateMatch[1];
-
-        const tocMatch = frontMatter.match(/showtoc:\s*true/i);
-        if (tocMatch) showToc = true;
       }
 
       document.title = title + ' - Basu Jindal';
 
       // Build table of contents
       let toc = '';
-      if (showToc) {
-        const headings = content.match(/^##\s+.+$/gm);
-        if (headings && headings.length > 0) {
-          toc = '<nav class="toc"><h3>Table of Contents</h3><ul>';
-          headings.forEach(h => {
-            const text = h.replace(/^##\s+/, '');
-            const id = text.toLowerCase().replace(/[^\w]+/g, '-');
-            toc += `<li><a href="#${id}">${text}</a></li>`;
-          });
-          toc += '</ul></nav>';
-        }
+      const headings = content.match(/^##\s+.+$/gm);
+      if (headings && headings.length > 0) {
+        toc = '<nav class="toc"><h3>Table of Contents</h3><ul>';
+        headings.forEach(h => {
+          const text = h.replace(/^##\s+/, '');
+          const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+          toc += `<li><a href="#${id}">${text}</a></li>`;
+        });
+        toc += '</ul></nav>';
       }
 
       // Configure marked

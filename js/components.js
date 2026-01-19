@@ -2,8 +2,7 @@
 (function() {
   // Determine if we're in a subdirectory
   const isSubdir = window.location.pathname.includes('/blogs/') ||
-                   window.location.pathname.includes('/inprogress/') ||
-                   window.location.pathname.includes('/diffchecker/');
+                   window.location.pathname.includes('/inprogress/');
   const basePath = isSubdir ? '..' : '.';
 
   // Header HTML
@@ -14,7 +13,7 @@
     </a>
     <nav>
       <a href="/blogs.html">Blogs</a>
-      <a href="/diffchecker/">Diff Checker</a>
+      <a href="/diffchecker.html">Diff Checker</a>
       <a href="/job_search.html">Search Jobs</a>
       <a href="/photography.html">Astro Photography</a>
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>

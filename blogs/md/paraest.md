@@ -1,16 +1,6 @@
 ---
 title: "Parameter Estimation"
-date: 2023-10-05 15:20:28 -0800
-summary: "Estimating the parameters of a distribution given the data is a fundamental problem in statistics. In this blog, we will look at different methods to estimate the parameters of a distribution given the data. We will also look at the different assumptions we make about the noise and the parameters."
-description:
-cover:
-  image:
-  alt:
-  caption:
-  relative: true
-showtoc: true
-draft: false
-math: true
+date: 2023-10-05
 ---
 
 Although Probabilty & Statistics is tough to understand and wrap you head around but: **वो समझे भी क्या जो उलझा नहीं ।**
