@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blogs - Basu Jindal</title>
   <meta name="description" content="Blog posts on AI, ML, and more by Basu Jindal">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
   <div class="container">
@@ -21,8 +21,8 @@
 
     <footer></footer>
   </div>
-  <script src="js/components.js"></script>
-  <script src="js/main.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/main.js"></script>
   <script>
     const blogs = [
       { slug: 'diffusion', description: 'Understanding diffusion models for generative AI.' },
@@ -35,7 +35,7 @@
     async function loadBlogs() {
       const grid = document.getElementById('blog-grid');
       const blogData = await Promise.all(blogs.map(async (blog) => {
-        const res = await fetch(`blogs/md/${blog.slug}.md`);
+        const res = await fetch(`../blogs/md/${blog.slug}.md`);
         const text = await res.text();
         const frontMatter = text.match(/^---\n([\s\S]*?)\n---/);
         let title = blog.slug;
@@ -55,7 +55,7 @@
         const dateObj = new Date(blog.date + 'T00:00:00');
         const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         grid.innerHTML += `
-          <a href="blogs/post.html?p=${blog.slug}" class="blog-card">
+          <a href="post.html?section=blogs&p=${blog.slug}" class="blog-card">
             <div class="blog-card-content">
               <time datetime="${blog.date}">${formatted}</time>
               <h2>${blog.title}</h2>

@@ -32,7 +32,7 @@ Place any images in `/blogs/images/` and reference them in your markdown:
 
 ### 3. Add Blog Entry to Listing Page
 
-Edit `/blogs.html` and add a new entry to the `blogs` array:
+Edit `/html/blogs.html` and add a new entry to the `blogs` array:
 
 ```javascript
 { slug: 'POST_NAME', description: 'Brief description of the post' }
@@ -46,7 +46,7 @@ Add the new post to `sitemap.xml`:
 
 ```xml
 <url>
-  <loc>https://basujindal.github.io/blogs/post.html?p=POST_NAME</loc>
+  <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=POST_NAME</loc>
   <priority>0.6</priority>
 </url>
 ```
@@ -65,11 +65,11 @@ Place your image in the `/Photos/` directory. Supported formats: `.jpg`, `.png`
 
 ### 2. Add Gallery Entry
 
-Edit `/photography.html` and add a new figure inside the gallery:
+Edit `/html/photography.html` and add a new figure inside the gallery:
 
 ```html
 <figure class="gallery-item"
-        data-src="Photos/YourImage.jpg"
+        data-src="../Photos/YourImage.jpg"
         data-title="Photo Title"
         data-description="Description of the photo"
         data-camera="Camera Model"
@@ -78,7 +78,7 @@ Edit `/photography.html` and add a new figure inside the gallery:
         data-location="Location"
         data-date="YYYY-MM-DD"
         data-alt="Alt text for accessibility">
-  <img src="Photos/YourImage.jpg" alt="Alt text" loading="lazy">
+  <img src="../Photos/YourImage.jpg" alt="Alt text" loading="lazy">
   <figcaption><h3>Photo Title</h3></figcaption>
 </figure>
 ```
@@ -94,6 +94,6 @@ Commit and push to `main` branch.
 For work-in-progress posts, use the `/inprogress/` directory instead:
 - Markdown files go in `/inprogress/md/`
 - Images go in `/inprogress/images/`
-- Access via `inprogress/post.html?p=POST_NAME`
+- Access via `html/post.html?section=inprogress&p=POST_NAME`
 
 Move to `/blogs/` when ready to publish.

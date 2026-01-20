@@ -7,10 +7,10 @@
       Basu Jindal
     </a>
     <nav>
-      <a href="/blogs.html">Blogs</a>
-      <a href="/diffchecker.html">Diff Checker</a>
-      <a href="/job_search.html">Search Jobs</a>
-      <a href="/photography.html">Astro Photography</a>
+      <a href="/html/blogs.html">Blogs</a>
+      <a href="/html/diffchecker.html">Diff Checker</a>
+      <a href="/html/job_search.html">Search Jobs</a>
+      <a href="/html/photography.html">Astro Photography</a>
     </nav>
   `;
 
@@ -51,11 +51,12 @@
       const pagePath = currentPath.replace(/^\//, '');
 
       if (linkPath === pagePath ||
-          (pagePath.startsWith('blogs') && href.includes('blogs.html')) ||
-          (pagePath.startsWith('photography') && href.includes('photography.html')) ||
-          (pagePath.startsWith('inprogress') && href.includes('inprogress.html')) ||
-          (pagePath.startsWith('diffchecker') && href.includes('diffchecker')) ||
-          (pagePath.startsWith('job_search') && href.includes('job_search.html'))) {
+          (pagePath.startsWith('html/blogs') && href.includes('blogs.html')) ||
+          (pagePath.startsWith('html/photography') && href.includes('photography.html')) ||
+          (pagePath.startsWith('html/inprogress') && href.includes('inprogress.html')) ||
+          (pagePath.startsWith('html/diffchecker') && href.includes('diffchecker')) ||
+          (pagePath.startsWith('html/job_search') && href.includes('job_search.html')) ||
+          (pagePath.startsWith('html/post') && href.includes('blogs.html'))) {
         link.classList.add('active');
       }
     }

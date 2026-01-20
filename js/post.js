@@ -2,13 +2,14 @@
 (function() {
   const params = new URLSearchParams(window.location.search);
   const postName = params.get('p');
+  const section = params.get('section') || 'blogs';
 
   if (!postName) {
     document.getElementById('content').innerHTML = '<p class="error">No post specified.</p>';
     return;
   }
 
-  fetch(`md/${postName}.md`)
+  fetch(`../${section}/md/${postName}.md`)
     .then(res => {
       if (!res.ok) throw new Error('Post not found');
       return res.text();
@@ -63,21 +64,25 @@
           let href = token.href;
           const title = token.title || '';
           const text = token.text || '';
-          // Handle ../images/ paths
+          // Handle ../images/ paths (relative from md folder)
           if (href && href.startsWith('../images/')) {
-            href = 'images/' + href.substring(10);
+            href = `../${section}/images/` + href.substring(10);
           }
           // Handle local image references (no path)
           else if (href && !href.includes('/')) {
-            href = 'images/' + href;
+            href = `../${section}/images/` + href;
           }
-          // Handle /assets/img/ paths (convert to images/)
+          // Handle images/ paths
+          else if (href && href.startsWith('images/')) {
+            href = `../${section}/` + href;
+          }
+          // Handle /assets/img/ paths (convert to section images/)
           else if (href && href.startsWith('/assets/img/')) {
-            href = 'images/' + href.substring(12);
+            href = `../${section}/images/` + href.substring(12);
           }
           // Handle /static/images/ paths
           else if (href && href.startsWith('/static/images/')) {
-            href = 'images/' + href.substring(15);
+            href = `../${section}/images/` + href.substring(15);
           }
           return `<img src="${href}" alt="${text}" title="${title}" loading="lazy">`;
         }
