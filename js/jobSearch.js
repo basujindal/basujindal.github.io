@@ -264,6 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // add function to clear local storage
 
 function clearLocalStorage() {
-    localStorage.clear();
+    localStorage.removeItem('jobSearchOptions');
     location.reload();
 }
