@@ -110,8 +110,8 @@ function findSimilarPairs(removed, added) {
 }
 
 function computeDiff() {
-    const lines1 = text1.value.split('\n');
-    const lines2 = text2.value.split('\n');
+    const lines1 = text1.value ? text1.value.split('\n') : [];
+    const lines2 = text2.value ? text2.value.split('\n') : [];
     const useCharDiff = charDiffToggle.checked;
 
     if (!text1.value && !text2.value) {

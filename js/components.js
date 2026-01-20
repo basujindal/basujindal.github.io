@@ -1,10 +1,5 @@
 // Shared components - header, footer, and analytics
 (function() {
-  // Determine if we're in a subdirectory
-  const isSubdir = window.location.pathname.includes('/blogs/') ||
-                   window.location.pathname.includes('/inprogress/');
-  const basePath = isSubdir ? '..' : '.';
-
   // Header HTML
   const headerHTML = `
     <a href="/" class="logo">

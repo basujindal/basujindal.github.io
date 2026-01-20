@@ -3,11 +3,11 @@ title: Diffusion Models
 date: 2024-02-27
 ---
 
-Before diving into current SoTA Diffusion Models, we need to understand a type of generative model called Energy Based Models.
+Before diving into Diffusion Models, we need to understand a type of generative models called Energy Based Models.
 
 ## Energy Based Models
 
-Let us say we have an image dataset $X = \\{ x_1, x_2, \dots, x_n \\}$, where $ x_i \in \mathbb{R}^d $. Our goal is to learn an energy function $ E_\theta(x) $ that should be low for the images in the dataset and high for all other images. Here $\theta$ are the parameters of the energy function. These functions, similar to pdfs, can be used to model and generate new data points.
+Let us say we have an image dataset $X = \\{ x_1, x_2, \dots, x_n \\}$, where $ x_i \in \mathbb{R}^d $. Our goal is to learn an energy function $ E_\theta(x) $ that should be low for the images in the dataset and high for all other images. Here $\theta$ are the parameters of the energy function. These functions, similar to probability density functions (pdfs), can be used to model and generate new data points.
 
 Energy-Based Models (EBMs), also known as non-normalized probabilistic models, specify probability density or mass functions up to an unknown normalizing constant. The probability density function of an EBM is defined as follows:
 
@@ -102,8 +102,8 @@ where the expectation is approximated by the empirical average of samples. This 
 
 To reduce the inconsistency of DSM, one can choose $q \approx p_{\text{data}}$, i.e., use a small noise perturbation. For example, if $q(\tilde{x} | x) = \mathcal{N}(\tilde{x} | x, \sigma^2 I)$ and $\sigma \approx 0$, the corresponding DSM objective is:
 
-$$ D_F(q(\tilde{x}) || p_{\theta}(\tilde{x})) = \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_{z\sim \mathcal{N}(0,I)}}\left[\frac{1}{2} \left\|\frac{z}{\sigma} + \nabla_{x} \log p_{\theta}(x + \sigma z)\right\|^2_2\right] \\\
-= \frac{1}{2N} \sum_{i=1}^{N} \left[\frac{1}{2} \left\|\frac{z^{(i)}}{\sigma} + \nabla_{x} \log p_{\theta}(x^{(i)} + \sigma z^{(i)})\right\|^2_2\right] $$
+$$ D_F(q(\tilde{x}) || p_{\theta}(\tilde{x})) = \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_{z\sim \mathcal{N}(0,I)}}\left[\frac{1}{2} \left\|\frac{z}{\sigma} + \nabla_{x} \log p_{\theta}(x + \sigma z)\right\|^2_2\right]$$
+$$= \frac{1}{2N} \sum_{i=1}^{N} \left[\frac{1}{2} \left\|\frac{z^{(i)}}{\sigma} + \nabla_{x} \log p_{\theta}(x^{(i)} + \sigma z^{(i)})\right\|^2_2\right] $$
 
 where $x^i \sim p_{\text{data}}(x)$, and $z^i \sim \mathcal{N}(0, I)$. As $\sigma \to 0$, we can use Taylor series expansion to rewrite the Monte Carlo estimator to:
 
@@ -122,8 +122,8 @@ For example, we can take $p(v) = \mathcal{N}(0, I)$.
 
 Similar to Fisher divergence, sliced Fisher divergence has an implicit form that does not involve the unknown $\nabla_x \log p_{\text{data}}(x)$, which is given by:
 
-$$D_{SF}(p_{\text{data}}(x) || p_{\theta}(x)) = \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_p(v)}\left[\frac{1}{2}\left(v^T\nabla_x E_{\theta}(x)\right)^2 + v^T\nabla^2_x E_{\theta}(x)v\right] \\\
-= \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_p(v)}\left[\frac{1}{2}\sum_{i=1}^{d}\left(\frac{\partial E_{\theta}(x)}{\partial x_i}v_i\right)^2 + \sum_{i=1}^{d}\sum_{j=1}^{d}\frac{\partial^2 E_{\theta}(x)}{\partial x_i \partial x_j}v_iv_j\right]$$
+$$D_{SF}(p_{\text{data}}(x) || p_{\theta}(x)) = \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_p(v)}\left[\frac{1}{2}\left(v^T\nabla_x E_{\theta}(x)\right)^2 + v^T\nabla^2_x E_{\theta}(x)v\right]$$
+$$= \mathbb{E_{p_{\text{data}}(x)}}\mathbb{E_p(v)}\left[\frac{1}{2}\sum_{i=1}^{d}\left(\frac{\partial E_{\theta}(x)}{\partial x_i}v_i\right)^2 + \sum_{i=1}^{d}\sum_{j=1}^{d}\frac{\partial^2 E_{\theta}(x)}{\partial x_i \partial x_j}v_iv_j\right]$$
 
 The above loss is similar to the original Score Matching loss by the fact that we make the gradient and trace of Jacobian zero at the points in the dataset. However to reduce the computational complexity, the above equation constrains the gradients and jacobian for a random direction. However over multiple optimization epochs the above loss shows a performance similar to that of the original loss function.
  
@@ -252,6 +252,5 @@ $$ t{\tau_{t-1}} = \frac{1}{\tau}1 + \underbrace{t_\text{direction pointing to $
 
 - [How to Train Your Energy-Based Models](https://arxiv.org/pdf/2101.03288.pdf)
 - https://www.youtube.com/watch?v=8TcNXi3A5DI
-
 - https://lilianweng.github.io/posts/2021-07-11-diffusion-models/
 - https://huggingface.co/blog/annotated-diffusion

@@ -1,14 +1,14 @@
 /* Minimal CSS for Basu Jindal's personal site */
 :root {
-  --bg: #ffffff;
+  --bg: #faf9f7;
   --text: #1a1a2e;
   --text-secondary: #64748b;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
-  --border: #e2e8f0;
-  --code-bg: #f8fafc;
+  --border: #e8e6e1;
+  --code-bg: #f4f3f0;
   --card-bg: #ffffff;
-  --shadow: rgba(0,0,0,0.08);
+  --shadow: rgba(0,0,0,0.06);
 }
 
 [data-theme="dark"] {

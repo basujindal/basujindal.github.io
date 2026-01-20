@@ -350,7 +350,6 @@ Here $y$ is the label (or the probability distribution of the label given by the
 
 ## References
 
-- All the recommended readings in the above sections
 - https://lilianweng.github.io/posts/2018-08-12-vae/
 - https://calvinyluo.com/2022/08/26/diffusion-tutorial.html
 - https://www.youtube.com/playlist?list=PLISXH-iEM4JloWnKysIEPPysGVg4v3PaP

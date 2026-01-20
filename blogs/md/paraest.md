@@ -410,7 +410,7 @@ $$\tilde{\Sigma_{\mu_{n | n-1}}} = G_{n}\tilde{\Sigma_{\mu_{n-1}}}G_{n}^T + \Sig
 
 Here $G_{n}$ is the Jacobian of the function $g$ evaluated at $\tilde{\mu_{n-1}}$.
 
-$\tilde$ represents the fact that the mean and covariance are approximations and not the actual values.
+~ represents the fact that the mean and covariance are approximations and not the actual values.
 
 ### Extended Kalman Update Step
 

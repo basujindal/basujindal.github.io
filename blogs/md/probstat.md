@@ -11,7 +11,7 @@ Let us have a look at some of the important concepts in Probability and Statisti
 
 A Markov chain is a stochastic model describing a sequence of possible events in which the probability of each event depends only on the state attained in the previous event. In other words, it is a memoryless sequence of random variables $X_1, X_2, \dots$ with the Markov property. The Markov property says that the probability of moving to the next state depends only on the current state and not on the previous states.
 
-{{< figure src="../images/markov.png" width="300" alt="galton board" class="center" >}}
+<img src="./images/markov.png" alt="Markov Chain" style="max-width: 400px;">
 
 Let us say we have a directed connected graph with nodes as the states and edges as the transition probabilities. The transition probabilities are the probabilities of moving from one state to another. 
 
