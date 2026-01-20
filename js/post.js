@@ -33,6 +33,21 @@
 
       document.title = title + ' - Basu Jindal';
 
+      // Update Schema.org JSON-LD with dynamic content
+      const schemaScript = document.getElementById('schema-json-ld');
+      if (schemaScript) {
+        const schema = JSON.parse(schemaScript.textContent);
+        schema.headline = title;
+        schema.name = title;
+        schema.url = window.location.href;
+        schema.mainEntityOfPage.url = window.location.href;
+        if (date) {
+          schema.datePublished = date;
+          schema.dateModified = date;
+        }
+        schemaScript.textContent = JSON.stringify(schema);
+      }
+
       // Build table of contents
       let toc = '';
       const headings = content.match(/^##\s+.+$/gm);
@@ -93,11 +108,48 @@
       const html = marked.parse(content);
 
       document.getElementById('content').innerHTML = `
-        <h1>${title}</h1>
-        ${date ? `<p class="meta">${date}</p>` : ''}
-        ${toc}
+        <div class="post-header">
+          <h1>${title}</h1>
+          ${date ? `<time class="post-date">${date}</time>` : ''}
+        </div>
         ${html}
       `;
+
+      // Add TOC to body as a floating sidebar
+      if (toc) {
+        const tocSidebar = document.createElement('aside');
+        tocSidebar.className = 'toc-sidebar';
+        tocSidebar.innerHTML = toc;
+        document.body.appendChild(tocSidebar);
+
+        // Mobile TOC button
+        const mobileTocBtn = document.createElement('button');
+        mobileTocBtn.className = 'mobile-toc-btn';
+        mobileTocBtn.setAttribute('aria-label', 'Table of Contents');
+        mobileTocBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
+        document.body.appendChild(mobileTocBtn);
+
+        // Mobile TOC modal
+        const mobileTocModal = document.createElement('div');
+        mobileTocModal.className = 'mobile-toc-modal';
+        mobileTocModal.innerHTML = `
+          <div class="mobile-toc-content">
+            <h3>Table of Contents</h3>
+            ${toc.replace('<nav class="toc"><h3>Table of Contents</h3>', '').replace('</nav>', '')}
+          </div>
+        `;
+        document.body.appendChild(mobileTocModal);
+
+        mobileTocBtn.addEventListener('click', () => {
+          mobileTocModal.classList.add('open');
+        });
+
+        mobileTocModal.addEventListener('click', (e) => {
+          if (e.target === mobileTocModal || e.target.tagName === 'A') {
+            mobileTocModal.classList.remove('open');
+          }
+        });
+      }
 
       // Render math with KaTeX
       renderMathInElement(document.getElementById('content'), {
@@ -119,15 +171,36 @@
         const btn = document.createElement('button');
         btn.className = 'copy-btn';
         btn.textContent = 'Copy';
-        btn.style.cssText = 'position:absolute;top:8px;right:8px;padding:4px 8px;font-size:12px;background:var(--border);border:none;border-radius:4px;cursor:pointer;color:var(--text);';
-        pre.style.position = 'relative';
         pre.appendChild(btn);
         btn.addEventListener('click', () => {
           navigator.clipboard.writeText(block.textContent).then(() => {
             btn.textContent = 'Copied!';
-            setTimeout(() => btn.textContent = 'Copy', 2000);
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'Copy';
+              btn.classList.remove('copied');
+            }, 2000);
           });
         });
+      });
+
+      // Add go to top button
+      const goToTopBtn = document.createElement('button');
+      goToTopBtn.className = 'go-to-top';
+      goToTopBtn.setAttribute('aria-label', 'Go to top');
+      goToTopBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>';
+      document.body.appendChild(goToTopBtn);
+
+      goToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          goToTopBtn.classList.add('visible');
+        } else {
+          goToTopBtn.classList.remove('visible');
+        }
       });
     })
     .catch(err => {

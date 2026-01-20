@@ -181,140 +181,8 @@ Unet & BigGAN uses Upsampling followed by Conv layers to avoid checkboard effect
 
 - Standardization vs Normalization: https://www.geeksforgeeks.org/normalization-vs-standardization/
 
-### Image Normalization
-
-#### Batch Norm
-
-- In Feed forward layer, output of a neuron is taken across the batch and normalized.
-- For Image, 1 channel i.e. HxW output is taken and normed across batch.
-- A running average is kept for the mean and variance of the output of the neuron or the image across the batch.
-
-#### Instance Norm
-
-- Similar to BatchNorm (normalization done over a single channel) but only over only 1 image.
-- Used to keep the sample features independent improving image variability.
-- Not possible in Feed Forward since if no batch, only neuron is there.
-- No need to keep running average
-
-![image](../../images/instanceNorm.png)
-
-#### Layer Norm
-
-- Normed across the layer for 1 data sample, i.e. output of the Feed Forward network.
-- For Image, normalize across all the channels of one data sample, same as instance norm across all channels.
-- In transformer, if we have a tensor of B, N, D where B is the batch size, N is the number of tokens and D is the dimension of each token, then the normalization is done across the D dimension, i.e. the tokens don't interact with each other.
-- Unlike Instance Norm and batch norm, it does element wise affine operation on the normalized output. This means that all the D values in a token have different learnable mean and variance
-- No need to keep running average
 
 
-#### Group Norm
-
-- Somewhere in between LN and IN, it assumes that some channels will have similar features which should be normalzed together instead of only 1 channel or all the channels. The groups to be normalized together are just the adjacent ones like of 32 channels, groups of 8 can be formed.
-- Good for small batch sizes like $\in$ (1,8)
-
-The H, W are flattend to show the 4D tensor in a 3D tensor
-
-![image](../../images/norm.png)
-
-#### RMSNorm
-
-- Similar to LayerNorm but the input is only divided by the RMS of the input and not the mean and variance.
-
-If the output of a Feed Forward layer is is $A = [a_1, a_2, \dots, a_n]$, then the output of the layer norm is:
-
-$$A = \frac{A - \mu}{\sigma}$$
-
-where $\mu$ is the mean of the output and $\sigma$ is the standard deviation of the output.
-
-Whereas in RMSNorm, the output is:
-
-$$A = \frac{A}{\sqrt{\frac{1}{n}\sum_{i=1}^{n}a_i^2}}$$
-
-Experimentally, the performance of RMSNorm is similar to LayerNorm but it is faster to compute due to the absence of the mean and variance.
-
-
-## Activation Functions
-
-### Gaussian Error Linear Unit (GELU)
-
-![](../../images/gelu.png)
-
-GELU is a smooth approximation of ReLU. It is defined as:
-
-$$GELU(x) = x * \Phi(x)$$
-
-where $\Phi(x)$ is the CDF of the Gaussian distribution.
-
-It combines ReLU and dropout into a single function. Since CDF of Normal distribution cannot be computed in closed form, it is approximated using the following function:
-
-$$\Phi(x) = 0.5 * (1 + tanh(\sqrt{2/\pi} * (x + 0.044715 * x^3)))$$
-
-It can also be approximated using the following function:
-
-$$\Phi(x) = 0.5 * (1 + erf(x/\sqrt{2}))$$
-
-Here erf is the error function, which has efficient implementations in most programming languages.
-
-It can also be approximated using the sigmoid function:
-
-$$\Phi(x) = x * sigmoid(1.702 * x)$$
-
-### Swish (SiLU)
-
-![](../../images/silu.png)
-
-Swish is also known as Sigmoid Linear Unit or SiLU. It is defined as:
-
-$$Swish(x) = x * sigmoid(\beta x)$$
-
-It is a smooth approximation of ReLU and is also differentiable everywhere.
-
-The Transformer model is described by alternating between multi-head attention and position-wise feed-forward networks (FFN). The original FFN is defined as:
-
-$$ \text{FFN}(x, W_1, W_2, b_1, b_2) = \max(0, xW_1 + b_1)W_2 + b_2 $$
-
-A bias-free version, following the T5 codebase, is given by:
-
-$$ \text{FFNReLU}(x, W_1, W_2) = \max(xW_1, 0)W_2 $$
-
-Subsequent enhancements proposed include using GELU and Swishβ as activation functions:
-
-$$ \text{FFNGELU}(x, W_1, W_2) = \text{GELU}(xW_1)W_2 $$
-
-$$ \text{FFNSwish}(x, W_1, W_2) = \text{Swish}_\beta(xW_1)W_2 $$
-
-### Gated Linear Units (GLU) and Variants
-
-![Alt text](../../images/swiglu.png)
-GLU is introduced as follows:
-
-$$ \text{GLU}(x, W, V, b, c) = \sigma(xW + b) \odot (xV + c) $$
-
-The bilinear variant (without the activation) is defined as:
-
-$$ \text{Bilinear}(x, W, V, b, c) = (xW + b) \odot (xV + c) $$
-
-Further variants of GLU with different activation functions include:
-
-$$ \text{ReGLU}(x, W, V, b, c) = \max(0, xW + b) \odot (xV + c) $$
-
-$$ \text{GEGLU}(x, W, V, b, c) = \text{GELU}(xW + b) \odot (xV + c) $$
-
-$$ \text{SwiGLU}(x, W, V, b, c, \beta) = \text{Swish}_\beta(xW + b) \odot (xV + c) $$
-
-The proposal includes incorporating GLU or its variants into the Transformer FFN layer, thus defining new FFN variations:
-
-$$ \text{FFNGLU}(x, W, V, W_2) = (\sigma(xW) \odot xV)W_2 $$
-
-$$ \text{FFNBilinear}(x, W, V, W_2) = (xW \odot xV)W_2 $$
-
-$$ \text{FFNReGLU}(x, W, V, W_2) = (\max(0, xW) \odot xV)W_2 $$
-
-$$ \text{FFNGEGLU}(x, W, V, W_2) = (\text{GELU}(xW) \odot xV)W_2 $$
-
-$$ \text{FFNSwiGLU}(x, W, V, W_2) = (\text{Swish}_1(xW) \odot xV)W_2 $$
-
-To maintain parameter count and computational requirements, a reduction in the dimensionality of the hidden units is applied when transitioning from the original two-matrix FFN to these new variants.
 
 
 ## Mixed Precision Training
@@ -328,6 +196,15 @@ FP16 training is not straightforward because of the limited range and precision 
 - Update the master weights in FP32. The advantage with mixed-precision training is that the forward pass and backward pass computations are done in FP16 which is faster than FP32. However due to the low range and precision of FP16, the gradients are casted to FP32 and the weights are updated in FP32. Also the optimizer states are stored in FP32.
 
 Inshort, the forward pass and backward pass (gradient computation) are done in FP16, the loss is multiplied by a scaling factor to prevent underflow, the gradients are upcasted to FP32 and divided by the same scalign factor and is used to update the weights in FP32 along with the FP32 optimizer states.
+
+
+
+## DataLoader
+
+One of the important requirements to reach great training speed is the ability to feed the GPU at the maximum speed it can handle. By default everything happens in the main process and it might not be able to read the data from disk fast enough, and thus create a bottleneck, leading to GPU under-utilization.
+
+DataLoader(pin_memory=True, ...) which ensures that the data gets preloaded into the pinned memory on CPU and typically leads to much faster transfers from CPU to GPU memory.
+DataLoader(num_workers=4, ...) - spawn several workers to pre-load data faster - during training watch the GPU utilization stats and if it’s far from 100% experiment with raising the number of workers. Of course, the problem could be elsewhere so a very big number of workers won’t necessarily lead to a better performance.
 
 
 ## Memory Requirements

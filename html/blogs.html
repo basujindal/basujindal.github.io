@@ -13,8 +13,8 @@
     <header></header>
 
     <main>
-      <h1 class="page-title">Blogs</h1>
-      <p class="page-subtitle">Notes on AI, ML, and more</p>
+      <h1 class="page-title fade-in">Blogs</h1>
+      <p class="page-subtitle fade-in fade-in-delay-1">Notes on AI, ML, and more</p>
 
       <div class="blog-grid" id="blog-grid">
       </div>
@@ -26,12 +26,13 @@
   <script src="../js/main.js"></script>
   <script>
     const blogs = [
-      { slug: 'diffusion', description: 'Understanding diffusion models for generative AI.' },
-      { slug: 'generative_models', description: 'Overview of generative AI models.' },
+      { slug: 'diffusion', description: 'Understanding diffusion models' },
+      { slug: 'generative_models', description: 'Overview of image generative models.' },
       { slug: 'parameter_estimation', description: 'Notes on parameter estimation techniques.' },
       { slug: 'probability_statistics', description: 'Foundations of probability and statistics.' },
-      { slug: 'llm', description: 'Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.' },
-      { slug: 'cuda', description: 'Notes on GPU Programming' }
+      { slug: 'llm', description: 'Notes on LLMs' },
+      { slug: 'cuda', description: 'Basics of GPU Programming' },
+      { slug: 'quantization', description: 'Quantization 101' },
     ];
 
     async function loadBlogs() {
@@ -56,11 +57,12 @@
 
       blogData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      blogData.forEach(blog => {
+      blogData.forEach((blog, index) => {
         const dateObj = new Date(blog.date + 'T00:00:00');
         const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const delay = Math.min(index + 2, 5); // Cap delay at 0.5s
         grid.innerHTML += `
-          <a href="post.html?section=blogs&p=${blog.slug}" class="blog-card">
+          <a href="post.html?section=blogs&p=${blog.slug}" class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
             <div class="blog-card-content">
               <time datetime="${blog.date}">${formatted}</time>
               <h2>${blog.title}</h2>

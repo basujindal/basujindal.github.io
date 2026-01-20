@@ -1,21 +1,48 @@
 ---
 title: "Quantization"
-date: 2024-07-17 15:20:28 -0800
-summary: "Quantization methods for deep learning models"
-description:
-cover:
-  image:
-  alt:
-  caption:
-  relative: true
-showtoc: true
-draft: false
-math: true
+date: 2024-07-17
+show: false
 ---
+
+## Precision
+
+![](../../images/precision.png)
+
+If you allow for DENORMALS as well, then minumum values are:
+
+- 16-bit: ±5.96^e-8
+- 32-bit: ±1e^-45
+- 64-bit: ±5e^-324
+
+Just because a number is in this range doesn't mean it can be exactly represented. At any range, floating-point numbers necessarily skip values due to cardinality reasons. The classic example is 1/3 which has no exact representation in any finite precision. In general you can only precisely represent those numbers that are called "dyadic," i.e., those of the form A/2^B for some A and B; provided the result falls into the dynamic range.
+
+Naturally, precision increases with the bits increment. This means if you need precise results, you should use formats with more precision bits, but this will increase space and time requirements of the calculations.
+
+Using FP16 instead of FP32 in deep learning proved helpful in decreasing the time and space needed for training the models without much loss in the performance of these models.
+
+This transition prevents overfitting to some extent; if the models’ parameters are highly adjustable, this opens a window for overfitting to your training data.
+
+In contrast, FP16 opens a tiny window for overflow and underflow, where you try to compute numbers out of the representable range. Or with unnoticeable differences with regard to this format.
+
+The caveat in DL networks is that the range matters but not the precision, which lead to the invention of BFLOAT16 – short for Google’s Brain float 16. Just an FP32 with it’s precision truncated to leave it with 16 bits.
+
+BFLOAT16 combines the best of both worlds; it has the range of FP32 by using 8 bits as the exponent and 7 bits as the precision part. This makes it possible to represent the whole range of FP32 with BFLOAT16, but with little precision. i.e., you can compare two numbers with a meaningful difference in magnitude, but the same can’t be said for two close numbers (underflow), which isn’t a big issue in DL applications.
+
+Both these low precision floating point data types are usually comparably fast, but some networks may only converge with one vs the other. If a network requires more precision it may need to use float16, and if a network requires more dynamic range it may need to use bfloat16, whose dynamic range is equal to that of float32. If overflows are observed, for example, then we suggest trying bfloat16.
+
+High Performance Computing (HPC) applications, regression tasks, and generative networks may simply require full float32 IEEE precision to converge as expected. Note that TF32 mode is a global switch and can’t be used selectively on regions of a network. Enable TF32 first to check if a network’s operators are sensitive to the mode, otherwise disable it.
+
+Figure out by experimentation if your network is sensitive to range and/or precision of a format. For example fine-tuning bfloat16-pretrained models in float16 can easily run into range issues in float16 because of the potentially large range from training in bfloat16, so users should stick with bfloat16 fine-tuning if the model was trained in bfloat16.
+
+The performance gain of mixed precision training can depend on multiple factors (e.g. compute-bound vs memory-bound problems) and users should use the tuning guide to remove other bottlenecks in their training scripts. Although having similar theoretical performance benefits, BF16 and FP16 can have different speeds in practice. It’s recommended to try the mentioned formats and use the one with best speed while maintaining the desired numeric behavior.
+
+![](../../images/mixed_precision_compare.png)
+
+FP16 is only supported in CUDA, BF16 has support on newer CPUs and TPUs. Calling .half() on your network and tensors explicitly casts them to FP16, but not all ops are safe to run in half-precision. A better solution is to use Automatic Mixed Precision to let PyTorch choose the right op-specific precision (FP32 vs FP16 / BF16) for your tensors. 
 
 ## Quantization
 
-![Alt text](llm_quant.png)
+![Alt text](../../images/llm_quant.png)
 
 ### Absmax quantization
 
@@ -102,8 +129,6 @@ https://www.dropbox.com/scl/fi/dtnp6h6y1mnp7g036axu6/AWQ-slide.pdf?rlkey=ffgh50h
 - Comparison of quantization methods:
     - https://oobabooga.github.io/blog/posts/gptq-awq-exl2-llamacpp/
     - https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fwhich-quantization-method-is-right-for-you-gptq-vs-gguf-vs-awq-c4cd9d77d5be
-
-- Old quant method: https://github.com/yhhhli/BRECQ
 
 
 ## Other general Optimizations

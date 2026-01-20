@@ -1,11 +1,16 @@
 // Shared components - header, footer, and analytics
 (function() {
-  // Header HTML
+  // Header HTML with hamburger menu
   const headerHTML = `
     <div class="header-left">
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
       <a href="/" class="logo">Basu Jindal</a>
     </div>
+    <button class="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <nav>
       <a href="/html/blogs.html">Blogs</a>
       <a href="/html/diffchecker.html">Diff Checker</a>
@@ -13,6 +18,11 @@
       <a href="/html/photography.html">Astro Photography</a>
     </nav>
   `;
+
+  // Nav overlay for mobile
+  const navOverlay = document.createElement('div');
+  navOverlay.className = 'nav-overlay';
+  document.body.appendChild(navOverlay);
 
   // Footer HTML with SVG icons
   const currentYear = new Date().getFullYear();
@@ -32,6 +42,36 @@
   const header = document.querySelector('header');
   if (header && !header.innerHTML.trim()) {
     header.innerHTML = headerHTML;
+  }
+
+  // Hamburger menu functionality
+  const hamburger = document.querySelector('.hamburger');
+  const nav = document.querySelector('nav');
+
+  if (hamburger && nav) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('open');
+      navOverlay.classList.toggle('open');
+      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    });
+
+    navOverlay.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      nav.classList.remove('open');
+      navOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+
+    // Close menu when nav link is clicked
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        nav.classList.remove('open');
+        navOverlay.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
   }
 
   // Inject footer
