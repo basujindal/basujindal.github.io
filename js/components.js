@@ -8,7 +8,7 @@
   // Header HTML
   const headerHTML = `
     <a href="/" class="logo">
-      <img src="${basePath}/images/coding.png" alt="Logo">
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
       Basu Jindal
     </a>
     <nav>
@@ -16,7 +16,6 @@
       <a href="/diffchecker.html">Diff Checker</a>
       <a href="/job_search.html">Search Jobs</a>
       <a href="/photography.html">Astro Photography</a>
-      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
     </nav>
   `;
 
