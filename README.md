@@ -30,22 +30,15 @@ Place any images in `/blogs/images/` and reference them in your markdown:
 ![Description](../images/your-image.png)
 ```
 
-### 3. Add Blog Card to Listing Page
+### 3. Add Blog Entry to Listing Page
 
-Edit `/blogs.html` and add a new card inside the `blog-grid` div:
+Edit `/blogs.html` and add a new entry to the `blogs` array:
 
-```html
-<a href="blogs/post.html?p=POST_NAME" class="blog-card">
-  <div class="blog-card-content">
-    <time datetime="YYYY-MM-DD">Mon D, YYYY</time>
-    <h2>Your Post Title</h2>
-    <p>Brief description of the post</p>
-  </div>
-  <span class="blog-card-arrow">&rarr;</span>
-</a>
+```javascript
+{ slug: 'POST_NAME', description: 'Brief description of the post' }
 ```
 
-Replace `POST_NAME` with your markdown filename (without `.md`).
+The title and date are automatically read from the markdown front matter.
 
 ### 4. Update Sitemap
 

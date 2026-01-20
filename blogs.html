@@ -15,51 +15,7 @@
       <h1 class="page-title">Blogs</h1>
       <p class="page-subtitle">Notes on AI, ML, and more</p>
 
-        <a href="blogs/post.html?p=diffusion" class="blog-card">
-          <div class="blog-card-content">
-            <time datetime="2024-02-27">Feb 27, 2024</time>
-            <h2>Diffusion Models</h2>
-            <p>Understanding diffusion models for generative AI.</p>
-          </div>
-          <span class="blog-card-arrow">&rarr;</span>
-        </a>
-
-        <a href="blogs/post.html?p=Generative-Models" class="blog-card">
-          <div class="blog-card-content">
-            <time datetime="2023-12-26">Dec 26, 2023</time>
-            <h2>Generative Models</h2>
-            <p>Overview of generative AI models.</p>
-          </div>
-          <span class="blog-card-arrow">&rarr;</span>
-        </a>
-
-        <a href="blogs/post.html?p=paraest" class="blog-card">
-          <div class="blog-card-content">
-            <time datetime="2023-10-05">Oct 5, 2023</time>
-            <h2>Parameter Estimation</h2>
-            <p>Notes on parameter estimation techniques.</p>
-          </div>
-          <span class="blog-card-arrow">&rarr;</span>
-        </a>
-
-        <a href="blogs/post.html?p=probstat" class="blog-card">
-          <div class="blog-card-content">
-            <time datetime="2023-10-05">Oct 5, 2023</time>
-            <h2>Probability & Statistics</h2>
-            <p>Foundations of probability and statistics.</p>
-          </div>
-          <span class="blog-card-arrow">&rarr;</span>
-        </a>
-
-        <div class="blog-grid">
-        <a href="blogs/post.html?p=LLM" class="blog-card">
-          <div class="blog-card-content">
-            <time datetime="2023-04-03">Apr 3, 2023</time>
-            <h2>Large Language Models</h2>
-            <p>Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.</p>
-          </div>
-          <span class="blog-card-arrow">&rarr;</span>
-        </a>
+      <div class="blog-grid" id="blog-grid">
       </div>
     </main>
 
@@ -67,5 +23,50 @@
   </div>
   <script src="js/components.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    const blogs = [
+      { slug: 'diffusion', description: 'Understanding diffusion models for generative AI.' },
+      { slug: 'Generative-Models', description: 'Overview of generative AI models.' },
+      { slug: 'paraest', description: 'Notes on parameter estimation techniques.' },
+      { slug: 'probstat', description: 'Foundations of probability and statistics.' },
+      { slug: 'LLM', description: 'Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.' }
+    ];
+
+    async function loadBlogs() {
+      const grid = document.getElementById('blog-grid');
+      const blogData = await Promise.all(blogs.map(async (blog) => {
+        const res = await fetch(`blogs/md/${blog.slug}.md`);
+        const text = await res.text();
+        const frontMatter = text.match(/^---\n([\s\S]*?)\n---/);
+        let title = blog.slug;
+        let date = '';
+        if (frontMatter) {
+          const titleMatch = frontMatter[1].match(/title:\s*["']?(.+?)["']?\s*$/m);
+          const dateMatch = frontMatter[1].match(/date:\s*(\d{4}-\d{2}-\d{2})/);
+          if (titleMatch) title = titleMatch[1];
+          if (dateMatch) date = dateMatch[1];
+        }
+        return { ...blog, title, date };
+      }));
+
+      blogData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      blogData.forEach(blog => {
+        const dateObj = new Date(blog.date + 'T00:00:00');
+        const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        grid.innerHTML += `
+          <a href="blogs/post.html?p=${blog.slug}" class="blog-card">
+            <div class="blog-card-content">
+              <time datetime="${blog.date}">${formatted}</time>
+              <h2>${blog.title}</h2>
+              <p>${blog.description}</p>
+            </div>
+            <span class="blog-card-arrow">&rarr;</span>
+          </a>
+        `;
+      });
+    }
+    loadBlogs();
+  </script>
 </body>
 </html>
