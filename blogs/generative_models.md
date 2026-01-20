@@ -29,7 +29,7 @@ Likelihood-based models are a class of generative models that explicitly define 
 
 GANs are a good example of implicit density models. They consist of two neural networks, a generator and a discriminator trained simultaneously in a game-theoretic framework. The generator creates images, while the discriminator evaluates them. They do not explicitly model the data distribution; instead, they learn a mapping from a simple distribution to the data distribution using a min-max game.
 
-![Alt text](../images/gan_vae_diff.png)
+![Alt text](../../images/gan_vae_diff.png)
 
 ### Differences
 
@@ -191,13 +191,13 @@ Also in practice, the second term for the generator is replaced with:
 
 $$\max_{G} \mathbb{E}_{z \sim p_z(z)} [\log D(G(z))]$$
 
-![](../images/gan_losses.png)
+![](../../images/gan_losses.png)
 
 This is done due to vanishing gradient problem. At the start of the training, the Discriminator can easily learn to distinguish between the real and fake images since the task of classification is relatively easier than the task of generating images. As shown in the above graph, this leads to very low values for $ D(G(z)) $ and its gradient is almost zero. This leads to the generator not learning anything. While the new loss function (non-saturating heuristic) does not have zero gradient in the left part of the graph and hence the generator can learn.
 
 The loss curves of GANs are not very intuitive. Usually, the discriminator loss increases initially and then decreases and vice versa for the generator loss.
 
-![](../images/gan_loss.png)
+![](../../images/gan_loss.png)
 
 Also, the output of the discriminator is a float value and to convert it to a probability, we usually use the sigmoid function. The problem here is that the sigmoid function is not stable for very large or very small values (even torch.exp(1000) will give nan). Therefore instead of `nn.Sigmoid` + `nn.BCELoss`, we use `nn.BCEWithLogitsLoss` uses something called the [log-sum-exp trick](https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/) that helps in stable computation of the probabilities.
 

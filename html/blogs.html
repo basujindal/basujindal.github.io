@@ -27,28 +27,32 @@
   <script>
     const blogs = [
       { slug: 'diffusion', description: 'Understanding diffusion models for generative AI.' },
-      { slug: 'Generative-Models', description: 'Overview of generative AI models.' },
-      { slug: 'paraest', description: 'Notes on parameter estimation techniques.' },
-      { slug: 'probstat', description: 'Foundations of probability and statistics.' },
-      { slug: 'LLM', description: 'Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.' }
+      { slug: 'generative_models', description: 'Overview of generative AI models.' },
+      { slug: 'parameter_estimation', description: 'Notes on parameter estimation techniques.' },
+      { slug: 'probability_statistics', description: 'Foundations of probability and statistics.' },
+      { slug: 'llm', description: 'Notes on LLMs - tokenization, decoding strategies, parameter counting, and more.' },
+      { slug: 'cuda', description: 'Notes on GPU Programming' }
     ];
 
     async function loadBlogs() {
       const grid = document.getElementById('blog-grid');
-      const blogData = await Promise.all(blogs.map(async (blog) => {
-        const res = await fetch(`../blogs/md/${blog.slug}.md`);
+      const blogData = (await Promise.all(blogs.map(async (blog) => {
+        const res = await fetch(`../blogs/${blog.slug}.md`);
         const text = await res.text();
         const frontMatter = text.match(/^---\n([\s\S]*?)\n---/);
         let title = blog.slug;
         let date = '';
+        let show = true;
         if (frontMatter) {
           const titleMatch = frontMatter[1].match(/title:\s*["']?(.+?)["']?\s*$/m);
           const dateMatch = frontMatter[1].match(/date:\s*(\d{4}-\d{2}-\d{2})/);
+          const showMatch = frontMatter[1].match(/show:\s*(true|false)/);
           if (titleMatch) title = titleMatch[1];
           if (dateMatch) date = dateMatch[1];
+          if (showMatch) show = showMatch[1] === 'true';
         }
-        return { ...blog, title, date };
-      }));
+        return { ...blog, title, date, show };
+      }))).filter(blog => blog.show);
 
       blogData.sort((a, b) => new Date(b.date) - new Date(a.date));
 

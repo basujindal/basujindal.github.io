@@ -29,7 +29,7 @@ Covid RTPCR Test has high precision and low recall. This means if the test resul
 
 F1 = DICE Score = $ 2\frac{PR}{P + R} = 2\frac{TP}{2TP + FP + FN}$ . Can be thought of a combination of Recall and Precision.
 
-![image](../images/iou.png)
+![image](../../images/iou.png)
 
 ### Jaccards’S Index / IOU vs DICE
 

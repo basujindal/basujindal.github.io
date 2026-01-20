@@ -53,7 +53,7 @@ $$ H_T(X) = \beta(H(X) - \log(\beta)) $$
 
 The above implies that the change in the entropy of a system with temperature is not dependent on the individual probabilities, but on the entropy of the system. This is not a an obvious result and is a very interesting property of the entropy of a system with temperature. Now, if we set $T = \beta = 1$, then the entropy of the probability distribution is equal to the entropy of the original probability distribution. Increasing the temperature usually increases the entropy but it depends on the original probability distribution. If the entropy is high already, increasing the temperature might decrease the entropy as shown in the figure below.
 
-![Alt text](../images/entropy_temp.png)
+![Alt text](../../images/entropy_temp.png)
 
 
 ### Beam Search
@@ -138,7 +138,7 @@ Suggested Reading:
 
 Rotational Positional Embeddings use the relative distance between the words in the sequence to generate the positional embeddings. Instead of adding a positional embedding to the entire embedding, they treat the embedded vector as a concatenation of multiple tuples and each tuple as a vector in complex plane. They multiply each vector by a 2D rotation matrix $R$.
 
-![Alt text](../images/rope.png)
+![Alt text](../../images/rope.png)
 
 Let the input embeddings be $X \in \mathbb{R}^{D \times L}$, where $L$ is the length of the sequence and $D$ is the dimension of the input embeddings. Also the K weight matrix be $W_k \in \mathbb{R}^{D \times D}$, the Q weight matrix be $W_q \in \mathbb{R}^{D \times D}$, the attention matrix be $A \in \mathbb{R}^{L \times L}$ and the Rotation matrix be $R \in \mathbb{R}^{D \times D}$.
 

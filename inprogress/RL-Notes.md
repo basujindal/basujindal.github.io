@@ -71,7 +71,7 @@ Here $ \alpha $ is the learning rate, $ r $ is the reward for taking action $ a 
 This is also called off policy $ TD(0) $. Here for the next action, i.e. the bootstrap action (a'), we follow the different policy, i.e only greedy to update our Q value, that is why its off policy.
 
 The Q value can be approximated by a neural network and optimized using gradient descent as follows:
-![](../images/2022-11-26-21-22-00.png)
+![](../../images/2022-11-26-21-22-00.png)
 
 ## SARSA (State-Action-Reward-State-Action)
 
@@ -211,7 +211,7 @@ The new Loss function becomes:
 
 $$ \nabla_\theta \hat J(\theta) \approx { 1 \over N } \sum_{s_t, a_t} \nabla_\theta \log \pi_\theta (a_t \mid s_t) \cdot ( r + \gamma V(s_{t+1})- V(s_t)) $$
 
-![](../images/2022-11-26-20-45-40.png)
+![](../../images/2022-11-26-20-45-40.png)
 
 
 ## Proximal Policy Optimization

@@ -31,7 +31,7 @@ $Entropy(H)$ refers to the expected value of information/surprise or the minimum
 
 $$H = -\sum p(x)log(p(x))$$
 
-![entropy](../images/entropy.png)
+![entropy](../../images/entropy.png)
 
 For a binary random variable, $H = -(p log(p) + (1-p)log(p))$. The max value occurs when $p(H) = 0.5$, i.e. when we use a fair coin. This implies that on average we need 1 bit to tell the result of a fair coin toss.
 
@@ -87,9 +87,9 @@ Central Limit theorm can also be thought of repeated convolution of the distribu
 
 Lets the the example of a Galton Board. Each row of pegs is like a binary distribution that can take value +1 and -1 with equal probability. The sum of the values of the pegs in a column is the random variable. Here k is the number of rows, and as we increase the the number of balls, the distribution of the sum of the values approaches a normal distribution.
 
-<!-- ![image](../images/galton.png) -->
+<!-- ![image](../../images/galton.png) -->
 
-{{< figure src="../images/galton.png" width="300" alt="galton board" class="center" >}}
+{{< figure src="../../images/galton.png" width="300" alt="galton board" class="center" >}}
 
 Sum of random varables is equivalent to convolution opertation and convolution operation increases the entropy of the distribution. So as we increase the number of random variables, the entropy of the distribution increases and since the distribution with maximum entropy with fixes mean and variance is normal, we approach the normal distribution.
 
@@ -381,6 +381,6 @@ The dimension of the reduced data is $n \times k$.
 
 Shown below are the top 100 features of PCA of the ImageNet dataset. Note that they are very similar to the Discrete Cosine Transform (DCT) basis vectors.
 
-![PCA on ImageNet dataset](../images/PCA_imagenet.png)
+![PCA on ImageNet dataset](../../images/PCA_imagenet.png)
 
 <!-- ### SVD -->

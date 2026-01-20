@@ -70,7 +70,7 @@ Since each GPU has a different copy of gradients, we need to average them to get
 
 ### Fully Sharded Data Parallel (FSDP)
 
-![Alt text](../images/fsdp.png)
+![Alt text](../../images/fsdp.png)
 Good Tutorial: https://lightning.ai/docs/pytorch/stable/advanced/model_parallel/fsdp.html
 
 FSDP is a new parallelization technique that is designed to work with large models that do not fit into the memory of a single GPU. It divides the model and their respective optimizer parameters into shards and each shard is placed on a different GPU. For foward pass, all_gather operation is used to gather all the model shards on all the GPUs. The forward pass is then performed on all the GPUs. The extra shards are then deleted. 

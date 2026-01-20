@@ -154,7 +154,7 @@ tensor([[[[1.0000, 1.2500, 1.7500, 2.0000],
 Recommened reading:
 - https://towardsdatascience.com/what-is-transposed-convolutional-layer-40e5e6e31c11
 
-![Alt text](../images/convTranspose.png)
+![Alt text](../../images/convTranspose.png)
 
 - It has learnable kernels.
 - Exact opposite formula for Conv2D, only output padding is extra term.
@@ -196,7 +196,7 @@ Unet & BigGAN uses Upsampling followed by Conv layers to avoid checkboard effect
 - Not possible in Feed Forward since if no batch, only neuron is there.
 - No need to keep running average
 
-![image](../images/instanceNorm.png)
+![image](../../images/instanceNorm.png)
 
 #### Layer Norm
 
@@ -214,7 +214,7 @@ Unet & BigGAN uses Upsampling followed by Conv layers to avoid checkboard effect
 
 The H, W are flattend to show the 4D tensor in a 3D tensor
 
-![image](../images/norm.png)
+![image](../../images/norm.png)
 
 #### RMSNorm
 
@@ -237,7 +237,7 @@ Experimentally, the performance of RMSNorm is similar to LayerNorm but it is fas
 
 ### Gaussian Error Linear Unit (GELU)
 
-![](../images/gelu.png)
+![](../../images/gelu.png)
 
 GELU is a smooth approximation of ReLU. It is defined as:
 
@@ -261,7 +261,7 @@ $$\Phi(x) = x * sigmoid(1.702 * x)$$
 
 ### Swish (SiLU)
 
-![](../images/silu.png)
+![](../../images/silu.png)
 
 Swish is also known as Sigmoid Linear Unit or SiLU. It is defined as:
 
@@ -285,7 +285,7 @@ $$ \text{FFNSwish}(x, W_1, W_2) = \text{Swish}_\beta(xW_1)W_2 $$
 
 ### Gated Linear Units (GLU) and Variants
 
-![Alt text](../images/swiglu.png)
+![Alt text](../../images/swiglu.png)
 GLU is introduced as follows:
 
 $$ \text{GLU}(x, W, V, b, c) = \sigma(xW + b) \odot (xV + c) $$

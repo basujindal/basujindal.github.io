@@ -9,7 +9,7 @@
     return;
   }
 
-  fetch(`../${section}/md/${postName}.md`)
+  fetch(`../${section}//${postName}.md`)
     .then(res => {
       if (!res.ok) throw new Error('Post not found');
       return res.text();

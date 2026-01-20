@@ -52,7 +52,7 @@ $$ w_{\text{dequant}} = \frac{w_{\text{quant}} - z}{\Delta} $$
 
 ## Smooth Quant, llm.int8, AWQ
 
-![BNB](../images/bnb.png)
+![BNB](../../images/bnb.png)
 
 The activation ($T \times d$) where each row is a token, can have outliers in a few channels across all tokens ($d_i$ embedding of all tokens) as shown in yellow in above figure. So it would be good to quantize the activations along the channels. But the GEMM operation is usually done along the channels (per token). Therefore, we quantize the activations along the columns, which means each row gets 1 scale, giving us $T$ scales. Also, the weights (d x o) are quantized along the rows, giving us $o$ scales.
 
@@ -60,13 +60,13 @@ BNB solves this by separating the activation channels with outliers and its resp
 
 Smooth Quant solves this by dividing the activation channels by a scale and multiplying the weights by the same scale. This way the ouliers in the activations are "transfered" to the weights. The scale is equal to the ${\frac{absmax(A_j)}{absmax(W_j)}}^\alpha$. $\alpha$ is the amount of scale to transfer from activations to weights usually set to 0.5. $A_j$ is the jth column of the activations and $W_j$ is the jth row of the weights.
 
-![Quant channels](../images/quant_channels.png)
+![Quant channels](../../images/quant_channels.png)
 
 The $absmax(A_j)$ can be calcluated dynamically during inference or statically by taking a sample of the activations on the training data. Smooth quant is faster than BNB since it doesn't require fp16 computation but the quality is almost the same. 
 
 Smooth Quant is good for compute bound systems (high batch size) but edge inference (low batch size) is usually memory bound. Therefore, Han lab introduced Activation aware quantization (AWQ) which uses the distribution of activations to quantize only the weights to W4A16 format. During inference, the weights are dequantized to fp16 and the inference is done in fp16.
 
-![Alt text](../images/awqVSsmooth.png)
+![Alt text](../../images/awqVSsmooth.png)
 
 
 Recommened reading:
