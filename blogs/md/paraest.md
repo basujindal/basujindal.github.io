@@ -1,6 +1,6 @@
 ---
 title: "Parameter Estimation"
-date: 2023-10-05
+date: 2024-10-05
 ---
 
 Although Probabilty & Statistics is tough to understand and wrap you head around but: **वो समझे भी क्या जो उलझा नहीं ।**

@@ -2,10 +2,10 @@
 (function() {
   // Header HTML
   const headerHTML = `
-    <a href="/" class="logo">
+    <div class="header-left">
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
-      Basu Jindal
-    </a>
+      <a href="/" class="logo">Basu Jindal</a>
+    </div>
     <nav>
       <a href="/html/blogs.html">Blogs</a>
       <a href="/html/diffchecker.html">Diff Checker</a>

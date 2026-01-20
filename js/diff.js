@@ -215,4 +215,7 @@ function debouncedDiff() {
 
 text1.addEventListener('input', debouncedDiff);
 text2.addEventListener('input', debouncedDiff);
-charDiffToggle.addEventListener('change', computeDiff);
+charDiffToggle.addEventListener('change', () => {
+    clearTimeout(timeout);
+    computeDiff();
+});

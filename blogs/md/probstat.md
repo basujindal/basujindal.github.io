@@ -1,6 +1,6 @@
 ---
 title: "Probability & Statistics for Machine Learning"
-date: 2023-10-05
+date: 2024-10-05
 ---
 
 Let us have a look at some of the important concepts in Probability and Statistics that are used in Machine Learning. The order of the topics is not important and the topics are not exhaustive.
