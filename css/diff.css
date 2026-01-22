@@ -1,0 +1,578 @@
+/* Diff Checker CSS - All Diff Checker Styles */
+
+/* Diff Checker styles */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: nowrap;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  white-space: nowrap;
+  height: 36px;
+  align-items: center;
+}
+
+.stats span {
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.added-count { color: #22c55e; }
+.removed-count { color: #ef4444; }
+.unchanged-count { color: var(--text-secondary); }
+
+[data-theme="dark"] .added-count { color: #7ee787; }
+[data-theme="dark"] .removed-count { color: #ffa198; }
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  height: 36px;
+}
+
+.toggle-container label {
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 1;
+  margin: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: 0.3s;
+  border-radius: 20px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--bg);
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.toggle input:checked + .toggle-slider {
+  background-color: var(--accent);
+}
+
+.toggle input:checked + .toggle-slider:before {
+  transform: translateX(16px);
+}
+
+/* Diff container layout - full width */
+.diff-container {
+  display: flex;
+  gap: 1rem;
+  height: calc(100vh - 280px);
+  min-height: 400px;
+  padding: 0 1rem 2rem;
+}
+
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.panel-header {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* Diff panel header with toggle button */
+.diff-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.diff-only-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.diff-only-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.diff-only-toggle.active {
+  background: var(--code-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  color: var(--text);
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: none;
+  border-radius: 0 0 8px 8px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.diff-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.diff-output {
+  flex: 1;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  overflow: auto;
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  border-radius: 0 0 8px 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overscroll-behavior: contain;
+}
+
+/* Diff line styles */
+.line {
+  padding: 2px 8px;
+  margin: 1px 0;
+  border-radius: 4px;
+}
+
+.line-added {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.line-removed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.line-modified {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--text);
+}
+
+.line-unchanged {
+  color: var(--text-secondary);
+}
+
+/* Dark mode diff colors */
+[data-theme="dark"] .line-added {
+  background: rgba(46, 160, 67, 0.25);
+  color: #7ee787;
+}
+
+[data-theme="dark"] .line-removed {
+  background: rgba(248, 81, 73, 0.25);
+  color: #ffa198;
+}
+
+[data-theme="dark"] .line-modified {
+  background: rgba(136, 132, 216, 0.2);
+  color: #c9d1d9;
+}
+
+/* Character-level diff highlighting */
+.char-added {
+  background: rgba(34, 197, 94, 0.4);
+  color: #166534;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.char-removed {
+  background: rgba(239, 68, 68, 0.4);
+  color: #991b1b;
+  border-radius: 2px;
+  padding: 0 2px;
+  text-decoration: line-through;
+}
+
+.char-unchanged {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .char-added {
+  background: rgba(46, 160, 67, 0.5);
+  color: #fff;
+}
+
+[data-theme="dark"] .char-removed {
+  background: rgba(248, 81, 73, 0.5);
+  color: #fff;
+}
+
+/* Diff toolbar right section */
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+/* Diff toolbar center section */
+.toolbar-center {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+/* Swap button */
+.swap-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swap-btn:hover {
+  background: var(--code-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Fullscreen button */
+.fullscreen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fullscreen-btn:hover {
+  background: var(--code-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Fullscreen mode */
+body.diff-fullscreen {
+  overflow: hidden;
+}
+
+body.diff-fullscreen .container {
+  display: none;
+}
+
+body.diff-fullscreen .diff-container {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  padding: 1rem;
+  z-index: 1000;
+  background: var(--bg);
+}
+
+/* Floating toolbar in fullscreen */
+.fullscreen-toolbar {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+body.diff-fullscreen .fullscreen-toolbar {
+  display: flex;
+}
+
+body.diff-fullscreen .diff-container {
+  padding-top: 5rem;
+}
+
+/* Hidden panels */
+.diff-container [data-panel].hidden {
+  display: none;
+}
+
+/* Line numbers in diff output */
+.line-number {
+  color: var(--text-secondary);
+  opacity: 0.6;
+  user-select: none;
+  font-size: 0.8em;
+}
+
+/* Textarea wrapper for inline diff overlay */
+.textarea-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.textarea-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 0 0 8px 8px;
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+
+.textarea-wrapper textarea {
+  position: relative;
+  z-index: 2;
+  background: var(--code-bg);
+}
+
+/* When inline diff is active */
+body.inline-diff-mode .textarea-overlay {
+  display: block;
+}
+
+body.inline-diff-mode .textarea-wrapper textarea {
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+}
+
+body.inline-diff-mode .textarea-wrapper textarea::placeholder {
+  color: transparent;
+}
+
+body.inline-diff-mode .textarea-wrapper textarea::selection {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+/* Hide diff panel when inline mode is active */
+body.inline-diff-mode .diff-panel[data-panel="diff"] {
+  display: none;
+}
+
+
+/* Inline diff text styling */
+.inline-text {
+  color: var(--text);
+}
+
+.inline-line-number {
+  color: var(--text-secondary);
+  opacity: 0.6;
+  user-select: none;
+  font-size: 0.85em;
+  margin-right: 0.5em;
+}
+
+/* Line numbers gutter for inline diff mode */
+.line-numbers-gutter {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3rem;
+  padding: 1rem 0.5rem 1rem 0;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-right: none;
+  border-radius: 0 0 0 8px;
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  text-align: right;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  overflow: hidden;
+  user-select: none;
+  z-index: 3;
+}
+
+.line-numbers-gutter div {
+  height: 1.6em;
+}
+
+/* Show gutter and adjust padding when inline mode + line numbers are both active */
+body.inline-diff-mode.show-line-numbers .line-numbers-gutter {
+  display: block;
+}
+
+body.inline-diff-mode.show-line-numbers .textarea-wrapper textarea,
+body.inline-diff-mode.show-line-numbers .textarea-overlay {
+  padding-left: 3.5rem;
+}
+
+.inline-line-removed {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.inline-line-added {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.inline-removed {
+  background: rgba(239, 68, 68, 0.4);
+  color: #dc2626;
+  border-radius: 2px;
+}
+
+.inline-added {
+  background: rgba(34, 197, 94, 0.4);
+  color: #16a34a;
+  border-radius: 2px;
+}
+
+.inline-placeholder {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .inline-line-removed {
+  background: rgba(248, 81, 73, 0.2);
+}
+
+[data-theme="dark"] .inline-line-added {
+  background: rgba(46, 160, 67, 0.2);
+}
+
+[data-theme="dark"] .inline-removed {
+  background: rgba(248, 81, 73, 0.5);
+  color: #ffa198;
+}
+
+[data-theme="dark"] .inline-added {
+  background: rgba(46, 160, 67, 0.5);
+  color: #7ee787;
+}
+
+/* Diff responsive */
+@media (max-width: 900px) {
+  .diff-container {
+    flex-direction: column;
+    height: auto;
+    padding: 0 1rem 2rem;
+  }
+
+  .panel, .diff-panel {
+    min-height: 250px;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-right {
+    flex-wrap: wrap;
+  }
+
+  .stats, .toggle-container {
+    justify-content: center;
+  }
+}

@@ -4,7 +4,7 @@ date: 2024-07-17
 show: false
 ---
 
-## Precision
+## Exponent & Mantissa 
 
 ![](../../images/precision.png)
 
@@ -75,7 +75,37 @@ $$ z = -\text{round}(\text{min}(w)\Delta) - 2^{b-1} $$
 The quantized weight is then dequantized as:
 
 $$ w_{\text{dequant}} = \frac{w_{\text{quant}} - z}{\Delta} $$
+<!-- 
+* FP8
+    * Weights FP8 (channel wise), Activations fp8 (Tensor wise), KV cache fp8 
+    * Uses FP8 tensor cores
+    * Works on Hopper and later 
+    * Low accuracy degradation and good performance
 
+* W4A16 AWQ weight only
+    * Weights int4 (group wise), Activations fp16, KV cache fp16
+    * Uses fp16 tensor cores
+    * Works on both Ampere and later
+    * More accuracy degradation and less performant than FP8
+* INT8 weight only quantization
+    * Weights int8 (channel wise), Activations fp16, KV cache fp16
+    * Uses fp16 tensor cores
+    * Works on both Ampere and later
+* INT4 weight only quantization
+    * Weights int4 (channel wise), Activations fp16, KV cache fp16
+    * Uses fp16 tensor cores
+    * Works on both Ampere and Hopper
+    * Need to run experiments 
+* W4A8 AWQ weight only
+    * Weights int4 (group wise), Activations fp8, KV cache fp8
+    * Uses fp8 tensor cores
+    * Works on Hopper and later
+    * Need to add support and run experiments 
+* W4A8KV4 Qserve
+    * Weights int4, Activations int8, KV cache int4
+    * Uses int8 tensor cores
+    * Works on both Ampere and Hopper (Not optimized for Hopper)
+    * Missing support for features like Paged KV cache, not worth supporting -->
 
 ## Smooth Quant, llm.int8, AWQ
 
@@ -95,8 +125,55 @@ Smooth Quant is good for compute bound systems (high batch size) but edge infere
 
 ![Alt text](../../images/awqVSsmooth.png)
 
+## FP8 (W8A8)
 
-Recommened reading:
+## NVFP4 (W4A4)
+
+NVFP4 does the GEMM with A4 x W4  --> O16. We need to quantize both weights and activations to FP4 and a good approximate range for FP4 is `(-6, 6)`.
+
+The scaling factor for quantization is `s =  m / 6` where `m = max(W)` is the max value of the weight/activation block (We use a block size of 16, which means every 16 values share a scaling factor). We store `s` using `fp8 (e4m3)` ,giving us an average bits per weight of `(4 * 16 + 8) / 16 = 4.5`. (Using FP16/FP32 for the scaling factor will make it 5 bit and 6 bit quantization ...)
+
+Storing vanilla `s` leads to a large drop in precision, therefore we scale `s = SF * m / 6` before storing it in FP8. The idea is to keep `s` close to 1, around which the precision of FP8 is the highest. To quantize the weights, we get the `outputScale = 1 / (s / SF)` and `x_4 = x * outputScale = x * SF / s`. To dequantize, we use `x = s / SF * x_4`. 
+
+In TRTLLM, the weights stored in FP4 along with `weight_scaling_factor_2 = SF` and `weight_scaling_factor = ` which is the blockwise fp8 scales. The activations we get from the previous layers are often in FP16 and hence we need to quantize them before the GEMM. Also the blockwise scaling factors `s` are calculated dynamically, i.e. we only have the `activation_scaling_factor (aka global_activation_scaling_factor)` before hand. We also compute `alpha = activation_scaling_factor * weight_scaling_factor_2`
+
+The FP4 Tensor Core computes  = `A  = W4 * A4 * weight_scaling_factor * blockwise_activation_scaling_factor`. Followed by `A_16 = A * alpha`
+
+## GPT OSS 120B example
+
+Input GEMM (A4, B4 -> O16)
+QKNorm (I16 -> O16)
+ 
+Attention (QKV8 -> FP16) (How to convert from FP16 to FP8)??
+CVT FP8 to FP4
+OProj GEMM (A4, B4 -> O16)
+RMS Norm (I16 -> O4)
+
+Dense/MoE MLP Up(I4 -> O16)
+Silu & Mul (I16 -> O4)
+Dense/MoE MLP Down(I4 -> O16)
+
+RMS Norm (I16 -> O4)
+
+
+Repeat (replace Dense by MoE MLP)
+
+
+## FP8 vs INT8
+Qualcomm [whitepaper](https://www.qualcomm.com/news/onq/2023/04/floating-point-arithmetic-for-ai-inference-hit-or-miss) shows that the hardware implementation of the FP8 format is somewhere between 50% to 180% less efficient than INT8 in terms of chip area and energy usage. This is because of the additional logic needed in the accumulation of FP formats versus integer formats. This seems like a broad range, but the actual efficiency depends on many hardware design choices that vary greatly. A similar conclusion was reached recently by Microsoft and Meta: Floating-point arithmetic is just much less efficient than integer arithmetic.
+
+This means that FP8 will have to be significantly more accurate than INT8 to be worthwhile from a hardware-efficiency perspective.  
+
+FP8 is only supported in H100 GPUs but storing approximations in fp8 can be accurate than vanilla int8 quantization. The recent QLoRA paper explores different data types, 4-bit Float and 4-bit NormalFloat which again are only used for storage and not for computation.
+
+## Quantizing bias
+
+Biases are not converted because to preserve the accuracy of a typical addmm operation, they must be converted with a scale that is equal to the product of the input and weight scales, which leads to a ridiculously small scale, and conversely requires a very high bitwidth to avoid clipping. 
+
+
+## Recommended Reading & References
+
+### Recommened reading
 
 - https://huggingface.co/blog/hf-bitsandbytes-integration
 - Intro to weight quantization:https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fintroduction-to-weight-quantization-2494701b9c0c
@@ -104,7 +181,7 @@ Recommened reading:
 - GPT Fast (Read for good quantization implementation) : https://github.com/pytorch-labs/gpt-fast
 - Simple notebook: https://colab.research.google.com/drive/1oDfcLRz2AIgsclkXJHj-5wMvbylr4Nxz#scrollTo=iCsoFvwLrgdu
 
-## Other quantization methods
+### Other quantization methods
 
 - k-bit scaling laws, basically says that 4bit is best, even better than 8bit: https://arxiv.org/pdf/2212.09720.pdf#page=6.11
     - https://www.youtube.com/watch?v=jyOqtw4ry2w
@@ -131,30 +208,13 @@ https://www.dropbox.com/scl/fi/dtnp6h6y1mnp7g036axu6/AWQ-slide.pdf?rlkey=ffgh50h
     - https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fwhich-quantization-method-is-right-for-you-gptq-vs-gguf-vs-awq-c4cd9d77d5be
 
 
-## Other general Optimizations
-
-- https://pytorch.org/blog/accelerating-generative-ai-3/
-- https://pytorch.org/blog/accelerating-generative-ai-2/
-- Compile with max auto-tune.
-- Compute QKV in one go.
-
-## Quantize Diffusion
-- https://github.com/Xiuyu-Li/q-diffusion/tree/master
- - https://www.youtube.com/watch?v=virARwF_pt4&t=1669s
-- SD3 paper: https://arxiv.org/pdf/2403.03206.pdf
-
-
-## Libraries
-
-- https://github.com/huggingface/quanto
-
-## CUDA references
+### CUDA references
 
 - https://github.com/IST-DASLab/marlin
 - https://github.com/TimDettmers/bitsandbytes
 - https://github.com/turboderp/exllama/tree/master/exllama_ext/cuda_func
 
-## Good discussions
+### Good discussions
 
 - https://github.com/huggingface/quanto/issues/65
 - 4/8 bit in diffuser: https://github.com/huggingface/diffusers/issues/6500
@@ -163,23 +223,5 @@ https://www.dropbox.com/scl/fi/dtnp6h6y1mnp7g036axu6/AWQ-slide.pdf?rlkey=ffgh50h
 - QX4: https://github.com/ggerganov/llama.cpp/issues/1240
 - Quantized linear layer: https://discuss.pytorch.org/t/understanding-quantized-linear-layer/154000
 - GPTQ & bnb benchmarking by TheBloke: https://github.com/AutoGPTQ/AutoGPTQ/issues/49#issuecomment-1538065985
-
-## Misc
-
-### FP8 vs INT8
-Qualcomm [whitepaper](https://www.qualcomm.com/news/onq/2023/04/floating-point-arithmetic-for-ai-inference-hit-or-miss) shows that the hardware implementation of the FP8 format is somewhere between 50% to 180% less efficient than INT8 in terms of chip area and energy usage. This is because of the additional logic needed in the accumulation of FP formats versus integer formats. This seems like a broad range, but the actual efficiency depends on many hardware design choices that vary greatly. A similar conclusion was reached recently by Microsoft and Meta: Floating-point arithmetic is just much less efficient than integer arithmetic.
-
-This means that FP8 will have to be significantly more accurate than INT8 to be worthwhile from a hardware-efficiency perspective.  
-
-FP8 is only supported in H100 GPUs but storing approximations in fp8 can be accurate than vanilla int8 quantization. The recent QLoRA paper explores different data types, 4-bit Float and 4-bit NormalFloat which again are only used for storage and not for computation.
-
-### Quantizing bias
-
-Biases are not converted because to preserve the accuracy of a typical addmm operation, they must be converted with a scale that is equal to the product of the input and weight scales, which leads to a ridiculously small scale, and conversely requires a very high bitwidth to avoid clipping. 
-
-## Quantization layer reference
-
-https://pytorch.org/docs/stable/amp.html#torch.autocast
-
 
 

@@ -1,6 +1,7 @@
 ---
 title: "Large Language Models"
 date: 2024-04-03
+show: false
 ---
 
 ## Decoding Strategies
@@ -65,8 +66,8 @@ Top k sampling is a decoding strategy used in language models to generate text. 
 In top p sampling we select the words with the highest probability until the cumulative probability reaches p. The probability of the remaining words is set to zero. The value of p is usually set to 0.9 or 0.95. This strategy is used to prevent the model from generating gibberish text by sampling from the words with very low probability.
 
 
-<!-- ## Memory bound vs Latency bound layers -->
-<!-- Let's take the example of GPT OSS 120B model  -->
+## Memory bound vs Latency bound layers -->
+Let's take the example of GPT OSS 120B model 
 
 <!-- Let's take the example of LLAMA 7B model with $n_{layers} = 32$ , $d_{embed} = 4096$ and $N_{vocab} = 50000$. We can approximate the total number of parameters in the model as follows:
 
@@ -158,42 +159,28 @@ $ R_i^T R_j = R_{j-i} $ is only dependent on the relative position of the words 
 
 ### Batch Norm
 
-- In Feed forward layer, output of a neuron is taken across the batch and normalized.
-- For Image, 1 channel i.e. HxW output is taken and normed across batch.
-- A running average is kept for the mean and variance of the output of the neuron or the image across the batch.
+In Feed forward layer, output of a neuron is taken across the batch and normalized. For images, 1 channel i.e. HxW output is taken and normed across batch. A running average is kept for the mean and variance of the output of the neuron or the image across the batch.
 
 #### Instance Norm
 
-- Similar to BatchNorm (normalization done over a single channel) but only over only 1 image.
-- Used to keep the sample features independent improving image variability.
-- Not possible in Feed Forward since if no batch, only neuron is there.
-- No need to keep running average
+Similar to BatchNorm (normalization done over a single channel) but only over only 1 image. Used to keep the sample features independent improving image variability. Not possible in Feed Forward since if no batch, only neuron is there. No need to keep running average.
 
 ![image](../../images/instanceNorm.png)
 
 ### Layer Norm
 
-- Normed across the layer for 1 data sample, i.e. output of the Feed Forward network.
-- For Image, normalize across all the channels of one data sample, same as instance norm across all channels.
-- In transformer, if we have a tensor of B, N, D where B is the batch size, N is the number of tokens and D is the dimension of each token, then the normalization is done across the D dimension, i.e. the tokens don't interact with each other.
-- Unlike Instance Norm and batch norm, it does element wise affine operation on the normalized output. This means that all the D values in a token have different learnable mean and variance
-- No need to keep running average
+Normed across the layer for 1 data sample, i.e. output of the Feed Forward network. For Image, normalize across all the channels of one data sample, same as instance norm across all channels. In transformer, if we have a tensor of B, N, D where B is the batch size, N is the number of tokens and D is the dimension of each token, then the normalization is done across the D dimension, i.e. the tokens don't interact with each other. Unlike Instance Norm and batch norm, it does element wise affine operation on the normalized output. This means that all the D values in a token have different learnable mean and variance. No need to keep running average.
 
 
 ### Group Norm
 
-- Somewhere in between LN and IN, it assumes that some channels will have similar features which should be normalzed together instead of only 1 channel or all the channels. The groups to be normalized together are just the adjacent ones like of 32 channels, groups of 8 can be formed.
-- Good for small batch sizes like $\in$ (1,8)
-
-The H, W are flattend to show the 4D tensor in a 3D tensor
+Somewhere in between LN and IN, it assumes that some channels will have similar features which should be normalzed together instead of only 1 channel or all the channels. The groups to be normalized together are just the adjacent ones like of 32 channels, groups of 8 can be formed. Good for small batch sizes like $\in$ (1,8) The H, W are flattend to show the 4D tensor in a 3D tensor
 
 ![image](../../images/norm.png)
 
 ### RMSNorm
 
-- Similar to LayerNorm but the input is only divided by the RMS of the input and not the mean and variance.
-
-If the output of a Feed Forward layer is is $A = [a_1, a_2, \dots, a_n]$, then the output of the layer norm is:
+Similar to LayerNorm but the input is only divided by the RMS of the input and not the mean and variance.If the output of a Feed Forward layer is is $A = [a_1, a_2, \dots, a_n]$, then the output of the layer norm is:
 
 $$A = \frac{A - \mu}{\sigma}$$
 

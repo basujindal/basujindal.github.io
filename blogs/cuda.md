@@ -243,7 +243,7 @@ The producer can feed data to Tensor cores of Consumers. While one consumer is u
 
 Function from Coordinate to Index: `idx = inner_product(coord, stride)`
 
----
+---model_evaluation/quality/env_smodel_evaluation/quality/env_setup.shetup.sh
 
 | Logical Structure | Transformation Parameters | Physical Memory Layout | Index Calculation |
 | :--- | :--- | :--- | :--- |
