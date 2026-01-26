@@ -253,6 +253,20 @@ Function from Coordinate to Index: `idx = inner_product(coord, stride)`
 | 2D Grid<br>`[[a, b, c],`<br>` [d, e, f]]` | Padded Col-major<br>Shape: `(2,3)`<br>Stride: `(1,4)` | `[a, d, _, _, b, e, _, _, c, f, _, _]`<br>*(Includes gaps/padding)* | `idx = i*1 + j*4` |
 | 3D Tensor<br>Layer 0: `[[a, b], [c, d]]`<br>Layer 1: `[[e, f], [g, h]]` | Tensor layout<br>Shape: `(2,2,2)`<br>Stride: `(4,1,2)` | `[a, b, e, f, c, d, g, h]` | `idx = inner_product(coord, stride)` |
 
+### Examples
+
+Compile on DGX B200
+```
+nvcc -arch=sm_100a \
+-I include \
+-I tools/util/include \
+examples/cute/tutorial/blackwell/01_mma_sm100.cu \
+-o 01_mma_sm100
+
+./01_mma_sm100
+```
+
+
 ## Blackwell Architecture 
 
 https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability-10-x

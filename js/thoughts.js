@@ -731,6 +731,13 @@
 
     if (!text) return;
 
+    // Client-side word limit (100 words max)
+    const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+    if (wordCount > 100) {
+      showToast(`Comment too long (${wordCount} words). Maximum is 100 words.`, 'error');
+      return;
+    }
+
     const submitBtn = document.querySelector(`.comment-submit[data-post-id="${postId}"]`);
     submitBtn.disabled = true;
     submitBtn.textContent = 'Posting...';
