@@ -159,18 +159,19 @@
 
 .compose-submit {
   padding: 0.5rem 1.25rem;
-  background: var(--accent);
-  color: white;
-  border: none;
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--accent);
   border-radius: 20px;
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, color 0.2s;
 }
 
 .compose-submit:hover {
-  background: var(--accent-hover);
+  background: var(--code-bg);
+  color: var(--text);
 }
 
 .compose-submit:active {
@@ -178,7 +179,7 @@
 }
 
 .compose-submit:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -254,27 +255,25 @@
 
 /* Post body container (content) */
 .post-body {
-  padding: 0.75rem 0;
+  padding-bottom: 0.5rem;
 }
 
-/* Add line between text and images when images exist */
-.post-body:has(+ .post-images-container) {
-  border-bottom: 1px solid var(--border);
+.post-body:empty {
+  display: none;
 }
 
 /* Post images container */
 .post-images-container {
-  padding: 0.75rem 0;
+  padding-bottom: 0.75rem;
 }
 
 .post-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding-bottom: 0.75rem;
   margin-bottom: 0.75rem;
-  background: var(--code-bg);
-  padding: 0.75rem;
-  border-radius: 8px;
+  border-bottom: 1px solid var(--border);
 }
 
 .post-avatar {

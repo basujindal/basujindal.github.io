@@ -110,9 +110,10 @@
     if (composeAvatar && currentUser) {
       if (currentUser.avatar) {
         composeAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar">`;
-      } else {
-        composeAvatar.textContent = getInitials(currentUser.name || 'User');
+      } else if (currentUser.name) {
+        composeAvatar.textContent = getInitials(currentUser.name);
       }
+      // If no avatar or name, keep the default HTML content (BJ)
     }
   }
 
