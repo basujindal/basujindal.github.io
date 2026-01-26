@@ -9,18 +9,21 @@
     comment: `${API_BASE}/comment`,
     githubLogin: `${API_BASE}/auth/github`,
     deletePost: (id) => `${API_BASE}/post/${id}`,
-    deleteComment: (id) => `${API_BASE}/comment/${id}`
+    deleteComment: (id) => `${API_BASE}/comment/${id}`,
+    editPost: (id) => `${API_BASE}/post/${id}`
   };
 
   // State
   let posts = [];
   let authToken = null;  // JWT token from GitHub OAuth
   let isOwner = false;   // Whether current user is the site owner
+  let currentUser = null; // Current user info (name, avatar)
   let selectedImages = [];
 
   // DOM Elements
   const feed = document.getElementById('thoughts-feed');
   const composeBox = document.getElementById('compose-box');
+  const composeAvatar = document.getElementById('compose-avatar');
   const composeTextarea = document.getElementById('compose-text');
   const composeSubmit = document.getElementById('compose-submit');
   const imageInput = document.getElementById('image-input');
@@ -29,6 +32,13 @@
   const lightboxImg = document.getElementById('lightbox-img');
   const loginBtn = document.getElementById('github-login-btn');
   const logoutBtn = document.getElementById('logout-btn');
+  const toastContainer = document.getElementById('toast-container');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalTitle = document.getElementById('modal-title');
+  const modalMessage = document.getElementById('modal-message');
+  const modalContent = document.getElementById('modal-content');
+  const modalCancel = document.getElementById('modal-cancel');
+  const modalConfirm = document.getElementById('modal-confirm');
 
   // Initialize
   document.addEventListener('DOMContentLoaded', init);
@@ -45,14 +55,19 @@
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const ownerParam = params.get('is_owner');
+    const userName = params.get('user_name');
+    const userAvatar = params.get('user_avatar');
     const error = params.get('error');
 
     if (token) {
       // Store token and owner status, then clean URL
       localStorage.setItem('thoughts_token', token);
       localStorage.setItem('thoughts_is_owner', ownerParam === 'true' ? 'true' : 'false');
+      if (userName) localStorage.setItem('thoughts_user_name', userName);
+      if (userAvatar) localStorage.setItem('thoughts_user_avatar', userAvatar);
       authToken = token;
       isOwner = ownerParam === 'true';
+      currentUser = { name: userName, avatar: userAvatar };
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (error) {
       // Show error and clean URL
@@ -63,12 +78,16 @@
         'no_code': 'Authentication failed. Please try again.',
         'no_access_token': 'Authentication failed. Please try again.'
       };
-      alert(errorMessages[error] || 'Authentication failed.');
+      showToast(errorMessages[error] || 'Authentication failed.', 'error');
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
       // Check for existing token
       authToken = localStorage.getItem('thoughts_token');
       isOwner = localStorage.getItem('thoughts_is_owner') === 'true';
+      currentUser = {
+        name: localStorage.getItem('thoughts_user_name'),
+        avatar: localStorage.getItem('thoughts_user_avatar')
+      };
     }
   }
 
@@ -86,6 +105,15 @@
     if (logoutBtn) {
       logoutBtn.classList.toggle('hidden', !isAuthenticated);
     }
+
+    // Update compose avatar
+    if (composeAvatar && currentUser) {
+      if (currentUser.avatar) {
+        composeAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar">`;
+      } else {
+        composeAvatar.textContent = getInitials(currentUser.name || 'User');
+      }
+    }
   }
 
   // Login with GitHub
@@ -97,9 +125,13 @@
   function logout() {
     localStorage.removeItem('thoughts_token');
     localStorage.removeItem('thoughts_is_owner');
+    localStorage.removeItem('thoughts_user_name');
+    localStorage.removeItem('thoughts_user_avatar');
     authToken = null;
     isOwner = false;
+    currentUser = null;
     updateAuthUI();
+    loadPosts(); // Reload to show login required
   }
 
   // Setup event listeners
@@ -121,7 +153,10 @@
       composeTextarea.addEventListener('input', updateSubmitButton);
       composeTextarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-          submitPost();
+          e.preventDefault();
+          if (!composeSubmit.disabled) {
+            submitPost();
+          }
         }
       });
     }
@@ -140,10 +175,147 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-          closeLightbox();
+        if (e.key === 'Escape') {
+          if (lightbox.classList.contains('active')) {
+            closeLightbox();
+          }
+          if (modalOverlay.classList.contains('active')) {
+            closeModal();
+          }
         }
       });
+    }
+
+    // Modal
+    if (modalCancel) {
+      modalCancel.addEventListener('click', closeModal);
+    }
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+    }
+  }
+
+  // ===== TOAST NOTIFICATIONS =====
+  function showToast(message, type = 'info', duration = 4000) {
+    const icons = {
+      success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+      <div class="toast-icon">${icons[type]}</div>
+      <span class="toast-message">${escapeHtml(message)}</span>
+      <button class="toast-close">&times;</button>
+    `;
+
+    toast.querySelector('.toast-close').addEventListener('click', () => removeToast(toast));
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => removeToast(toast), duration);
+  }
+
+  function removeToast(toast) {
+    toast.style.animation = 'slideOut 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }
+
+  // ===== MODAL DIALOGS =====
+  let modalResolve = null;
+
+  function showModal(title, message, options = {}) {
+    return new Promise((resolve) => {
+      modalResolve = resolve;
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      modalContent.innerHTML = options.content || '';
+
+      modalConfirm.textContent = options.confirmText || 'Confirm';
+      modalConfirm.className = `modal-btn ${options.confirmClass || 'confirm'}`;
+      modalCancel.textContent = options.cancelText || 'Cancel';
+
+      modalConfirm.onclick = () => {
+        modalResolve = null; // Prevent closeModal from resolving to false
+        modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        resolve(true);
+      };
+
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    if (modalResolve) {
+      modalResolve(false);
+      modalResolve = null;
+    }
+  }
+
+  // ===== LOADING STATES =====
+  function showLoading() {
+    if (feed) {
+      feed.innerHTML = `
+        <div class="skeleton-card">
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex: 1;">
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-line" style="width: 20%; height: 10px;"></div>
+            </div>
+          </div>
+          <div class="skeleton skeleton-line long"></div>
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-image"></div>
+        </div>
+        <div class="skeleton-card">
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex: 1;">
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-line" style="width: 20%; height: 10px;"></div>
+            </div>
+          </div>
+          <div class="skeleton skeleton-line long"></div>
+          <div class="skeleton skeleton-line short"></div>
+        </div>
+      `;
+    }
+  }
+
+  // Show login required message with preview
+  function showLoginRequired() {
+    if (feed) {
+      feed.innerHTML = `
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6V7a4 4 0 10-8 0v4h8z"/>
+            <rect x="5" y="11" width="14" height="10" rx="2"/>
+          </svg>
+          <h3>Login to View Thoughts</h3>
+          <p>Sign in with GitHub to see posts, like, and comment.</p>
+        </div>
+        <div class="login-preview">
+          <div class="login-preview-title">Preview of what you'll see</div>
+          <div class="preview-post">
+            <div class="preview-avatar"></div>
+            <div class="preview-content">
+              <div class="preview-line"></div>
+              <div class="preview-line"></div>
+              <div class="preview-line"></div>
+            </div>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -182,22 +354,6 @@
     }
   }
 
-  // Show login required message
-  function showLoginRequired() {
-    if (feed) {
-      feed.innerHTML = `
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6V7a4 4 0 10-8 0v4h8z"/>
-            <rect x="5" y="11" width="14" height="10" rx="2"/>
-          </svg>
-          <h3>Login Required</h3>
-          <p>Please login with GitHub to view thoughts.</p>
-        </div>
-      `;
-    }
-  }
-
   // Render posts
   function renderPosts() {
     if (!feed) return;
@@ -221,12 +377,27 @@
 
   // Render single post
   function renderPost(post) {
-    const timeAgo = formatTimeAgo(new Date(post.created_at));
+    const postDate = new Date(post.created_at);
+    const timeAgo = formatTimeAgo(postDate);
+    const fullDate = postDate.toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
     const images = post.images || [];
     const comments = post.comments || [];
     const likeCount = post.likes || 0;
     const commentCount = comments.length;
     const isLiked = post.user_liked || false;
+    const authorAvatar = post.author_avatar;
+
+    // Render avatar
+    const avatarContent = authorAvatar
+      ? `<img src="${escapeHtml(authorAvatar)}" alt="${escapeHtml(post.author)}">`
+      : getInitials(post.author);
 
     let imagesHTML = '';
     if (images.length > 0) {
@@ -243,25 +414,38 @@
       `;
     }
 
-    const commentsHTML = comments.map(comment => `
-      <div class="comment" data-comment-id="${comment.id}">
-        <div class="comment-avatar">${getInitials(comment.author)}</div>
-        <div class="comment-content">
-          <span class="comment-author">${escapeHtml(comment.author)}</span>
-          <p class="comment-text">${escapeHtml(comment.text)}</p>
-          <span class="comment-time">${formatTimeAgo(new Date(comment.created_at))}</span>
-        </div>
-        ${isOwner ? `
-          <button class="comment-delete-btn" data-comment-id="${comment.id}" data-post-id="${post.id}" title="Delete comment">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-            </svg>
-          </button>
-        ` : ''}
-      </div>
-    `).join('');
+    const commentsHTML = comments.map(comment => {
+      const commentAvatarContent = comment.author_avatar
+        ? `<img src="${escapeHtml(comment.author_avatar)}" alt="${escapeHtml(comment.author)}">`
+        : getInitials(comment.author);
 
-    const deleteButtonHTML = isOwner ? `
+      return `
+        <div class="comment" data-comment-id="${comment.id}">
+          <div class="comment-avatar">${commentAvatarContent}</div>
+          <div class="comment-content">
+            <span class="comment-author">${escapeHtml(comment.author)}</span>
+            <p class="comment-text">${escapeHtml(comment.text)}</p>
+            <span class="comment-time">${formatTimeAgo(new Date(comment.created_at))}</span>
+          </div>
+          ${isOwner ? `
+            <button class="comment-delete-btn" data-comment-id="${comment.id}" data-post-id="${post.id}" title="Delete comment">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    // Owner action buttons (edit and delete)
+    const ownerButtonsHTML = isOwner ? `
+      <button class="post-edit-btn" data-post-id="${post.id}" title="Edit post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
       <button class="post-delete-btn" data-post-id="${post.id}" title="Delete post">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -269,18 +453,25 @@
       </button>
     ` : '';
 
+    // Process content with markdown and links
+    const processedContent = processContent(post.text);
+
     return `
       <article class="post-card fade-in" data-post-id="${post.id}">
         <div class="post-header">
-          <div class="post-avatar">${getInitials(post.author)}</div>
+          <div class="post-avatar">${avatarContent}</div>
           <div class="post-meta">
             <div class="post-author">${escapeHtml(post.author)}</div>
-            <div class="post-time">${timeAgo}</div>
+            <div class="post-time" data-tooltip="${fullDate}">${timeAgo}</div>
           </div>
-          ${deleteButtonHTML}
+          <div style="margin-left: auto; display: flex; gap: 0.25rem;">
+            ${ownerButtonsHTML}
+          </div>
         </div>
-        <div class="post-content">${escapeHtml(post.text)}</div>
-        ${imagesHTML}
+        <div class="post-body">
+          <div class="post-content">${processedContent}</div>
+        </div>
+        ${imagesHTML ? `<div class="post-images-container">${imagesHTML}</div>` : ''}
         <div class="post-actions">
           <button class="post-action like-btn ${isLiked ? 'liked' : ''}" data-post-id="${post.id}">
             <svg viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
@@ -294,16 +485,56 @@
             </svg>
             <span class="post-action-count">${commentCount > 0 ? commentCount : ''}</span>
           </button>
+          <button class="post-action share-btn" data-post-id="${post.id}" title="Share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
         </div>
         <div class="post-comments hidden" data-post-id="${post.id}">
           ${commentsHTML}
           <div class="comment-input-container">
+            <div class="comment-input-avatar">${currentUser && currentUser.avatar ? `<img src="${escapeHtml(currentUser.avatar)}" alt="Your avatar">` : getInitials(currentUser?.name || 'You')}</div>
             <input type="text" class="comment-input" placeholder="Write a comment..." data-post-id="${post.id}">
             <button class="comment-submit" data-post-id="${post.id}">Post</button>
           </div>
         </div>
       </article>
     `;
+  }
+
+  // ===== CONTENT PROCESSING (Markdown, Links, Hashtags, Mentions) =====
+  function processContent(text) {
+    if (!text) return '';
+
+    let processed = escapeHtml(text);
+
+    // Bold: **text** or __text__
+    processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    processed = processed.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+    // Italic: *text* or _text_
+    processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    processed = processed.replace(/(?<![a-zA-Z0-9])_(.*?)_(?![a-zA-Z0-9])/g, '<em>$1</em>');
+
+    // Inline code: `code`
+    processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // URLs - convert to links
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
+    processed = processed.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // Hashtags: #tag
+    processed = processed.replace(/#(\w+)/g, '<span class="hashtag">#$1</span>');
+
+    // Mentions: @username
+    processed = processed.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+
+    return processed;
   }
 
   // Attach event listeners to posts
@@ -318,9 +549,19 @@
       btn.addEventListener('click', () => toggleComments(btn.dataset.postId));
     });
 
+    // Share buttons
+    document.querySelectorAll('.share-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleShare(btn.dataset.postId));
+    });
+
     // Comment submit
     document.querySelectorAll('.comment-submit').forEach(btn => {
       btn.addEventListener('click', () => submitComment(btn.dataset.postId));
+    });
+
+    // Post edit buttons (owner only)
+    document.querySelectorAll('.post-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleEditPost(btn.dataset.postId));
     });
 
     // Post delete buttons (owner only)
@@ -336,11 +577,82 @@
     // Comment input enter key
     document.querySelectorAll('.comment-input').forEach(input => {
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
           submitComment(input.dataset.postId);
         }
       });
     });
+  }
+
+  // ===== SHARE FUNCTIONALITY =====
+  async function handleShare(postId) {
+    const url = `${window.location.origin}${window.location.pathname}#post-${postId}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copied to clipboard!', 'success');
+    } catch (err) {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('Link copied to clipboard!', 'success');
+    }
+  }
+
+  // ===== EDIT POST =====
+  async function handleEditPost(postId) {
+    const post = posts.find(p => p.id == postId);
+    if (!post) return;
+
+    modalContent.innerHTML = `<textarea class="modal-textarea" id="edit-post-text">${escapeHtml(post.text)}</textarea>`;
+
+    const confirmed = await showModal('Edit Post', '', {
+      content: `<textarea class="modal-textarea" id="edit-post-text">${escapeHtml(post.text)}</textarea>`,
+      confirmText: 'Save',
+      confirmClass: 'primary'
+    });
+
+    if (!confirmed) return;
+
+    const newText = document.getElementById('edit-post-text').value.trim();
+    if (!newText || newText === post.text) return;
+
+    try {
+      const response = await fetch(API.editPost(postId), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ text: newText })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to edit post');
+      }
+
+      // Update local state
+      post.text = newText;
+
+      // Update UI
+      const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+      if (postCard) {
+        const contentEl = postCard.querySelector('.post-content');
+        if (contentEl) {
+          contentEl.innerHTML = processContent(newText);
+        }
+      }
+
+      showToast('Post updated successfully!', 'success');
+    } catch (error) {
+      console.error('Error editing post:', error);
+      showToast('Failed to edit post. Please try again.', 'error');
+    }
   }
 
   // Handle like
@@ -434,6 +746,10 @@
       const commentsSection = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
       const inputContainer = commentsSection.querySelector('.comment-input-container');
 
+      const commentAvatarContent = newComment.author_avatar
+        ? `<img src="${escapeHtml(newComment.author_avatar)}" alt="${escapeHtml(newComment.author)}">`
+        : getInitials(newComment.author);
+
       const deleteBtn = isOwner ? `
         <button class="comment-delete-btn" data-comment-id="${newComment.id}" data-post-id="${postId}" title="Delete comment">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -444,7 +760,7 @@
 
       const commentHTML = `
         <div class="comment" data-comment-id="${newComment.id}">
-          <div class="comment-avatar">${getInitials(newComment.author)}</div>
+          <div class="comment-avatar">${commentAvatarContent}</div>
           <div class="comment-content">
             <span class="comment-author">${escapeHtml(newComment.author)}</span>
             <p class="comment-text">${escapeHtml(newComment.text)}</p>
@@ -471,9 +787,11 @@
       const currentCount = parseInt(countSpan.textContent) || 0;
       countSpan.textContent = currentCount + 1;
 
+      showToast('Comment posted!', 'success');
+
     } catch (error) {
       console.error('Error posting comment:', error);
-      alert('Failed to post comment. Please try again.');
+      showToast('Failed to post comment. Please try again.', 'error');
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Post';
@@ -482,9 +800,13 @@
 
   // Delete a post (owner only)
   async function handleDeletePost(postId) {
-    if (!confirm('Are you sure you want to delete this post?')) {
-      return;
-    }
+    const confirmed = await showModal(
+      'Delete Post',
+      'Are you sure you want to delete this post? This action cannot be undone.',
+      { confirmText: 'Delete', confirmClass: 'confirm' }
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(API.deletePost(postId), {
@@ -495,7 +817,7 @@
       });
 
       if (response.status === 401 || response.status === 403) {
-        alert('You do not have permission to delete this post.');
+        showToast('You do not have permission to delete this post.', 'error');
         return;
       }
 
@@ -517,17 +839,23 @@
         renderPosts();
       }
 
+      showToast('Post deleted successfully.', 'success');
+
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('Failed to delete post. Please try again.');
+      showToast('Failed to delete post. Please try again.', 'error');
     }
   }
 
   // Delete a comment (owner only)
   async function handleDeleteComment(commentId, postId) {
-    if (!confirm('Are you sure you want to delete this comment?')) {
-      return;
-    }
+    const confirmed = await showModal(
+      'Delete Comment',
+      'Are you sure you want to delete this comment?',
+      { confirmText: 'Delete', confirmClass: 'confirm' }
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(API.deleteComment(commentId), {
@@ -538,7 +866,7 @@
       });
 
       if (response.status === 401 || response.status === 403) {
-        alert('You do not have permission to delete this comment.');
+        showToast('You do not have permission to delete this comment.', 'error');
         return;
       }
 
@@ -557,9 +885,11 @@
       const currentCount = parseInt(countSpan.textContent) || 0;
       countSpan.textContent = currentCount > 1 ? currentCount - 1 : '';
 
+      showToast('Comment deleted.', 'success');
+
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert('Failed to delete comment. Please try again.');
+      showToast('Failed to delete comment. Please try again.', 'error');
     }
   }
 
@@ -575,7 +905,10 @@
 
     try {
       const formData = new FormData();
-      formData.append('text', text);
+      // Only append text if it has content (not just whitespace)
+      if (text) {
+        formData.append('text', text);
+      }
 
       selectedImages.forEach((file, index) => {
         formData.append(`image_${index}`, file);
@@ -591,7 +924,7 @@
 
       if (response.status === 401) {
         // Token expired or invalid
-        alert('Session expired. Please login again.');
+        showToast('Session expired. Please login again.', 'error');
         logout();
         return;
       }
@@ -612,9 +945,17 @@
       imagePreviewContainer.innerHTML = '';
       updateSubmitButton();
 
+      // Success animation
+      composeSubmit.classList.add('success');
+      setTimeout(() => {
+        composeSubmit.classList.remove('success');
+      }, 600);
+
+      showToast('Posted successfully!', 'success');
+
     } catch (error) {
       console.error('Error submitting post:', error);
-      alert('Failed to post. Please try again.');
+      showToast('Failed to post. Please try again.', 'error');
     } finally {
       composeSubmit.disabled = false;
       composeSubmit.textContent = 'Post';
@@ -624,16 +965,25 @@
   // Handle image selection
   function handleImageSelect(e) {
     const files = Array.from(e.target.files);
+    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
     // Limit to 4 images
     const remaining = 4 - selectedImages.length;
     const newFiles = files.slice(0, remaining);
 
     newFiles.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        selectedImages.push(file);
-        addImagePreview(file);
+      if (!file.type.startsWith('image/')) {
+        return;
       }
+
+      if (file.size > MAX_FILE_SIZE) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        showToast(`Image "${file.name}" is too large (${sizeMB}MB). Maximum size is 20MB.`, 'error');
+        return;
+      }
+
+      selectedImages.push(file);
+      addImagePreview(file);
     });
 
     updateSubmitButton();
@@ -687,17 +1037,6 @@
     if (lightbox) {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
-    }
-  }
-
-  // Show loading
-  function showLoading() {
-    if (feed) {
-      feed.innerHTML = `
-        <div class="loading-spinner">
-          <div class="spinner"></div>
-        </div>
-      `;
     }
   }
 

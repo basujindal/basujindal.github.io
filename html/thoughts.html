@@ -33,7 +33,7 @@
       <!-- Compose box (hidden until authenticated) -->
       <div id="compose-box" class="compose-box hidden fade-in fade-in-delay-2">
         <div class="compose-header">
-          <div class="compose-avatar">BJ</div>
+          <div id="compose-avatar" class="compose-avatar">BJ</div>
           <div class="compose-input">
             <textarea id="compose-text" placeholder="What's on your mind?"></textarea>
             <div id="image-preview-container" class="image-preview-container"></div>
@@ -50,7 +50,10 @@
               </svg>
             </label>
           </div>
-          <button id="compose-submit" class="compose-submit" disabled>Post</button>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="compose-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to post</span>
+            <button id="compose-submit" class="compose-submit" disabled>Post</button>
+          </div>
         </div>
       </div>
 
@@ -69,6 +72,22 @@
   <div id="image-lightbox" class="image-lightbox">
     <button class="image-lightbox-close">&times;</button>
     <img id="lightbox-img" src="" alt="Full size image">
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Modal Overlay -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+      <h3 id="modal-title" class="modal-title"></h3>
+      <p id="modal-message" class="modal-message"></p>
+      <div id="modal-content"></div>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="modal-btn cancel">Cancel</button>
+        <button id="modal-confirm" class="modal-btn confirm">Confirm</button>
+      </div>
+    </div>
   </div>
 
   <script src="../js/components.js"></script>
