@@ -21,7 +21,7 @@ The likelihood function measures the plausibility of a set of parameter values g
 
 Unlike probability, which treats the parameters as fixed and the data as variable, the likelihood function treats the data as fixed and the parameters as variable
 
-![image](../../images/2023-02-19-15-52-56.png)
+<img src="../../images/2023-02-19-15-52-56.png" alt="Likelihood function visualization showing probability density for different parameter values" style="max-width: 500px; display: block; margin: 0 auto;">
 
 Here $d$ is the data and the parameters are $\mu$ and $\sigma$
 

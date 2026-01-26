@@ -251,6 +251,6 @@ $$ t{\tau_{t-1}} = \frac{1}{\tau}1 + \underbrace{t_\text{direction pointing to $
 ## References & Recommended reading
 
 - [How to Train Your Energy-Based Models](https://arxiv.org/pdf/2101.03288.pdf)
-- https://www.youtube.com/watch?v=8TcNXi3A5DI
-- https://lilianweng.github.io/posts/2021-07-11-diffusion-models/
-- https://huggingface.co/blog/annotated-diffusion
+- [Video on Energy Based Models](https://www.youtube.com/watch?v=8TcNXi3A5DI)
+- [What are Diffusion Models by Lilian Weng](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
+- [Annotated Diffusion by Hugging Face](https://huggingface.co/blog/annotated-diffusion)

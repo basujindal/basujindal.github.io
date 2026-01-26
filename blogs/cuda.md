@@ -6,7 +6,7 @@ show: false
 
 ## Threads, Warps, Thread Blocks and Grid
 
-![Alt text](../../images/SM.png)
+<img src="../../images/SM.png" alt="CUDA Streaming Multiprocessor architecture showing threads, warps, and thread blocks" style="max-width: 600px; display: block; margin: 0 auto;">
 
 A group of threads executed physically in parallel (SIMD). Every consecutive 32 threads in a threadblock is assigned into a warp eg: `Kernel0 <<< 5, 40 >>>` kernel0: total 200 threads (5*40) , 10 warps (not 7 warps) 40 threads: 2 warps 0-31 -> warp0, 32-39 -> warp1
 
@@ -36,7 +36,7 @@ threadIdx.x = 0~3 (4 threads/threadblock)
 
 ## Memory types
 
-![Alt text](../../images/cuda_memory.png)
+<img src="../../images/cuda_memory.png" alt="CUDA memory hierarchy showing global, shared, and local memory" style="max-width: 550px; display: block; margin: 0 auto;">
 
 ### GMEM
 
@@ -135,7 +135,7 @@ Paged memory is memory that can be swapped out to disk by the operating system, 
 
 A pinned memory is a locked memory that is pinned at a particular page frame location. This means that the pinned page can neither be swapped out of main memory nor be moved within the physical RAM and hence it is guaranteed that the page fault will never happen. This is an ideal requirement for hard realtime applications
 
-![Page vs Pinned Memory for GPU](../../images/page_pinned.png)
+<img src="../../images/page_pinned.png" alt="Comparison of paged vs pinned memory for GPU data transfer" style="max-width: 550px; display: block; margin: 0 auto;">
 The GPU always must DMA from pinned memory. If you use malloc() for your host data, then it is in pageable (non-pinned memory). When you call cudaMemcpy(), the CUDA driver has to first memcpy the data from your non-pinned pointer to an internal pinned memory pointer, and then the host->GPU DMA can be invoked.
 
 If you allocate your host memory with cudaMallocHost and initialize the data there directly, then the driver doesn’t have to memcpy from pageable to pinned memory before DMAing – it can DMA directly. That is why it is faster. Using a lot of pinned memory can cause performance problems for the operating system. (“a lot” is hard to quantify unfortunately, which is another drawback). Pinned memory is great if you are going to be copying data back and forth between the CPU and GPU quite often but may not be that beneficial if you’re not doing many transfers…
@@ -146,11 +146,11 @@ If you allocate your host memory with cudaMallocHost and initialize the data the
 Shared memory is divided into 32 banks. Each succesive word (4 bytes/ 32 bits, which could be a 32 bit int, float, etc) in stored different bank upto bank the last bank (32), so word_32 in in bank_0. Each bank can read or write one 32-bit word per clock cycle. If multiple threads in the same warp access the same bank, a bank conflict occurs. This means that the bank has to serialize the accesses, which can slow down the memory access. On the contrary, if each thread in a warp access the same word, it will be broadcasted to all the threads.
 
 This is on the warp level only If multiple threads from different warps in the same block read from the same bank, conflict does not occur.
-- https://www.youtube.com/watch?v=CZgM3DEBplE
+- [Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
 
 ## Reduction (Sum of elements in a vector)
 
-Highly recommended to understand many of the concepts below: https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
+- [NVIDIA Reduction Optimization PDF](https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf)
 
 
 ## General Matrix-Matrix multiplication (GEMM) 
@@ -220,10 +220,11 @@ To Add
 
 ### Tensor Cores
 
-One of the first blogs in Tensor cores: https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/
-Good intro video: https://www.youtube.com/watch?v=Yt1A-vaWTck
-CUDA Mode video, gold: https://www.youtube.com/watch?v=hQ9GPnV0-50&t=3968s
-Follow up on Simons Blog written for H100: https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396 https://www.youtube.com/watch?v=ErTmTCRP1_U
+- [Programming Tensor Cores in CUDA 9](https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/)
+- [Intro to Tensor Cores Video](https://www.youtube.com/watch?v=Yt1A-vaWTck)
+- [CUDA Mode Video on Tensor Cores](https://www.youtube.com/watch?v=hQ9GPnV0-50&t=3968s)
+- [Outperforming cuBLAS on H100](https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396)
+- [Follow-up Video on H100](https://www.youtube.com/watch?v=ErTmTCRP1_U)
 
 <!-- ### Ping-Pong
 
@@ -401,10 +402,10 @@ This will generate PTX code for compute capability 3.0, 5.2, and 7.0. Generate S
 
 **nvprof**: CLI for the NVIDIA Visual Profiler which supports profiling and tracing of CUDA applications. It is deprecated in CUDA 11.0 and will be removed in a future release.
 
-### 
+###
 
-https://www.youtube.com/watch?v=nAsMhH1tnYw
-https://blog.vllm.ai/2025/08/11/cuda-debugging.html
+- [CUDA Debugging Video](https://www.youtube.com/watch?v=nAsMhH1tnYw)
+- [CUDA Debugging by vLLM](https://blog.vllm.ai/2025/08/11/cuda-debugging.html)
 
 Now open the GPU coredump in cuda-gdb. Launch cuda-gdb without your program first:
 
@@ -445,14 +446,15 @@ Usually, the single and half precision floating point operations are done using 
 
 ## References
 
-Practice exercises and lecture by NVIDIA and OLCF: https://www.olcf.ornl.gov/cuda-training-series/ (https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)
-https://github.com/olcf/cuda-training-series/tree/master/exercises
+- [CUDA Training Series by NVIDIA and OLCF](https://www.olcf.ornl.gov/cuda-training-series/)
+- [CUDA Training Series YouTube Playlist](https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)
+- [CUDA Training Exercises](https://github.com/olcf/cuda-training-series/tree/master/exercises)
 
-- [Introduction to CUDA programming video](https://www.youtube.com/watch?v=HOVvQfcBMTQ)
+- [Introduction to CUDA Programming Video](https://www.youtube.com/watch?v=HOVvQfcBMTQ)
 - [Quantization using CUTLASS](https://www.youtube.com/watch?v=adA9AMu4_Kc)
-- CUDA Mode Discord https://github.com/cuda-mode/lectures
-- NVIDIA CUDA C Programming Guide https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability
-- Programming Massively Parallel Processors: A Hands-on Approach by David B. Kirk and Wen-mei W. Hwu 4th Edition
-- CUDA Toolkit documentation https://docs.nvidia.com/cuda/index.html
-- https://stackoverflow.com/questions/62332067/vmlck-locked-memory-vs-vmpin-pinned-memory-in-proc-pid-status
-- https://forums.developer.nvidia.com/t/question-about-page-locked-memory/9032/2
+- [CUDA Mode Discord Lectures](https://github.com/cuda-mode/lectures)
+- [NVIDIA CUDA C Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability)
+- [Programming Massively Parallel Processors Book by David B. Kirk and Wen-mei W. Hwu 4th Edition]
+- [CUDA Toolkit Documentation](https://docs.nvidia.com/cuda/index.html)
+- [Locked Memory vs Pinned Memory Discussion](https://stackoverflow.com/questions/62332067/vmlck-locked-memory-vs-vmpin-pinned-memory-in-proc-pid-status)
+- [Page-locked Memory Forum Discussion](https://forums.developer.nvidia.com/t/question-about-page-locked-memory/9032/2)

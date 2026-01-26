@@ -29,7 +29,7 @@ Likelihood-based models are a class of generative models that explicitly define 
 
 GANs are a good example of implicit density models. They consist of two neural networks, a generator and a discriminator trained simultaneously in a game-theoretic framework. The generator creates images, while the discriminator evaluates them. They do not explicitly model the data distribution; instead, they learn a mapping from a simple distribution to the data distribution using a min-max game.
 
-![Alt text](../../images/gan_vae_diff.png)
+<img src="../../images/gan_vae_diff.png" alt="Comparison of GAN, VAE, and Diffusion model architectures" style="max-width: 600px; display: block; margin: 0 auto;">
 
 ### Differences
 
@@ -53,8 +53,8 @@ Auto-Encoder can used for tasks like dimensionality reduction, denoising, anomal
 
 ### Variational Auto-Encoder
 
-Recommend Readings:
-- [Good explanation of VAE ](https://arxiv.org/pdf/1606.05908.pdf)
+Recommended Readings:
+- [Good explanation of VAE](https://arxiv.org/pdf/1606.05908.pdf)
 - [Bayesian and graphical approach to VAE](http://www.cse.iitm.ac.in/~miteshk/CS7015/Slides/Teaching/pdf/Lecture21.pdf)
 
 There are a few ways to understand VAEs. First is to model it as a combination of an Auto-Encoder and Probability Distributions and the other as a Directed Graphical Model. I found that both the approaches complement each other and hence I will try to explain it using both to give a complete understanding of the model.
@@ -176,7 +176,7 @@ GANs consist of two neural networks, a generator and a discriminator trained sim
 
 ### GAN loss
 
-Recommend Readings:
+Recommended Readings:
 - [Excellent blog on GAN loss](https://danieltakeshi.github.io/2017/03/05/understanding-generative-adversarial-networks/)
 
 The loss function of GANs is a min-max game between the generator and the discriminator. The generator tries to minimize the loss while the discriminator tries to maximize it. The loss function is as follows:
@@ -191,13 +191,13 @@ Also in practice, the second term for the generator is replaced with:
 
 $$\max_{G} \mathbb{E}_{z \sim p_z(z)} [\log D(G(z))]$$
 
-![](../../images/gan_losses.png)
+<img src="../../images/gan_losses.png" alt="GAN generator loss functions showing saturating vs non-saturating heuristic" style="max-width: 500px; display: block; margin: 0 auto;">
 
 This is done due to vanishing gradient problem. At the start of the training, the Discriminator can easily learn to distinguish between the real and fake images since the task of classification is relatively easier than the task of generating images. As shown in the above graph, this leads to very low values for $ D(G(z)) $ and its gradient is almost zero. This leads to the generator not learning anything. While the new loss function (non-saturating heuristic) does not have zero gradient in the left part of the graph and hence the generator can learn.
 
 The loss curves of GANs are not very intuitive. Usually, the discriminator loss increases initially and then decreases and vice versa for the generator loss.
 
-![](../../images/gan_loss.png)
+<img src="../../images/gan_loss.png" alt="GAN training loss curves for generator and discriminator" style="max-width: 500px; display: block; margin: 0 auto;">
 
 Also, the output of the discriminator is a float value and to convert it to a probability, we usually use the sigmoid function. The problem here is that the sigmoid function is not stable for very large or very small values (even torch.exp(1000) will give nan). Therefore instead of `nn.Sigmoid` + `nn.BCELoss`, we use `nn.BCEWithLogitsLoss` uses something called the [log-sum-exp trick](https://gregorygundersen.com/blog/2020/02/09/log-sum-exp/) that helps in stable computation of the probabilities.
 
@@ -262,15 +262,15 @@ The Wasserstein distance is a better measure of distance between distributions t
 
 Also incase of WGAN, the discriminator is usually trained for more number of iterations than the generator.(2-5 iteration per generator iteration). One of the reasons is that generator is trained using the gradients from the discriminator and if the discriminator is not trained well, the generator can easily learn to fool the discriminator.
 
-https://www.alexirpan.com/2017/02/22/wasserstein-gan.html
-https://vincentherrmann.github.io/blog/wasserstein/
-https://lilianweng.github.io/lil-log/2017/08/20/from-GAN-to-WGAN.html
+- [Wasserstein GAN by Alex Irpan](https://www.alexirpan.com/2017/02/22/wasserstein-gan.html)
+- [Wasserstein GAN Visualization](https://vincentherrmann.github.io/blog/wasserstein/)
+- [From GAN to WGAN by Lilian Weng](https://lilianweng.github.io/lil-log/2017/08/20/from-GAN-to-WGAN.html)
 
 ### GAN Hacks
 
-- https://github.com/soumith/ganhacks
-- https://www.reddit.com/r/MachineLearning/comments/i085a8/d_best_gan_tricks/
-- https://towardsdatascience.com/gan-ways-to-improve-gan-performance-acf37f9f59b
+- [GAN Hacks by Soumith](https://github.com/soumith/ganhacks)
+- [Best GAN Tricks Discussion](https://www.reddit.com/r/MachineLearning/comments/i085a8/d_best_gan_tricks/)
+- [Ways to Improve GAN Performance](https://towardsdatascience.com/gan-ways-to-improve-gan-performance-acf37f9f59b)
 
 ## Diffusion Models(DM)
 
@@ -288,7 +288,7 @@ One of the ways to calculate the Fidelity is the Frechet Inception Distance betw
 
 ### Frechet Inception Distance(FID)
 
-https://wandb.ai/ayush-thakur/gan-evaluation/reports/How-to-Evaluate-GANs-using-Frechet-Inception-Distance-FID---Vmlldzo0MTAxOTI
+- [How to Evaluate GANs using FID by WandB](https://wandb.ai/ayush-thakur/gan-evaluation/reports/How-to-Evaluate-GANs-using-Frechet-Inception-Distance-FID---Vmlldzo0MTAxOTI)
 
 Mathematically, Frechet Distance is used to compute the distance between two "multivariate" normal distributions. For a "univariate" normal distribution Frechet Distance is given as,
 
@@ -340,7 +340,7 @@ Limited moments (only mean and covariance) are used to compute the FID score.
 
 ### Inception Score
 
-https://medium.com/octavian-ai/a-simple-explanation-of-the-inception-score-372dff6a8c7a
+- [A Simple Explanation of the Inception Score](https://medium.com/octavian-ai/a-simple-explanation-of-the-inception-score-372dff6a8c7a)
 
 The Inception Score is a metric for evaluating the diversity of generated images. It is also based on the Inception V-3 model pre-trained on the Imagenet dataset. It is the KL divergence between the marginal label distribution $p(y)$ and the conditional label distribution $p(y \vert x)$.
 
@@ -350,6 +350,6 @@ Here $y$ is the label (or the probability distribution of the label given by the
 
 ## References
 
-- https://lilianweng.github.io/posts/2018-08-12-vae/
-- https://calvinyluo.com/2022/08/26/diffusion-tutorial.html
-- https://www.youtube.com/playlist?list=PLISXH-iEM4JloWnKysIEPPysGVg4v3PaP
+- [VAE Tutorial by Lilian Weng](https://lilianweng.github.io/posts/2018-08-12-vae/)
+- [Diffusion Tutorial by Calvin Luo](https://calvinyluo.com/2022/08/26/diffusion-tutorial.html)
+- [Generative Models YouTube Playlist](https://www.youtube.com/playlist?list=PLISXH-iEM4JloWnKysIEPPysGVg4v3PaP)

@@ -172,7 +172,7 @@ textarea {
   background: var(--code-bg);
   color: var(--text);
   font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
   resize: none;
   border-radius: 0 0 8px 8px;
@@ -203,7 +203,7 @@ textarea:focus {
   padding: 1rem;
   overflow: auto;
   font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
   border-radius: 0 0 8px 8px;
   white-space: pre-wrap;
@@ -237,19 +237,19 @@ textarea:focus {
   color: var(--text-secondary);
 }
 
-/* Dark mode diff colors */
+/* Dark mode diff colors - reduced opacity for better text readability */
 [data-theme="dark"] .line-added {
-  background: rgba(46, 160, 67, 0.25);
+  background: rgba(46, 160, 67, 0.12);
   color: #7ee787;
 }
 
 [data-theme="dark"] .line-removed {
-  background: rgba(248, 81, 73, 0.25);
+  background: rgba(248, 81, 73, 0.12);
   color: #ffa198;
 }
 
 [data-theme="dark"] .line-modified {
-  background: rgba(136, 132, 216, 0.2);
+  background: rgba(136, 132, 216, 0.1);
   color: #c9d1d9;
 }
 
@@ -274,12 +274,12 @@ textarea:focus {
 }
 
 [data-theme="dark"] .char-added {
-  background: rgba(46, 160, 67, 0.5);
+  background: rgba(46, 160, 67, 0.25);
   color: #fff;
 }
 
 [data-theme="dark"] .char-removed {
-  background: rgba(248, 81, 73, 0.5);
+  background: rgba(248, 81, 73, 0.25);
   color: #fff;
 }
 
@@ -418,7 +418,7 @@ body.diff-fullscreen .diff-container {
   border: 1px solid var(--border);
   border-radius: 0 0 8px 8px;
   font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
   overflow: auto;
   white-space: pre-wrap;
@@ -486,7 +486,7 @@ body.inline-diff-mode .diff-panel[data-panel="diff"] {
   border-right: none;
   border-radius: 0 0 0 8px;
   font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
   text-align: right;
   color: var(--text-secondary);
@@ -535,20 +535,20 @@ body.inline-diff-mode.show-line-numbers .textarea-overlay {
 }
 
 [data-theme="dark"] .inline-line-removed {
-  background: rgba(248, 81, 73, 0.2);
+  background: rgba(248, 81, 73, 0.1);
 }
 
 [data-theme="dark"] .inline-line-added {
-  background: rgba(46, 160, 67, 0.2);
+  background: rgba(46, 160, 67, 0.1);
 }
 
 [data-theme="dark"] .inline-removed {
-  background: rgba(248, 81, 73, 0.5);
+  background: rgba(248, 81, 73, 0.25);
   color: #ffa198;
 }
 
 [data-theme="dark"] .inline-added {
-  background: rgba(46, 160, 67, 0.5);
+  background: rgba(46, 160, 67, 0.25);
   color: #7ee787;
 }
 

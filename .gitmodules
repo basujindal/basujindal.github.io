@@ -1,0 +1,3 @@
+[submodule "thoughts-api"]
+	path = thoughts-api
+	url = https://github.com/basujindal/thoughts-api

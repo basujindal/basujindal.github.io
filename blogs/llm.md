@@ -1,7 +1,7 @@
 ---
 title: "Large Language Models"
 date: 2024-04-03
-show: false
+show: true
 ---
 
 ## Decoding Strategies
@@ -46,7 +46,7 @@ $$ H_T(X) = \beta(H(X) - \log(\beta)) $$
 
 The above implies that the change in the entropy of a system with temperature is not dependent on the individual probabilities, but on the entropy of the system. This is not a an obvious result and is a very interesting property of the entropy of a system with temperature. Now, if we set $T = \beta = 1$, then the entropy of the probability distribution is equal to the entropy of the original probability distribution. Increasing the temperature usually increases the entropy but it depends on the original probability distribution. If the entropy is high already, increasing the temperature might decrease the entropy as shown in the figure below.
 
-![Alt text](../../images/entropy_temp.png)
+<img src="../../images/entropy_temp.png" alt="Graph showing entropy variation with temperature for different probability distributions" style="max-width: 500px; display: block; margin: 0 auto;">
 
 
 ### Beam Search
@@ -66,8 +66,19 @@ Top k sampling is a decoding strategy used in language models to generate text. 
 In top p sampling we select the words with the highest probability until the cumulative probability reaches p. The probability of the remaining words is set to zero. The value of p is usually set to 0.9 or 0.95. This strategy is used to prevent the model from generating gibberish text by sampling from the words with very low probability.
 
 
-## Memory bound vs Latency bound layers -->
-Let's take the example of GPT OSS 120B model 
+## Memory vs Latency Bound
+
+Let's take the example of GPT OSS 20B model and do an exercise to check whether a layer is memory bound or latency bound. We will run the model in fp8 precision on a GB200 node with 8GPUs.
+
+<img src="./../images/dgx_b200_specifications.png" alt="NVIDIA DGX B200 specification" style="max-width: 500px; display: block; margin: 0 auto;">
+
+Note that the reported performance might be a little misleading if someone ignores the fineprint text. For example the tensor core FP8 performance is written as 72 PFLOPS (Peta floating point operations per sec). But this is for sparse computations for all 8 GPUs. Therefore the dense per GPU PFLOPS are $72/2/2 = 18$ PFLOPS. Also since our major operation are matmuls, which involve a mac (multiply-accumulate) operation, the effective performace is $18/2 = 9$ PFLOPS.
+
+Also the bandwidth reported is dual channel for all 8 GPUs. There the per GPU one-way bandwidth is $64/8/2 = 4$ TB/s.
+
+### Embedding layer
+
+
 
 <!-- Let's take the example of LLAMA 7B model with $n_{layers} = 32$ , $d_{embed} = 4096$ and $N_{vocab} = 50000$. We can approximate the total number of parameters in the model as follows:
 
@@ -99,7 +110,7 @@ For a LLM, we use a sliding window of size equal to the max input length of the 
 
 The number of words per token depends on the tokenization method and the language of the text. For English text, a helpful rule of thumb is that one token generally corresponds to ~4 characters of text or ~0.75 words. This means that 100 tokens are roughly equivalent to 75 words. However, this may vary for other languages or formats, as tokens can include trailing spaces and even sub-words1. For example, in Polish, the word ‘przepytonowany’ is split into six tokens: pr, z, ep, ython, ow and any.
 
-Visualize GPT tokenization: https://platform.openai.com/tokenizer
+- [Visualize GPT Tokenization](https://platform.openai.com/tokenizer)
 
 ## Positional Embeddings
 
@@ -125,14 +136,14 @@ where $PE_m$ and $PE_n$ are the positional embeddings for the mth and nth words 
 
 ### Rotational Positional Embeddings (RoPE)
 
-Suggested Reading: 
+Suggested Reading:
 
 - [RoPE Paper](https://arxiv.org/abs/2104.09864)
-- [Video explaining RoPE](https://www.youtube.com/watch?v=C6rV8BsrrCc)
+- [Video Explaining RoPE](https://www.youtube.com/watch?v=C6rV8BsrrCc)
 
 Rotational Positional Embeddings use the relative distance between the words in the sequence to generate the positional embeddings. Instead of adding a positional embedding to the entire embedding, they treat the embedded vector as a concatenation of multiple tuples and each tuple as a vector in complex plane. They multiply each vector by a 2D rotation matrix $R$.
 
-![Alt text](../../images/rope.png)
+<img src="../../images/rope.png" alt="Rotary Positional Embedding (RoPE) visualization showing 2D rotation of embedding vectors" style="max-width: 600px; display: block; margin: 0 auto;">
 
 Let the input embeddings be $X \in \mathbb{R}^{D \times L}$, where $L$ is the length of the sequence and $D$ is the dimension of the input embeddings. Also the K weight matrix be $W_k \in \mathbb{R}^{D \times D}$, the Q weight matrix be $W_q \in \mathbb{R}^{D \times D}$, the attention matrix be $A \in \mathbb{R}^{L \times L}$ and the Rotation matrix be $R \in \mathbb{R}^{D \times D}$.
 
@@ -165,7 +176,7 @@ In Feed forward layer, output of a neuron is taken across the batch and normaliz
 
 Similar to BatchNorm (normalization done over a single channel) but only over only 1 image. Used to keep the sample features independent improving image variability. Not possible in Feed Forward since if no batch, only neuron is there. No need to keep running average.
 
-![image](../../images/instanceNorm.png)
+<img src="../../images/instanceNorm.png" alt="Instance Normalization diagram showing normalization across spatial dimensions for a single channel" style="max-width: 800px; display: block; margin: 0 auto;">
 
 ### Layer Norm
 
@@ -176,7 +187,7 @@ Normed across the layer for 1 data sample, i.e. output of the Feed Forward netwo
 
 Somewhere in between LN and IN, it assumes that some channels will have similar features which should be normalzed together instead of only 1 channel or all the channels. The groups to be normalized together are just the adjacent ones like of 32 channels, groups of 8 can be formed. Good for small batch sizes like $\in$ (1,8) The H, W are flattend to show the 4D tensor in a 3D tensor
 
-![image](../../images/norm.png)
+<img src="../../images/norm.png" alt="Comparison of Batch Norm, Layer Norm, Instance Norm, and Group Norm normalization techniques" style="max-width: 600px; display: block; margin: 0 auto;">
 
 ### RMSNorm
 
@@ -196,7 +207,7 @@ Experimentally, the performance of RMSNorm is similar to LayerNorm but it is fas
 
 ### Gaussian Error Linear Unit (GELU)
 
-![](../../images/gelu.png)
+<img src="../../images/gelu.png" alt="GELU activation function plot compared to ReLU" style="max-width: 450px; display: block; margin: 0 auto;">
 
 GELU is a smooth approximation of ReLU. It is defined as:
 
@@ -220,7 +231,7 @@ $$\Phi(x) = x * sigmoid(1.702 * x)$$
 
 ### Swish (SiLU)
 
-![](../../images/silu.png)
+<img src="../../images/silu.png" alt="Swish/SiLU activation function plot" style="max-width: 450px; display: block; margin: 0 auto;">
 
 Swish is also known as Sigmoid Linear Unit or SiLU. It is defined as:
 
@@ -244,7 +255,7 @@ $$ \text{FFNSwish}(x, W_1, W_2) = \text{Swish}_\beta(xW_1)W_2 $$
 
 ### Gated Linear Units (GLU) and Variants
 
-![Alt text](../../images/swiglu.png)
+<img src="../../images/swiglu.png" alt="SwiGLU architecture diagram showing gated linear unit with Swish activation" style="max-width: 550px; display: block; margin: 0 auto;">
 GLU is introduced as follows:
 
 $$ \text{GLU}(x, W, V, b, c) = \sigma(xW + b) \odot (xV + c) $$
@@ -277,12 +288,12 @@ To maintain parameter count and computational requirements, a reduction in the d
 
 ## Reference & Suggested Readings
 
-- Surveys of LLMs https://arxiv.org/abs/2303.18223
-- Nice details about training: https://arxiv.org/pdf/2304.03208.pdf
-- Training cost and time requirements: https://www.mosaicml.com/blog/billion-parameter-gpt-training-made-easy
-- Tips to train LLMs https://wandb.ai/craiyon/report/reports/A-Recipe-for-Training-Large-Models--VmlldzozNjc4MzQz
-- Decoding stratigies: https://blog.allenai.org/a-guide-to-language-model-sampling-in-allennlp-3b1239274bc3
-- https://huggingface.co/transformers/v4.2.2/perplexity.html
-- https://thegradient.pub/understanding-evaluation-metrics-for-language-models/
-- https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+- [Survey of LLMs](https://arxiv.org/abs/2303.18223)
+- [Details about Training LLMs](https://arxiv.org/pdf/2304.03208.pdf)
+- [Training Cost and Time Requirements](https://www.mosaicml.com/blog/billion-parameter-gpt-training-made-easy)
+- [Tips to Train LLMs by WandB](https://wandb.ai/craiyon/report/reports/A-Recipe-for-Training-Large-Models--VmlldzozNjc4MzQz)
+- [Decoding Strategies by AllenAI](https://blog.allenai.org/a-guide-to-language-model-sampling-in-allennlp-3b1239274bc3)
+- [Perplexity by Hugging Face](https://huggingface.co/transformers/v4.2.2/perplexity.html)
+- [Understanding Evaluation Metrics for Language Models](https://thegradient.pub/understanding-evaluation-metrics-for-language-models/)
+- [What are Tokens and How to Count Them](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them)
 - [Blog by Hugging Face](https://huggingface.co/blog/how-to-generate)

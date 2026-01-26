@@ -11,7 +11,7 @@ Let us have a look at some of the important concepts in Probability and Statisti
 
 A Markov chain is a stochastic model describing a sequence of possible events in which the probability of each event depends only on the state attained in the previous event. In other words, it is a memoryless sequence of random variables $X_1, X_2, \dots$ with the Markov property. The Markov property says that the probability of moving to the next state depends only on the current state and not on the previous states.
 
-<img src="./images/markov.png" alt="Markov Chain" style="max-width: 400px;">
+<img src="../../images/markov.png" alt="Markov Chain state transition diagram" style="max-width: 300px; display: block; margin: 0 auto;">
 
 Let us say we have a directed connected graph with nodes as the states and edges as the transition probabilities. The transition probabilities are the probabilities of moving from one state to another. 
 
@@ -31,7 +31,7 @@ $Entropy(H)$ refers to the expected value of information/surprise or the minimum
 
 $$H = -\sum p(x)log(p(x))$$
 
-![entropy](../../images/entropy.png)
+<img src="../../images/entropy.png" alt="Entropy of a binary random variable as a function of probability" style="max-width: 450px; display: block; margin: 0 auto;">
 
 For a binary random variable, $H = -(p log(p) + (1-p)log(p))$. The max value occurs when $p(H) = 0.5$, i.e. when we use a fair coin. This implies that on average we need 1 bit to tell the result of a fair coin toss.
 
@@ -61,9 +61,9 @@ So a pretty strong majority of rich people are happy. It's not hard to see why t
 
 ### Recommended readings for Prior & Posterior
 
-- <https://www.youtube.com/watch?v=Pahyv9i_X2k>
-- <https://www.youtube.com/watch?v=HZGCoVF3YvM>
-- <https://www.youtube.com/watch?v=R13BD8qKeTg>
+- [Video on Prior and Posterior 1](https://www.youtube.com/watch?v=Pahyv9i_X2k)
+- [Video on Prior and Posterior 2](https://www.youtube.com/watch?v=HZGCoVF3YvM)
+- [Video on Prior and Posterior 3](https://www.youtube.com/watch?v=R13BD8qKeTg)
 
 ## Naive Bayes
 
@@ -83,7 +83,7 @@ The Law of Large Numbers basically tells us that if we take a sample (n) observa
 
 On the other hand, the Central Limit Theorem tells us a procedure. First we sample from a distribution k times and take its mean. If we repeat the process n times, we get a normal distribution and as n increases $\to \infin$, we find a normal distribution. For a good approximation, k > 30.
 
-Central Limit theorm can also be thought of repeated convolution of the distribution of the random variable with itself. As the number of convolution increases, the distribution approaches a normal distribution. A good explanation is the 3Blue1Brown [video](https://www.youtube.com/watch?v=zeJD6dqJ5lo).
+Central Limit theorem can also be thought of repeated convolution of the distribution of the random variable with itself. As the number of convolution increases, the distribution approaches a normal distribution. A good explanation is the 3Blue1Brown [video on Convolutions](https://www.youtube.com/watch?v=zeJD6dqJ5lo).
 
 Lets the the example of a Galton Board. Each row of pegs is like a binary distribution that can take value +1 and -1 with equal probability. The sum of the values of the pegs in a column is the random variable. Here k is the number of rows, and as we increase the the number of balls, the distribution of the sum of the values approaches a normal distribution.
 
@@ -111,7 +111,7 @@ Let us look at few of the sampling techniques.
 
 ### Metropolis-Hastings Algorithm
 
-I recommend these [blog 1](https://blog.djnavarro.net/posts/2023-04-12_metropolis-hastings/#fn5) [blog 2](https://boyangzhao.github.io/posts/mcmc-bayesian-inference) for an in depth explanation with example.
+I recommend these [Blog on Metropolis-Hastings 1](https://blog.djnavarro.net/posts/2023-04-12_metropolis-hastings/#fn5) [Blog on Metropolis-Hastings 2](https://boyangzhao.github.io/posts/mcmc-bayesian-inference) for an in depth explanation with example.
 
 It is one of the most popular MCMC algorithm. Let us say we have a distribution 
 $$p(x) = \frac{f(x)}{Z}$$ where $f(x)$ is known function and $Z$ is the normalizing constant which is difficult to calculate. $f(x)$ for example, can be an energy function for Energy Based Models. The normalizing constant $Z$ is the integral of the function over the domain which can be difficult to calculate. This is also very common in Bayesian statistics where the norm const is the marginal likelihood. 
@@ -136,7 +136,7 @@ Having an algoritm that can sample from any function is nothing short of amazing
 
 ### Gibbs Sampling
 
-I recommend this [blog](https://boyangzhao.github.io/posts/mcmc-gibbs-sampling-multivariate) for an in depth explanation with example.
+I recommend this [Blog on Gibbs Sampling](https://boyangzhao.github.io/posts/mcmc-gibbs-sampling-multivariate) for an in depth explanation with example.
 
 Let us say we have a multivariate distribution $p(x_1, x_2, \dots, x_n)$ but sampling from the joint distribution is difficult. If we can easily sample from the marginal distributions $p(x_i|x_1, x_2, \dots, x_{i-1}, x_{i+1}, \dots, x_n)$, we can use the Gibbs sampling algorithm to sample from the joint distribution.
 
@@ -150,7 +150,8 @@ The algorithm is as follows:
 
 The algorithm is guaranteed to converge to the true distribution if the conditional distributions are sampled correctly.
 
-### Accept Reject Sampling [Video Explanation](https://www.youtube.com/watch?v=OXDqjdVVePY)
+### Accept Reject Sampling
+- [Video on Accept Reject Sampling](https://www.youtube.com/watch?v=OXDqjdVVePY)
 
 - Sample from a difficult to sample distribution $p(x) = f(x)/(norm const)$ where $f(x)$ is know but norm const is difficult to calculate due to integral. We use a easy to sample distribution $q(x)$, for eg. Gaussian with same domain as $p(x)$. $q(x)$ is such that Mq(x) >= p(x) for all $x$, where M is any positive number.
 
@@ -161,7 +162,8 @@ The algorithm is guaranteed to converge to the true distribution if the conditio
 - The main problem is to select M as small as possible or else we keep rejecting all samples as per $f(x)/(Mq(x))$
 
 
-### Monte Carlo methods [Video Explanation](https://www.youtube.com/watch?v=EaR3C4e600k)
+### Monte Carlo methods
+- [Video on Monte Carlo Methods](https://www.youtube.com/watch?v=EaR3C4e600k)
 
 
 Monte Carlo methods are a broad class of computational algorithms that rely on repeated random sampling to obtain numerical results. For example, to get the value of $\pi$ by selecting random points in a square(with side length = 2) with a circle incribed inside it.
@@ -198,7 +200,7 @@ One other perspective is that the variance is calculated between multiple terms,
 
 Also, after calculating the mean, we are left with n-1 degrees of freedom since we can get the $x_n$ from $\bar{x}$ and the other $n-1$ terms. Using $1/(n-1)$ instead of $1/n$ takes into account the reduction in degrees of freedom.
 
-Good video explanation can be found [here](https://www.youtube.com/watch?v=fs4eg1u7oY)
+- [Video on Sample Variance](https://www.youtube.com/watch?v=fs4eg1u7oY)
 
 <!-- 
 ## Hypothesis Testing
@@ -381,6 +383,6 @@ The dimension of the reduced data is $n \times k$.
 
 Shown below are the top 100 features of PCA of the ImageNet dataset. Note that they are very similar to the Discrete Cosine Transform (DCT) basis vectors.
 
-![PCA on ImageNet dataset](../../images/PCA_imagenet.png)
+<img src="../../images/PCA_imagenet.png" alt="Top 100 PCA principal components of ImageNet dataset" style="max-width: 600px; display: block; margin: 0 auto;">
 
 <!-- ### SVD -->

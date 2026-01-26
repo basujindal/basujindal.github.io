@@ -1,12 +1,12 @@
 ---
 title: "Quantization"
 date: 2024-07-17
-show: false
+show: true
 ---
 
 ## Exponent & Mantissa 
 
-![](../../images/precision.png)
+<img src="../../images/precision.png" alt="Floating point precision formats showing exponent and mantissa bits for FP16, FP32, and FP64" style="max-width: 600px; display: block; margin: 0 auto;">
 
 If you allow for DENORMALS as well, then minumum values are:
 
@@ -36,13 +36,13 @@ Figure out by experimentation if your network is sensitive to range and/or preci
 
 The performance gain of mixed precision training can depend on multiple factors (e.g. compute-bound vs memory-bound problems) and users should use the tuning guide to remove other bottlenecks in their training scripts. Although having similar theoretical performance benefits, BF16 and FP16 can have different speeds in practice. It’s recommended to try the mentioned formats and use the one with best speed while maintaining the desired numeric behavior.
 
-![](../../images/mixed_precision_compare.png)
+<img src="../../images/mixed_precision_compare.png" alt="Comparison of mixed precision training performance across different data types" style="max-width: 600px; display: block; margin: 0 auto;">
 
 FP16 is only supported in CUDA, BF16 has support on newer CPUs and TPUs. Calling .half() on your network and tensors explicitly casts them to FP16, but not all ops are safe to run in half-precision. A better solution is to use Automatic Mixed Precision to let PyTorch choose the right op-specific precision (FP32 vs FP16 / BF16) for your tensors. 
 
 ## Quantization
 
-![Alt text](../../images/llm_quant.png)
+<img src="../../images/llm_quant.png" alt="LLM quantization methods overview" style="max-width: 550px; display: block; margin: 0 auto;">
 
 ### Absmax quantization
 
@@ -109,7 +109,7 @@ $$ w_{\text{dequant}} = \frac{w_{\text{quant}} - z}{\Delta} $$
 
 ## Smooth Quant, llm.int8, AWQ
 
-![BNB](../../images/bnb.png)
+<img src="../../images/bnb.png" alt="BitsAndBytes LLM.int8() quantization showing outlier handling" style="max-width: 550px; display: block; margin: 0 auto;">
 
 The activation ($T \times d$) where each row is a token, can have outliers in a few channels across all tokens ($d_i$ embedding of all tokens) as shown in yellow in above figure. So it would be good to quantize the activations along the channels. But the GEMM operation is usually done along the channels (per token). Therefore, we quantize the activations along the columns, which means each row gets 1 scale, giving us $T$ scales. Also, the weights (d x o) are quantized along the rows, giving us $o$ scales.
 
@@ -117,13 +117,13 @@ BNB solves this by separating the activation channels with outliers and its resp
 
 Smooth Quant solves this by dividing the activation channels by a scale and multiplying the weights by the same scale. This way the ouliers in the activations are "transfered" to the weights. The scale is equal to the ${\frac{absmax(A_j)}{absmax(W_j)}}^\alpha$. $\alpha$ is the amount of scale to transfer from activations to weights usually set to 0.5. $A_j$ is the jth column of the activations and $W_j$ is the jth row of the weights.
 
-![Quant channels](../../images/quant_channels.png)
+<img src="../../images/quant_channels.png" alt="Quantization along activation channels and weight rows" style="max-width: 500px; display: block; margin: 0 auto;">
 
 The $absmax(A_j)$ can be calcluated dynamically during inference or statically by taking a sample of the activations on the training data. Smooth quant is faster than BNB since it doesn't require fp16 computation but the quality is almost the same. 
 
 Smooth Quant is good for compute bound systems (high batch size) but edge inference (low batch size) is usually memory bound. Therefore, Han lab introduced Activation aware quantization (AWQ) which uses the distribution of activations to quantize only the weights to W4A16 format. During inference, the weights are dequantized to fp16 and the inference is done in fp16.
 
-![Alt text](../../images/awqVSsmooth.png)
+<img src="../../images/awqVSsmooth.png" alt="Comparison of AWQ vs SmoothQuant quantization methods" style="max-width: 550px; display: block; margin: 0 auto;">
 
 ## FP8 (W8A8)
 
@@ -173,55 +173,53 @@ Biases are not converted because to preserve the accuracy of a typical addmm ope
 
 ## Recommended Reading & References
 
-### Recommened reading
+### Recommended reading
 
-- https://huggingface.co/blog/hf-bitsandbytes-integration
-- Intro to weight quantization:https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fintroduction-to-weight-quantization-2494701b9c0c
-- Holy grail: https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/
-- GPT Fast (Read for good quantization implementation) : https://github.com/pytorch-labs/gpt-fast
-- Simple notebook: https://colab.research.google.com/drive/1oDfcLRz2AIgsclkXJHj-5wMvbylr4Nxz#scrollTo=iCsoFvwLrgdu
+- [HuggingFace BitsAndBytes Integration](https://huggingface.co/blog/hf-bitsandbytes-integration)
+- [Introduction to Weight Quantization](https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fintroduction-to-weight-quantization-2494701b9c0c)
+- [Which GPU for Deep Learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/)
+- [GPT Fast GitHub Repository](https://github.com/pytorch-labs/gpt-fast)
+- [Simple Quantization Notebook](https://colab.research.google.com/drive/1oDfcLRz2AIgsclkXJHj-5wMvbylr4Nxz#scrollTo=iCsoFvwLrgdu)
 
 ### Other quantization methods
 
-- k-bit scaling laws, basically says that 4bit is best, even better than 8bit: https://arxiv.org/pdf/2212.09720.pdf#page=6.11
-    - https://www.youtube.com/watch?v=jyOqtw4ry2w
-    - https://freedium.cfd/https://medium.com/@metechsolutions/llm-by-examples-use-bitsandbytes-for-quantization-cf33aa8bfe16
+- [k-bit Scaling Laws Paper](https://arxiv.org/pdf/2212.09720.pdf#page=6.11)
+    - [Video on k-bit Scaling](https://www.youtube.com/watch?v=jyOqtw4ry2w)
+    - [BitsAndBytes Quantization Examples](https://freedium.cfd/https://medium.com/@metechsolutions/llm-by-examples-use-bitsandbytes-for-quantization-cf33aa8bfe16)
 
-- GGUF: mainly bock quantization for use with CPU only: https://kaitchup.substack.com/p/gguf-quantization-for-fast-and-memory
-    - GGML format explained: https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fquantize-llama-models-with-ggml-and-llama-cpp-3612dfbcc172
-- AWQ: Activation aware quantization: Uses the distribution of activations to quantize them.
-https://www.dropbox.com/scl/fi/dtnp6h6y1mnp7g036axu6/AWQ-slide.pdf?rlkey=ffgh50hxhx8dmsnjiu8kef0ou&e=1&dl=0
+- [GGUF Quantization for Fast and Memory Efficient Inference](https://kaitchup.substack.com/p/gguf-quantization-for-fast-and-memory)
+    - [GGML Format Explained](https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fquantize-llama-models-with-ggml-and-llama-cpp-3612dfbcc172)
+- [AWQ Activation Aware Quantization Slides](https://www.dropbox.com/scl/fi/dtnp6h6y1mnp7g036axu6/AWQ-slide.pdf?rlkey=ffgh50hxhx8dmsnjiu8kef0ou&e=1&dl=0)
 
-- GPTQ: https://arxiv.org/pdf/2210.17323.pdf
-    - Uses 4bit quantization and 16bit computation, the difference with gguf is that it uses a different quantization method.
-    - Explanation video: https://www.youtube.com/watch?v=05v2MA3CXKo
+- [GPTQ Paper](https://arxiv.org/pdf/2210.17323.pdf)
+    - [GPTQ Explanation Video](https://www.youtube.com/watch?v=05v2MA3CXKo)
 
-- Smooth Quantization+, 4 bit quantization: https://arxiv.org/pdf/2312.03788.pdf
-    - https://www.youtube.com/watch?v=RGUCmX1fvOE
+- [Smooth Quantization+ 4 bit Quantization Paper](https://arxiv.org/pdf/2312.03788.pdf)
+    - [Smooth Quantization Video](https://www.youtube.com/watch?v=RGUCmX1fvOE)
 
-- 6bit quantization: https://arxiv.org/pdf/2310.05079.pdf
-- QLLM, recent SoTA 4bit: https://arxiv.org/pdf/2310.08041.pdf
-- OmniQuant, recent SoTA method: Both weight and activation quantization: https://github.com/OpenGVLab/OmniQuant?tab=readme-ov-file
+- [6-bit Quantization Paper](https://arxiv.org/pdf/2310.05079.pdf)
+- [QLLM 4-bit Paper](https://arxiv.org/pdf/2310.08041.pdf)
+- [OmniQuant GitHub Repository](https://github.com/OpenGVLab/OmniQuant?tab=readme-ov-file)
 
 - Comparison of quantization methods:
-    - https://oobabooga.github.io/blog/posts/gptq-awq-exl2-llamacpp/
-    - https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fwhich-quantization-method-is-right-for-you-gptq-vs-gguf-vs-awq-c4cd9d77d5be
+    - [GPTQ vs AWQ vs EXL2 vs llama.cpp](https://oobabooga.github.io/blog/posts/gptq-awq-exl2-llamacpp/)
+    - [Which Quantization Method is Right for You](https://freedium.cfd/https://medium.com/m/global-identity-2?redirectUrl=https%3A%2F%2Ftowardsdatascience.com%2Fwhich-quantization-method-is-right-for-you-gptq-vs-gguf-vs-awq-c4cd9d77d5be)
 
 
 ### CUDA references
 
-- https://github.com/IST-DASLab/marlin
-- https://github.com/TimDettmers/bitsandbytes
-- https://github.com/turboderp/exllama/tree/master/exllama_ext/cuda_func
+- [Marlin GitHub Repository](https://github.com/IST-DASLab/marlin)
+- [BitsAndBytes GitHub Repository](https://github.com/TimDettmers/bitsandbytes)
+- [ExLlama CUDA Functions](https://github.com/turboderp/exllama/tree/master/exllama_ext/cuda_func)
 
 ### Good discussions
 
-- https://github.com/huggingface/quanto/issues/65
-- 4/8 bit in diffuser: https://github.com/huggingface/diffusers/issues/6500
-- fp8 storage: https://github.com/AUTOMATIC1111/stable-diffusion-webui/pull/14031
-- 4bit Qlinear: https://github.com/huggingface/quanto/issues/65
-- QX4: https://github.com/ggerganov/llama.cpp/issues/1240
-- Quantized linear layer: https://discuss.pytorch.org/t/understanding-quantized-linear-layer/154000
-- GPTQ & bnb benchmarking by TheBloke: https://github.com/AutoGPTQ/AutoGPTQ/issues/49#issuecomment-1538065985
+- [Quanto Issue #65](https://github.com/huggingface/quanto/issues/65)
+- [4/8 bit in Diffusers](https://github.com/huggingface/diffusers/issues/6500)
+- [FP8 Storage Discussion](https://github.com/AUTOMATIC1111/stable-diffusion-webui/pull/14031)
+- [4bit Qlinear Discussion](https://github.com/huggingface/quanto/issues/65)
+- [QX4 Discussion](https://github.com/ggerganov/llama.cpp/issues/1240)
+- [Quantized Linear Layer Discussion](https://discuss.pytorch.org/t/understanding-quantized-linear-layer/154000)
+- [GPTQ & BNB Benchmarking by TheBloke](https://github.com/AutoGPTQ/AutoGPTQ/issues/49#issuecomment-1538065985)
 
 
