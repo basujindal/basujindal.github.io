@@ -690,6 +690,20 @@
       if (!response.ok) {
         throw new Error('Failed to like post');
       }
+
+      // Update local posts array with server response
+      const data = await response.json();
+      const post = posts.find(p => p.id == postId);
+      if (post) {
+        post.likes = data.likes;
+        post.user_liked = data.user_liked;
+      }
+
+      // Update UI with actual server values
+      countSpan.textContent = data.likes > 0 ? data.likes : '';
+      btn.classList.toggle('liked', data.user_liked);
+      svg.setAttribute('fill', data.user_liked ? 'currentColor' : 'none');
+
     } catch (error) {
       // Revert on error
       console.error('Error liking post:', error);
