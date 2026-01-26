@@ -1,7 +1,7 @@
 ---
 title: "Quantization"
 date: 2024-07-17
-show: true
+show: false
 ---
 
 ## Exponent & Mantissa 
