@@ -1,7 +1,16 @@
 // Thoughts - Twitter-like feed functionality
+// Uses shared InteractionsCommon module
 (function() {
-  // API endpoints - configure your base URL here
-  const API_BASE = 'https://server.basujindal.me/api';  // Change this to your actual API URL
+  // Wait for common module to load
+  if (typeof InteractionsCommon === 'undefined') {
+    console.error('InteractionsCommon not loaded');
+    return;
+  }
+
+  const { API_BASE, getAuthState, setAuthState, clearAuthState, formatTimeAgo,
+          getInitials, escapeHtml, processContent } = InteractionsCommon;
+
+  // API endpoints
   const API = {
     getPosts: `${API_BASE}/get_posts`,
     submit: `${API_BASE}/submit`,
@@ -15,9 +24,9 @@
 
   // State
   let posts = [];
-  let authToken = null;  // JWT token from GitHub OAuth
-  let isOwner = false;   // Whether current user is the site owner
-  let currentUser = null; // Current user info (name, avatar)
+  let authToken = null;
+  let isOwner = false;
+  let currentUser = null;
   let selectedImages = [];
 
   // DOM Elements
@@ -52,42 +61,22 @@
 
   // Handle OAuth callback - check for token in URL
   function handleAuthCallback() {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const ownerParam = params.get('is_owner');
-    const userName = params.get('user_name');
-    const userAvatar = params.get('user_avatar');
-    const error = params.get('error');
+    const result = InteractionsCommon.handleAuthCallback();
 
-    if (token) {
-      // Store token and owner status, then clean URL
-      localStorage.setItem('thoughts_token', token);
-      localStorage.setItem('thoughts_is_owner', ownerParam === 'true' ? 'true' : 'false');
-      if (userName) localStorage.setItem('thoughts_user_name', userName);
-      if (userAvatar) localStorage.setItem('thoughts_user_avatar', userAvatar);
-      authToken = token;
-      isOwner = ownerParam === 'true';
-      currentUser = { name: userName, avatar: userAvatar };
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (error) {
-      // Show error and clean URL
-      const errorMessages = {
-        'github_denied': 'GitHub authorization was denied.',
-        'token_exchange_failed': 'Authentication failed. Please try again.',
-        'user_fetch_failed': 'Could not verify GitHub user.',
-        'no_code': 'Authentication failed. Please try again.',
-        'no_access_token': 'Authentication failed. Please try again.'
-      };
-      showToast(errorMessages[error] || 'Authentication failed.', 'error');
-      window.history.replaceState({}, document.title, window.location.pathname);
+    if (result) {
+      if (result.success) {
+        authToken = result.token;
+        isOwner = result.isOwner;
+        currentUser = result.user;
+      } else if (result.error) {
+        showToast(result.error, 'error');
+      }
     } else {
       // Check for existing token
-      authToken = localStorage.getItem('thoughts_token');
-      isOwner = localStorage.getItem('thoughts_is_owner') === 'true';
-      currentUser = {
-        name: localStorage.getItem('thoughts_user_name'),
-        avatar: localStorage.getItem('thoughts_user_avatar')
-      };
+      const authState = getAuthState();
+      authToken = authState.token;
+      isOwner = authState.isOwner;
+      currentUser = authState.user;
     }
   }
 
@@ -96,7 +85,6 @@
     const isAuthenticated = !!authToken;
 
     if (composeBox) {
-      // Only show compose box for authenticated owners
       composeBox.classList.toggle('hidden', !isAuthenticated || !isOwner);
     }
     if (loginBtn) {
@@ -106,14 +94,12 @@
       logoutBtn.classList.toggle('hidden', !isAuthenticated);
     }
 
-    // Update compose avatar
     if (composeAvatar && currentUser) {
       if (currentUser.avatar) {
         composeAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar">`;
       } else if (currentUser.name) {
         composeAvatar.textContent = getInitials(currentUser.name);
       }
-      // If no avatar or name, keep the default HTML content (BJ)
     }
   }
 
@@ -124,20 +110,25 @@
 
   // Logout
   function logout() {
-    localStorage.removeItem('thoughts_token');
-    localStorage.removeItem('thoughts_is_owner');
-    localStorage.removeItem('thoughts_user_name');
-    localStorage.removeItem('thoughts_user_avatar');
+    clearAuthState();
     authToken = null;
     isOwner = false;
     currentUser = null;
     updateAuthUI();
-    loadPosts(); // Reload to show login required
+    loadPosts();
+  }
+
+  // Auto-resize textarea based on content
+  function autoResizeTextarea(textarea) {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const maxHeight = parseInt(getComputedStyle(textarea).maxHeight) || 400;
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    textarea.style.height = newHeight + 'px';
   }
 
   // Setup event listeners
   function setupEventListeners() {
-    // Auth buttons
     if (loginBtn) {
       loginBtn.addEventListener('click', loginWithGitHub);
     }
@@ -145,13 +136,15 @@
       logoutBtn.addEventListener('click', logout);
     }
 
-    // Compose form
     if (composeSubmit) {
       composeSubmit.addEventListener('click', submitPost);
     }
 
     if (composeTextarea) {
-      composeTextarea.addEventListener('input', updateSubmitButton);
+      composeTextarea.addEventListener('input', () => {
+        updateSubmitButton();
+        autoResizeTextarea(composeTextarea);
+      });
       composeTextarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
@@ -162,12 +155,10 @@
       });
     }
 
-    // Image upload
     if (imageInput) {
       imageInput.addEventListener('change', handleImageSelect);
     }
 
-    // Lightbox
     if (lightbox) {
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox || e.target.classList.contains('image-lightbox-close')) {
@@ -187,7 +178,6 @@
       });
     }
 
-    // Modal
     if (modalCancel) {
       modalCancel.addEventListener('click', closeModal);
     }
@@ -242,7 +232,7 @@
       modalCancel.textContent = options.cancelText || 'Cancel';
 
       modalConfirm.onclick = () => {
-        modalResolve = null; // Prevent closeModal from resolving to false
+        modalResolve = null;
         modalOverlay.classList.remove('active');
         document.body.style.overflow = '';
         resolve(true);
@@ -293,7 +283,6 @@
     }
   }
 
-  // Show login required message with preview
   function showLoginRequired() {
     if (feed) {
       feed.innerHTML = `
@@ -337,7 +326,6 @@
       });
 
       if (response.status === 401 || response.status === 403) {
-        // Token expired or invalid
         logout();
         showLoginRequired();
         return;
@@ -380,13 +368,11 @@
   function renderPost(post) {
     const postDate = new Date(post.created_at);
     const timeAgo = formatTimeAgo(postDate);
-    const fullDate = postDate.toLocaleString('en-US', {
+    const fullDate = postDate.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
+      day: 'numeric'
     });
     const images = post.images || [];
     const comments = post.comments || [];
@@ -395,7 +381,6 @@
     const isLiked = post.user_liked || false;
     const authorAvatar = post.author_avatar;
 
-    // Render avatar
     const avatarContent = authorAvatar
       ? `<img src="${escapeHtml(authorAvatar)}" alt="${escapeHtml(post.author)}">`
       : getInitials(post.author);
@@ -439,7 +424,6 @@
       `;
     }).join('');
 
-    // Owner action buttons (edit and delete)
     const ownerButtonsHTML = isOwner ? `
       <button class="post-edit-btn" data-post-id="${post.id}" title="Edit post">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -454,7 +438,6 @@
       </button>
     ` : '';
 
-    // Process content with markdown and links
     const processedContent = processContent(post.text);
 
     return `
@@ -508,74 +491,36 @@
     `;
   }
 
-  // ===== CONTENT PROCESSING (Markdown, Links, Hashtags, Mentions) =====
-  function processContent(text) {
-    if (!text) return '';
-
-    let processed = escapeHtml(text);
-
-    // Bold: **text** or __text__
-    processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    processed = processed.replace(/__(.*?)__/g, '<strong>$1</strong>');
-
-    // Italic: *text* or _text_
-    processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    processed = processed.replace(/(?<![a-zA-Z0-9])_(.*?)_(?![a-zA-Z0-9])/g, '<em>$1</em>');
-
-    // Inline code: `code`
-    processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-    // URLs - convert to links
-    const urlRegex = /(https?:\/\/[^\s<]+)/g;
-    processed = processed.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-
-    // Hashtags: #tag
-    processed = processed.replace(/#(\w+)/g, '<span class="hashtag">#$1</span>');
-
-    // Mentions: @username
-    processed = processed.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
-
-    return processed;
-  }
-
   // Attach event listeners to posts
   function attachPostEventListeners() {
-    // Like buttons
     document.querySelectorAll('.like-btn').forEach(btn => {
       btn.addEventListener('click', () => handleLike(btn.dataset.postId));
     });
 
-    // Comment buttons
     document.querySelectorAll('.comment-btn').forEach(btn => {
       btn.addEventListener('click', () => toggleComments(btn.dataset.postId));
     });
 
-    // Share buttons
     document.querySelectorAll('.share-btn').forEach(btn => {
       btn.addEventListener('click', () => handleShare(btn.dataset.postId));
     });
 
-    // Comment submit
     document.querySelectorAll('.comment-submit').forEach(btn => {
       btn.addEventListener('click', () => submitComment(btn.dataset.postId));
     });
 
-    // Post edit buttons (owner only)
     document.querySelectorAll('.post-edit-btn').forEach(btn => {
       btn.addEventListener('click', () => handleEditPost(btn.dataset.postId));
     });
 
-    // Post delete buttons (owner only)
     document.querySelectorAll('.post-delete-btn').forEach(btn => {
       btn.addEventListener('click', () => handleDeletePost(btn.dataset.postId));
     });
 
-    // Comment delete buttons (owner only)
     document.querySelectorAll('.comment-delete-btn').forEach(btn => {
       btn.addEventListener('click', () => handleDeleteComment(btn.dataset.commentId, btn.dataset.postId));
     });
 
-    // Comment input enter key
     document.querySelectorAll('.comment-input').forEach(input => {
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -594,7 +539,6 @@
       await navigator.clipboard.writeText(url);
       showToast('Link copied to clipboard!', 'success');
     } catch (err) {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = url;
       document.body.appendChild(textarea);
@@ -606,54 +550,113 @@
   }
 
   // ===== EDIT POST =====
-  async function handleEditPost(postId) {
+  function handleEditPost(postId) {
     const post = posts.find(p => p.id == postId);
     if (!post) return;
 
-    modalContent.innerHTML = `<textarea class="modal-textarea" id="edit-post-text">${escapeHtml(post.text)}</textarea>`;
+    const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+    if (!postCard) return;
 
-    const confirmed = await showModal('Edit Post', '', {
-      content: `<textarea class="modal-textarea" id="edit-post-text">${escapeHtml(post.text)}</textarea>`,
-      confirmText: 'Save',
-      confirmClass: 'primary'
+    const contentEl = postCard.querySelector('.post-content');
+    if (!contentEl) return;
+
+    // Store original content
+    const originalText = post.text;
+
+    // Replace content with textarea
+    const textarea = document.createElement('textarea');
+    textarea.className = 'inline-edit-textarea';
+    textarea.value = originalText;
+
+    // Create action buttons
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'inline-edit-actions';
+    actionsDiv.innerHTML = `
+      <button class="inline-edit-cancel">Cancel</button>
+      <button class="inline-edit-save">Save</button>
+    `;
+
+    // Hide original content and show textarea
+    contentEl.style.display = 'none';
+    contentEl.parentNode.insertBefore(textarea, contentEl.nextSibling);
+    contentEl.parentNode.insertBefore(actionsDiv, textarea.nextSibling);
+
+    // Auto-resize and focus
+    autoResizeTextarea(textarea);
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    // Handle input for auto-resize
+    textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+
+    // Cancel button
+    actionsDiv.querySelector('.inline-edit-cancel').addEventListener('click', () => {
+      textarea.remove();
+      actionsDiv.remove();
+      contentEl.style.display = '';
     });
 
-    if (!confirmed) return;
+    // Save button
+    actionsDiv.querySelector('.inline-edit-save').addEventListener('click', async () => {
+      const newText = textarea.value.trim();
 
-    const newText = document.getElementById('edit-post-text').value.trim();
-    if (!newText || newText === post.text) return;
-
-    try {
-      const response = await fetch(API.editPost(postId), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        },
-        body: JSON.stringify({ text: newText })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to edit post');
+      if (!newText) {
+        showToast('Post cannot be empty', 'error');
+        return;
       }
 
-      // Update local state
-      post.text = newText;
+      if (newText === originalText) {
+        textarea.remove();
+        actionsDiv.remove();
+        contentEl.style.display = '';
+        return;
+      }
 
-      // Update UI
-      const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
-      if (postCard) {
-        const contentEl = postCard.querySelector('.post-content');
-        if (contentEl) {
-          contentEl.innerHTML = processContent(newText);
+      const saveBtn = actionsDiv.querySelector('.inline-edit-save');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      try {
+        const response = await fetch(API.editPost(postId), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ text: newText })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to edit post');
         }
-      }
 
-      showToast('Post updated successfully!', 'success');
-    } catch (error) {
-      console.error('Error editing post:', error);
-      showToast('Failed to edit post. Please try again.', 'error');
-    }
+        post.text = newText;
+        contentEl.innerHTML = processContent(newText);
+
+        textarea.remove();
+        actionsDiv.remove();
+        contentEl.style.display = '';
+
+        showToast('Post updated successfully!', 'success');
+      } catch (error) {
+        console.error('Error editing post:', error);
+        showToast('Failed to edit post. Please try again.', 'error');
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      }
+    });
+
+    // Keyboard shortcuts
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        textarea.remove();
+        actionsDiv.remove();
+        contentEl.style.display = '';
+      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        actionsDiv.querySelector('.inline-edit-save').click();
+      }
+    });
   }
 
   // Handle like
@@ -663,7 +666,6 @@
     const isLiked = btn.classList.contains('liked');
     const svg = btn.querySelector('svg');
 
-    // Optimistic update
     btn.classList.toggle('liked');
     svg.setAttribute('fill', isLiked ? 'none' : 'currentColor');
 
@@ -691,7 +693,6 @@
         throw new Error('Failed to like post');
       }
 
-      // Update local posts array with server response
       const data = await response.json();
       const post = posts.find(p => p.id == postId);
       if (post) {
@@ -699,13 +700,11 @@
         post.user_liked = data.user_liked;
       }
 
-      // Update UI with actual server values
       countSpan.textContent = data.likes > 0 ? data.likes : '';
       btn.classList.toggle('liked', data.user_liked);
       svg.setAttribute('fill', data.user_liked ? 'currentColor' : 'none');
 
     } catch (error) {
-      // Revert on error
       console.error('Error liking post:', error);
       btn.classList.toggle('liked');
       svg.setAttribute('fill', isLiked ? 'currentColor' : 'none');
@@ -731,7 +730,6 @@
 
     if (!text) return;
 
-    // Client-side word limit (100 words max)
     const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
     if (wordCount > 100) {
       showToast(`Comment too long (${wordCount} words). Maximum is 100 words.`, 'error');
@@ -764,7 +762,6 @@
 
       const newComment = await response.json();
 
-      // Add comment to UI
       const commentsSection = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
       const inputContainer = commentsSection.querySelector('.comment-input-container');
 
@@ -794,7 +791,6 @@
 
       inputContainer.insertAdjacentHTML('beforebegin', commentHTML);
 
-      // Attach delete listener to new comment if owner
       if (isOwner) {
         const newCommentEl = commentsSection.querySelector(`.comment[data-comment-id="${newComment.id}"] .comment-delete-btn`);
         if (newCommentEl) {
@@ -804,7 +800,6 @@
 
       input.value = '';
 
-      // Update comment count
       const countSpan = document.querySelector(`.comment-btn[data-post-id="${postId}"] .post-action-count`);
       const currentCount = parseInt(countSpan.textContent) || 0;
       countSpan.textContent = currentCount + 1;
@@ -847,16 +842,13 @@
         throw new Error('Failed to delete post');
       }
 
-      // Remove post from UI
       const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
       if (postCard) {
         postCard.remove();
       }
 
-      // Remove from local state
       posts = posts.filter(p => p.id != postId);
 
-      // Show empty state if no posts left
       if (posts.length === 0) {
         renderPosts();
       }
@@ -896,13 +888,11 @@
         throw new Error('Failed to delete comment');
       }
 
-      // Remove comment from UI
       const commentEl = document.querySelector(`.comment[data-comment-id="${commentId}"]`);
       if (commentEl) {
         commentEl.remove();
       }
 
-      // Update comment count
       const countSpan = document.querySelector(`.comment-btn[data-post-id="${postId}"] .post-action-count`);
       const currentCount = parseInt(countSpan.textContent) || 0;
       countSpan.textContent = currentCount > 1 ? currentCount - 1 : '';
@@ -927,7 +917,6 @@
 
     try {
       const formData = new FormData();
-      // Only append text if it has content (not just whitespace)
       if (text) {
         formData.append('text', text);
       }
@@ -945,7 +934,6 @@
       });
 
       if (response.status === 401) {
-        // Token expired or invalid
         showToast('Session expired. Please login again.', 'error');
         logout();
         return;
@@ -957,17 +945,15 @@
 
       const newPost = await response.json();
 
-      // Add to beginning of posts
       posts.unshift(newPost);
       renderPosts();
 
-      // Clear form
       composeTextarea.value = '';
+      composeTextarea.style.height = 'auto';
       selectedImages = [];
       imagePreviewContainer.innerHTML = '';
       updateSubmitButton();
 
-      // Success animation
       composeSubmit.classList.add('success');
       setTimeout(() => {
         composeSubmit.classList.remove('success');
@@ -987,9 +973,8 @@
   // Handle image selection
   function handleImageSelect(e) {
     const files = Array.from(e.target.files);
-    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-    // Limit to 4 images
     const remaining = 4 - selectedImages.length;
     const newFiles = files.slice(0, remaining);
 
@@ -1009,7 +994,7 @@
     });
 
     updateSubmitButton();
-    e.target.value = ''; // Reset input
+    e.target.value = '';
   }
 
   // Add image preview
@@ -1077,41 +1062,6 @@
         </div>
       `;
     }
-  }
-
-  // Utility: Format time ago
-  function formatTimeAgo(date) {
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-    });
-  }
-
-  // Utility: Get initials from name
-  function getInitials(name) {
-    if (!name) return '?';
-    return name.split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
-
-  // Utility: Escape HTML
-  function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   }
 
   // Expose necessary functions globally

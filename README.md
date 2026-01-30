@@ -97,3 +97,11 @@ For work-in-progress posts, use the `/inprogress/` directory instead:
 - Access via `html/post.html?section=inprogress&p=POST_NAME`
 
 Move to `/blogs/` when ready to publish.
+
+## To Do 
+
+- [ ] Add like and comment option to blogs similar to thoughts but allow anonymous or github login 
+- [ ] Visit count for all pages (blogs, thoughts, diffchecker, photos) on login just visible to basujindal
+- [ ] Keep deleted posts and edit history for thoughts just in database
+- [ ] No need to display exact time on hover on post in thoughts, just date is good
+
