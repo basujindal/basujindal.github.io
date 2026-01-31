@@ -100,8 +100,15 @@ Move to `/blogs/` when ready to publish.
 
 ## To Do 
 
-- [ ] Add like and comment option to blogs similar to thoughts but allow anonymous or github login 
+- [ ] Move logout button to the bottom
+- [ ] Login at blog return no blog selected nad login is not successful
+- [ ] Update comments UI
 - [ ] Visit count for all pages (blogs, thoughts, diffchecker, photos) on login just visible to basujindal
+- [ ] Display the blog posts and like and views in admin portal
+- [ ] Show full preview
+- [ ] Make blog like not anon?
+- [ ] Check how multiple images are posted
+- [ ] Split large files into smaller, eespcially thoughts.js and any files greater than 500 lines
 - [ ] Keep deleted posts and edit history for thoughts just in database
-- [ ] No need to display exact time on hover on post in thoughts, just date is good
-
+- [x] Add like and comment option to blogs similar to thoughts but allow anonymous or github login 
+- [x] No need to display exact time on hover on post in thoughts, just date is good

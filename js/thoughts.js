@@ -159,6 +159,10 @@
       imageInput.addEventListener('change', handleImageSelect);
     }
 
+    if (composeTextarea) {
+      composeTextarea.addEventListener('paste', handlePaste);
+    }
+
     if (lightbox) {
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox || e.target.classList.contains('image-lightbox-close')) {
@@ -973,8 +977,34 @@
   // Handle image selection
   function handleImageSelect(e) {
     const files = Array.from(e.target.files);
-    const MAX_FILE_SIZE = 20 * 1024 * 1024;
+    processImageFiles(files);
+    e.target.value = '';
+  }
 
+  // Handle paste event for images
+  function handlePaste(e) {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const files = [];
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    }
+
+    if (files.length > 0) {
+      e.preventDefault();
+      processImageFiles(files);
+    }
+  }
+
+  // Process image files (shared by file input and paste)
+  function processImageFiles(files) {
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
     const remaining = 4 - selectedImages.length;
     const newFiles = files.slice(0, remaining);
 
@@ -994,7 +1024,6 @@
     });
 
     updateSubmitButton();
-    e.target.value = '';
   }
 
   // Add image preview
