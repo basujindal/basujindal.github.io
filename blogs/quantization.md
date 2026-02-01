@@ -170,6 +170,10 @@ FP8 is only supported in H100 GPUs but storing approximations in fp8 can be accu
 
 Biases are not converted because to preserve the accuracy of a typical addmm operation, they must be converted with a scale that is equal to the product of the input and weight scales, which leads to a ridiculously small scale, and conversely requires a very high bitwidth to avoid clipping. 
 
+## Latency and Bandwidth analysis
+
+https://www.youtube.com/watch?v=adA9AMu4_Kc
+
 
 ## Recommended Reading & References
 

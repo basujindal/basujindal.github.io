@@ -17,6 +17,35 @@
   prefersDark.addEventListener('change', e => { if (!localStorage.getItem('theme')) setTheme(e.matches ? 'dark' : 'light'); });
 })();
 
+// Visit tracking
+(function() {
+  const API_BASE = 'https://server.basujindal.me/api';
+  const VISIT_KEY = 'last_visit_tracked';
+
+  // Only track once per session per page
+  const page = window.location.pathname + window.location.search;
+  const sessionKey = `${VISIT_KEY}_${page}`;
+
+  if (sessionStorage.getItem(sessionKey)) return;
+
+  // Don't track stats page visits
+  if (page.includes('stats.html')) return;
+
+  // Track the visit
+  fetch(`${API_BASE}/visit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      page: page,
+      referrer: document.referrer || ''
+    })
+  }).then(() => {
+    sessionStorage.setItem(sessionKey, Date.now().toString());
+  }).catch(() => {
+    // Silently fail - don't break the page if tracking fails
+  });
+})();
+
 // Lightbox for photography
 (function() {
   const gallery = document.querySelector('.gallery');
