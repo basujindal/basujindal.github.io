@@ -383,7 +383,8 @@
     actionsDiv.querySelector('.inline-edit-cancel').addEventListener('click', restore);
     actionsDiv.querySelector('.inline-edit-save').addEventListener('click', async () => {
       const newText = textarea.value.trim();
-      if (!newText) { showToast('Post cannot be empty', 'error'); return; }
+      const hasImages = post.images && post.images.length > 0;
+      if (!newText && !hasImages) { showToast('Post cannot be empty', 'error'); return; }
       if (newText === originalText) { restore(); return; }
 
       const saveBtn = actionsDiv.querySelector('.inline-edit-save');

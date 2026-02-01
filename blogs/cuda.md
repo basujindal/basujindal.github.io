@@ -1,7 +1,7 @@
 ---
 title: "CUDA Programming"
 date: 2026-01-19
-show: false
+show: true
 ---
 
 ## Threads, Warps, Thread Blocks, Thread Block cluster and Grid
@@ -78,11 +78,34 @@ Thread blocks in the same cluster can:
 
 <img src="../../images/cuda_memory.png" alt="CUDA memory hierarchy showing global, shared, and local memory" style="max-width: 550px; display: block; margin: 0 auto;">
 
-### GMEM
+### Global Memory
 
-### SMEM
+### Shared Memory
 
-### TMEM
+### Bank Conflicts
+
+Shared memory is divided into 32 banks. Each succesive word (4 bytes/ 32 bits, which could be a 32 bit int, float, etc) in stored different bank upto bank the last bank (32), so $word_32$ in in $bank_0$. Each bank can read or write one 32-bit word per clock cycle. If multiple threads in the same warp access the same bank, a bank conflict occurs. This means that the bank has to serialize the accesses, which can slow down the memory access. On the contrary, if each thread in a warp access the same word, it will be broadcasted to all the threads.
+
+Although if threads from different warps in the same block read from the same bank, conflict does not occur.
+- [Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
+
+### Tensor Memory
+
+N.B: The consumer Blackwell architecture (compute capability 12.0) differs from the data center Blackwell architecture (compute capability 10.0) in some major ways, notably lacking Tensor Memory.
+
+The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
+
+TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both tcgen05.alloc and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the tcgen05.alloc instruction stores the base 32-bit address of the allocation to a given location in shared memory. The TMEM base address should then be set as the offset to the accumulator tensor for the UMMA, as we show below. Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using tcgen05.ld for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through tcgen05.cp or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Luckily for us, CUTLASS provides utility functions that we’ll cover later that simplify the process of organizing data via swizzling. That said, those interested can find the layout information in the PTX guide. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM. Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM
+
+### Register File
+
+---
+
+### Moving data between memory types
+
+Every time we move data from one memory to another, lets say from $m_a$ to $m_b$, we need to keep in mind the instruction used for data transfer might exect the data in a particular layout and what hardware unit will perform that instruction. 
+
+For example, the Ampere PTX instruction `ldmatrix.m8n8.x1.b16` loads data from the SMEM to RF. Each call to `ldmatrix` will load a M=8, K=8 (or a 8x16B) subtile from SMEM into RF. This suggests that for whatever layout the A tile is stored in SMEM, it has to support the `8x16B` subtile load pattern of `ldmatrix.m8n8` at full SMEM read bandwidth (128B/cycle).
 
 
 ## Optimizations and Latency Hiding
@@ -169,28 +192,9 @@ __global__ void row_sums(const float *A, float *sums, size_t ds){
 
 ```
 
-## Paged and Pinned Memory
-
-Paged memory is memory that can be swapped out to disk by the operating system, while pinned memory is memory that is not swapped out to disk by the operating system. A Page-locked memory is never swapped out of main memory. This means that a page locked in physical memory is guaranteed to be present in RAM all the time. However, there is no guarantee that the page fault will never happen, since the kernel is still free to move the page within the physical memory.
-
-A pinned memory is a locked memory that is pinned at a particular page frame location. This means that the pinned page can neither be swapped out of main memory nor be moved within the physical RAM and hence it is guaranteed that the page fault will never happen. This is an ideal requirement for hard realtime applications
-
-<img src="../../images/page_pinned.png" alt="Comparison of paged vs pinned memory for GPU data transfer" style="max-width: 550px; display: block; margin: 0 auto;">
-The GPU always must DMA from pinned memory. If you use malloc() for your host data, then it is in pageable (non-pinned memory). When you call cudaMemcpy(), the CUDA driver has to first memcpy the data from your non-pinned pointer to an internal pinned memory pointer, and then the host->GPU DMA can be invoked.
-
-If you allocate your host memory with cudaMallocHost and initialize the data there directly, then the driver doesn’t have to memcpy from pageable to pinned memory before DMAing – it can DMA directly. That is why it is faster. Using a lot of pinned memory can cause performance problems for the operating system. (“a lot” is hard to quantify unfortunately, which is another drawback). Pinned memory is great if you are going to be copying data back and forth between the CPU and GPU quite often but may not be that beneficial if you’re not doing many transfers…
-
-
-## Bank Conflicts
-
-Shared memory is divided into 32 banks. Each succesive word (4 bytes/ 32 bits, which could be a 32 bit int, float, etc) in stored different bank upto bank the last bank (32), so word_32 in in bank_0. Each bank can read or write one 32-bit word per clock cycle. If multiple threads in the same warp access the same bank, a bank conflict occurs. This means that the bank has to serialize the accesses, which can slow down the memory access. On the contrary, if each thread in a warp access the same word, it will be broadcasted to all the threads.
-
-This is on the warp level only If multiple threads from different warps in the same block read from the same bank, conflict does not occur.
-- [Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
-
 ## Reduction (Sum of elements in a vector)
 
-- [NVIDIA Reduction Optimization PDF](https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf)
+https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
 
 
 ## General Matrix-Matrix multiplication (GEMM) 
@@ -256,19 +260,22 @@ While using shared memory approach with BLOCK_SIZE of 32, we load 32x32 elements
 
 ### 2D Blocktiling
 
-To Add
 
 ### Tensor Cores
+
+For Ampere, CUDA WMMA API, or PTX mma.sync instructions are issued by a warp and are warp-synchronous: all 32 threads participate in the instruction. Each thread contributes part of the operand “fragments” (held in registers) and receives part of the result fragment. Therefore a warp executes the MMA instruction, and the hardware executes it on tensor cores with data distributed across the warp’s lanes.
+
+
+
 
 - [Programming Tensor Cores in CUDA 9](https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/)
 - [Intro to Tensor Cores Video](https://www.youtube.com/watch?v=Yt1A-vaWTck)
 - [CUDA Mode Video on Tensor Cores](https://www.youtube.com/watch?v=hQ9GPnV0-50&t=3968s)
-- [Outperforming cuBLAS on H100](https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396)
-- [Follow-up Video on H100](https://www.youtube.com/watch?v=ErTmTCRP1_U)
 
-<!-- ### Ping-Pong
 
-For Ping-Pong, each warp group takes on a specialized role of either Data producer or Data consumer. The producer warp group focuses on producing data movement to fill the shared memory buffers (via TMA). Two other warp groups are dedicated consumers that process the math (MMA) portion with tensor cores, and then do any follow up work and write their results back to global memory (epilogue)
+### Ping-Pong
+
+<!-- For Ping-Pong, each warp group takes on a specialized role of either Data producer or Data consumer. The producer warp group focuses on producing data movement to fill the shared memory buffers (via TMA). Two other warp groups are dedicated consumers that process the math (MMA) portion with tensor cores, and then do any follow up work and write their results back to global memory (epilogue)
 
 The producer can feed data to Tensor cores of Consumers. While one consumer is using the Tensor cores for Main Loop (MMA), the other can work on Epilogue which uses the CUDA cores. Thereby maximizing the utilization of Tensor cores -->
 
@@ -329,7 +336,7 @@ Function from Coordinate to Index: `idx = inner_product(coord, stride)`
 | 3D Tensor<br>Layer 0: `[[a, b], [c, d]]`<br>Layer 1: `[[e, f], [g, h]]` | Tensor layout<br>Shape: `(2,2,2)`<br>Stride: `(4,1,2)` | `[a, b, e, f, c, d, g, h]` | `idx = inner_product(coord, stride)` |
 
 
-## Functions
+### CuTe Functions
 
 `cute::cosize_v<CuteLayout>`: Compile time function that results the cosize of a layout. Cosize is the min number of elements needed to store all elemtns addressed by the layout accounting for potential non-contiguous access patterns (strides > 1) For contiguous layouts, cosize equals size 
 
@@ -363,19 +370,6 @@ auto result_2d = tiled_divide(layout_4x6, tile_2x3);
 //   - Outer modes 2,2 : grid of tiles (4/2=2 tiles in M, 6/3=2 tiles in N)
 ```
 
-### Examples
-
-Compile on DGX B200
-```
-nvcc -arch=sm_100a \
--I include \
--I tools/util/include \
-examples/cute/tutorial/blackwell/01_mma_sm100.cu \
--o 01_mma_sm100
-
-./01_mma_sm100
-```
-
 
 ## Blackwell Architecture 
 
@@ -398,14 +392,6 @@ A Streaming Multiprocessor (SM) level:
 Block Level: Maximum shared memory per thread block is 227 KB.
 Thread level: The maximum number of registers per thread is 255.
 
-
-### Tensor Memory
-
-N.B: The consumer Blackwell architecture (compute capability 12.0) differs from the data center Blackwell architecture (compute capability 10.0) in some major ways, notably lacking Tensor Memory.
-
-The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
-
-TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both tcgen05.alloc and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the tcgen05.alloc instruction stores the base 32-bit address of the allocation to a given location in shared memory. The TMEM base address should then be set as the offset to the accumulator tensor for the UMMA, as we show below. Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using tcgen05.ld for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through tcgen05.cp or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Luckily for us, CUTLASS provides utility functions that we’ll cover later that simplify the process of organizing data via swizzling. That said, those interested can find the layout information in the PTX guide. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM. Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM
 
 
 ### Loading from SMEM in Blackwell
@@ -450,6 +436,21 @@ More information on [Driver vs Runtime API](https://docs.nvidia.com/cuda/cuda-ru
 
 
 NB: The PyTorch binaries ship with their own CUDA runtime (as well as cuDNN, NCCL etc.) and don’t need a locally installed CUDA toolkit to execute code but only a properly installed NVIDIA driver. The local CUDA toolkit (with the compiler) will be used if building PyTorch from source or a custom CUDA extension.
+
+## Paged and Pinned Memory
+
+Paged memory is memory that can be swapped out to disk by the operating system, while pinned memory is memory that is not swapped out to disk by the operating system. A Page-locked memory is never swapped out of main memory. This means that a page locked in physical memory is guaranteed to be present in RAM all the time. However, there is no guarantee that the page fault will never happen, since the kernel is still free to move the page within the physical memory.
+
+A pinned memory is a locked memory that is pinned at a particular page frame location. This means that the pinned page can neither be swapped out of main memory nor be moved within the physical RAM and hence it is guaranteed that the page fault will never happen. This is an ideal requirement for hard realtime applications
+
+<img src="../../images/page_pinned.png" alt="Comparison of paged vs pinned memory for GPU data transfer" style="max-width: 550px; display: block; margin: 0 auto;">
+The GPU always must DMA from pinned memory. If you use malloc() for your host data, then it is in pageable (non-pinned memory). When you call cudaMemcpy(), the CUDA driver has to first memcpy the data from your non-pinned pointer to an internal pinned memory pointer, and then the host->GPU DMA can be invoked.
+
+If you allocate your host memory with cudaMallocHost and initialize the data there directly, then the driver doesn’t have to memcpy from pageable to pinned memory before DMAing – it can DMA directly. That is why it is faster. Using a lot of pinned memory can cause performance problems for the operating system. (“a lot” is hard to quantify unfortunately, which is another drawback). Pinned memory is great if you are going to be copying data back and forth between the CPU and GPU quite often but may not be that beneficial if you’re not doing many transfers…
+
+- [Locked Memory vs Pinned Memory Discussion](https://stackoverflow.com/questions/62332067/vmlck-locked-memory-vs-vmpin-pinned-memory-in-proc-pid-status)
+- [Page-locked Memory Forum Discussion](https://forums.developer.nvidia.com/t/question-about-page-locked-memory/9032/2)
+
 
 ### Compiling CUDA code
 
@@ -570,6 +571,9 @@ Usually, the single and half precision floating point operations are done using 
 
 ## References
 
+- [Swizzling](https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html#6-how-transposed-input-is-handled)
+- [Outperforming cuBLAS on H100](https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396)
+- [Follow-up Video on H100](https://www.youtube.com/watch?v=ErTmTCRP1_U)
 - [CUDA Training Series by NVIDIA and OLCF](https://www.olcf.ornl.gov/cuda-training-series/)
 - [CUDA Training Series YouTube Playlist](https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)
 - [CUDA Training Exercises](https://github.com/olcf/cuda-training-series/tree/master/exercises)
@@ -578,6 +582,3 @@ Usually, the single and half precision floating point operations are done using 
 - [CUDA Mode Discord Lectures](https://github.com/cuda-mode/lectures)
 - [NVIDIA CUDA C Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability)
 - Programming Massively Parallel Processors Book by David B. Kirk and Wen-mei W. Hwu 4th Edition
-- [CUDA Toolkit Documentation](https://docs.nvidia.com/cuda/index.html)
-- [Locked Memory vs Pinned Memory Discussion](https://stackoverflow.com/questions/62332067/vmlck-locked-memory-vs-vmpin-pinned-memory-in-proc-pid-status)
-- [Page-locked Memory Forum Discussion](https://forums.developer.nvidia.com/t/question-about-page-locked-memory/9032/2)
