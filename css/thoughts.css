@@ -57,6 +57,19 @@
   display: none;
 }
 
+/* Logout container at bottom */
+.logout-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.logout-container.hidden {
+  display: none;
+}
+
 /* Compose box (for authenticated users) */
 .compose-box {
   background: var(--card-bg);
@@ -1296,15 +1309,21 @@
 }
 
 .twitter-embed {
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem;
   min-height: 100px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .twitter-embed .twitter-tweet {
   margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+.twitter-embed .twitter-tweet-rendered,
+.twitter-embed iframe {
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 
 .twitter-embed a {
@@ -1561,9 +1580,8 @@
   }
 
   .twitter-embed {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
   /* Code blocks on mobile */

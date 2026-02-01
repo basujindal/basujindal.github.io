@@ -41,6 +41,7 @@
   const lightboxImg = document.getElementById('lightbox-img');
   const loginBtn = document.getElementById('github-login-btn');
   const logoutBtn = document.getElementById('logout-btn');
+  const logoutContainer = document.getElementById('logout-container');
   const toastContainer = document.getElementById('toast-container');
   const modalOverlay = document.getElementById('modal-overlay');
   const modalTitle = document.getElementById('modal-title');
@@ -90,8 +91,8 @@
     if (loginBtn) {
       loginBtn.classList.toggle('hidden', isAuthenticated);
     }
-    if (logoutBtn) {
-      logoutBtn.classList.toggle('hidden', !isAuthenticated);
+    if (logoutContainer) {
+      logoutContainer.classList.toggle('hidden', !isAuthenticated);
     }
 
     if (composeAvatar && currentUser) {
