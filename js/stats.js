@@ -299,6 +299,11 @@
         visitorMap.fitBounds(bounds, { padding: [50, 50] });
       }
     }
+
+    // Fix map rendering issues
+    setTimeout(() => {
+      visitorMap.invalidateSize();
+    }, 100);
   }
 
   function renderCountryGrid(countries) {
