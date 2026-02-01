@@ -573,12 +573,11 @@ Usually, the single and half precision floating point operations are done using 
 - [CUDA Training Series by NVIDIA and OLCF](https://www.olcf.ornl.gov/cuda-training-series/)
 - [CUDA Training Series YouTube Playlist](https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)
 - [CUDA Training Exercises](https://github.com/olcf/cuda-training-series/tree/master/exercises)
-
 - [Introduction to CUDA Programming Video](https://www.youtube.com/watch?v=HOVvQfcBMTQ)
 - [Quantization using CUTLASS](https://www.youtube.com/watch?v=adA9AMu4_Kc)
 - [CUDA Mode Discord Lectures](https://github.com/cuda-mode/lectures)
 - [NVIDIA CUDA C Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability)
-- [Programming Massively Parallel Processors Book by David B. Kirk and Wen-mei W. Hwu 4th Edition]
+- Programming Massively Parallel Processors Book by David B. Kirk and Wen-mei W. Hwu 4th Edition
 - [CUDA Toolkit Documentation](https://docs.nvidia.com/cuda/index.html)
 - [Locked Memory vs Pinned Memory Discussion](https://stackoverflow.com/questions/62332067/vmlck-locked-memory-vs-vmpin-pinned-memory-in-proc-pid-status)
 - [Page-locked Memory Forum Discussion](https://forums.developer.nvidia.com/t/question-about-page-locked-memory/9032/2)
