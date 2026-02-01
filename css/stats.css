@@ -329,6 +329,46 @@
   overflow: hidden;
 }
 
+.table-scrollable {
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Collapsible Section */
+.section-title.collapsible {
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-title.collapsible:hover {
+  color: var(--accent);
+}
+
+.collapse-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.section-title.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
 .stats-table {
   width: 100%;
   border-collapse: collapse;
@@ -391,6 +431,33 @@
 
 .stats-table .comments-col {
   color: #3b82f6;
+}
+
+/* Visitor Details Table */
+.visitor-time {
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.visitor-ip {
+  font-family: monospace;
+  font-size: 0.8125rem;
+}
+
+.visitor-ua {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.visitor-page {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Users Grid (Recent Logins) */

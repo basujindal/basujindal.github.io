@@ -109,10 +109,9 @@
     document.getElementById('stat-blog-posts').textContent = formatNumber(data.totals.blog_posts);
     document.getElementById('stat-unique-users').textContent = formatNumber(data.totals.unique_users);
     document.getElementById('stat-total-logins').textContent = formatNumber(data.totals.total_logins);
-    document.getElementById('stat-thoughts-likes').textContent = formatNumber(data.totals.thoughts_likes);
-    document.getElementById('stat-thoughts-comments').textContent = formatNumber(data.totals.thoughts_comments);
-    document.getElementById('stat-blog-likes').textContent = formatNumber(data.totals.blog_likes);
-    document.getElementById('stat-blog-comments').textContent = formatNumber(data.totals.blog_comments);
+
+    // Render visitor details table
+    renderVisitorDetails(data.visit_locations);
 
     // Render visits chart
     renderVisitsChart(data.visits_by_day);
@@ -368,6 +367,62 @@
     `).join('');
   }
 
+  function renderVisitorDetails(locations) {
+    const tbody = document.querySelector('#visitor-table tbody');
+    const toggle = document.getElementById('visitor-details-toggle');
+    const content = document.getElementById('visitor-details-content');
+
+    // Setup collapsible toggle
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('collapsed');
+      content.classList.toggle('collapsed');
+    });
+
+    if (!locations || locations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No visitor data yet</td></tr>';
+      return;
+    }
+
+    // Sort by most recent first
+    const sortedLocations = [...locations].sort((a, b) =>
+      new Date(b.visited_at) - new Date(a.visited_at)
+    );
+
+    tbody.innerHTML = sortedLocations.map(visit => {
+      const locationStr = visit.city ? `${visit.city}` : '-';
+      const countryStr = visit.country || '-';
+      const timeStr = formatDateTime(new Date(visit.visited_at));
+      const ipStr = visit.ip_address || '-';
+      const pageStr = visit.page || '-';
+      const uaStr = visit.user_agent || '-';
+
+      return `
+        <tr>
+          <td class="visitor-time">${escapeHtml(timeStr)}</td>
+          <td class="visitor-ip">${escapeHtml(ipStr)}</td>
+          <td class="visitor-location">${escapeHtml(locationStr)}</td>
+          <td class="visitor-country">${escapeHtml(countryStr)}</td>
+          <td class="visitor-page">${escapeHtml(pageStr)}</td>
+          <td class="visitor-ua" title="${escapeHtml(uaStr)}">${escapeHtml(truncateUA(uaStr))}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function formatDateTime(date) {
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function truncateUA(ua) {
+    if (!ua || ua === '-') return '-';
+    return ua.length > 50 ? ua.substring(0, 50) + '...' : ua;
+  }
+
   // Utility functions
   function formatNumber(num) {
     if (num >= 1000000) {
@@ -389,10 +444,6 @@
 
   function formatTimeAgo(date) {
     return InteractionsCommon.formatTimeAgo(date);
-  }
-
-  function getInitials(name) {
-    return InteractionsCommon.getInitials(name);
   }
 
   function escapeHtml(text) {
