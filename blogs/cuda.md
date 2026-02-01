@@ -4,7 +4,7 @@ date: 2026-01-19
 show: false
 ---
 
-## Threads, Warps, Thread Blocks and Grid
+## Threads, Warps, Thread Blocks, Thread Block cluster and Grid
 
 <img src="../../images/SM.png" alt="CUDA Streaming Multiprocessor architecture showing threads, warps, and thread blocks" style="max-width: 600px; display: block; margin: 0 auto;">
 
@@ -33,6 +33,46 @@ kernel<<< 2, 4>>> ()
 blockIdx.x=0, blockIdx.x=1 (2 threadblocks)
 threadIdx.x = 0~3 (4 threads/threadblock)
 ```
+
+A thread block cluster is a newer CUDA concept (introduced in Hopper SM90, also in Blackwell SM100). It's a grouping of thread blocks that can cooperate more tightly.
+
+```cpp
+Grid
+  └── Cluster (new!)      ← Group of thread blocks that can sync & share memory
+      └── Thread Block   ← blockDim.x * blockDim.y * blockDim.z threads
+            └── Warp      ← 32 threads
+
+
+┌────────────┬─────────────────────────────────────┬─────────────────────────────┐
+│  Concept   │         What it represents          │        Size variable        │
+├────────────┼─────────────────────────────────────┼─────────────────────────────┤
+│ gridDim    │ Number of thread blocks in the grid │ gridDim.x/y/z               │
+├────────────┼─────────────────────────────────────┼─────────────────────────────┤
+│ blockDim   │ Number of threads per block         │ blockDim.x/y/z              │
+├────────────┼─────────────────────────────────────┼─────────────────────────────┤
+│ clusterDim │ Number of thread blocks per cluster │ cluster_shape (e.g., 2×2×1) │
+└────────────┴─────────────────────────────────────┴─────────────────────────────┘
+```
+
+#### Example
+
+cluster_shape = (2, 2, 1)   // 2×2×1 = 4 thread blocks per cluster
+gridDim       = (8, 4, 1)   // 32 total thread blocks
+blockDim      = (128, 1, 1) // 128 threads per block
+
+- Total clusters = 32 / 4 = 8 clusters
+- Each cluster has 4 thread blocks that can:
+1. Synchronize with each other (cluster.sync())
+2. Access each other's shared memory (distributed shared memory)
+3. Coordinate on tensor core operations
+
+#### Why Clusters?
+
+Thread blocks in the same cluster can:
+1. Synchronize - __cluster_barrier_arrive() / __cluster_barrier_wait()
+2. Share memory - Distributed Shared Memory (DSMEM) allows one block to read another block's shared memory within the cluster
+3. Coordinate MMA - Multiple CTAs can cooperate on large matrix multiplies
+
 
 ## Memory types
 
@@ -232,6 +272,41 @@ For Ping-Pong, each warp group takes on a specialized role of either Data produc
 
 The producer can feed data to Tensor cores of Consumers. While one consumer is using the Tensor cores for Main Loop (MMA), the other can work on Epilogue which uses the CUDA cores. Thereby maximizing the utilization of Tensor cores -->
 
+## GEMM flow in blackwell
+
+Full GEMM: (Gemm_M × Gemm_N) output, iterating over Gemm_K
+    │
+    ▼
+Cluster Tile: Multiple CTAs in a cluster TOGETHER compute a larger tile
+    │          Size: (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N)
+    ▼
+CTA Tile: Each CTA within the cluster computes its portion
+    │      Size: MmaTile_M × MmaTile_N (one CTA's responsibility)
+    ▼
+MMA Atom: The hardware instruction (tcgen05.mma)
+            Size: e.g., 64×256×16 for SM100
+
+So the relationship is:
+┌──────────────┬───────────────────────────┬───────────────────────────────────────────────────┐
+│    Level     │     What computes it      │                       Size                        │
+├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
+│ Full output  │ Entire grid               │ Gemm_M × Gemm_N                                   │
+├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
+│ Cluster tile │ 1 cluster (multiple CTAs) │ (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N) │
+├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
+│ CTA tile     │ 1 CTA (thread block)      │ MmaTile_M × MmaTile_N                             │
+├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
+│ MMA atom     │ 1 MMA instruction         │ ~64×256×16                                        │
+└──────────────┴───────────────────────────┴───────────────────────────────────────────────────┘
+Example
+
+cluster_shape = (2, 1, 1)   // 2 CTAs per cluster in M
+MmaTile_M = 128, MmaTile_N = 256
+
+// One CLUSTER handles: (2 × 128) × (1 × 256) = 256 × 256 output tile
+// Each CTA in the cluster handles: 128 × 256 (half the M dimension)
+
+The cluster doesn't work on ONE MMA tile together - rather, multiple CTAs in a cluster each handle their own MMA tile, but they can share data via distributed shared memory and synchronize.
 
 ## CuTe
 
@@ -252,6 +327,41 @@ Function from Coordinate to Index: `idx = inner_product(coord, stride)`
 | 2D Grid<br>`[[a, b, c],`<br>` [d, e, f]]` | Row-major<br>Shape: `(2,3)`<br>Stride: `(3,1)` | `[a, b, c, d, e, f]` | `idx = i*3 + j*1` |
 | 2D Grid<br>`[[a, b, c],`<br>` [d, e, f]]` | Padded Col-major<br>Shape: `(2,3)`<br>Stride: `(1,4)` | `[a, d, _, _, b, e, _, _, c, f, _, _]`<br>*(Includes gaps/padding)* | `idx = i*1 + j*4` |
 | 3D Tensor<br>Layer 0: `[[a, b], [c, d]]`<br>Layer 1: `[[e, f], [g, h]]` | Tensor layout<br>Shape: `(2,2,2)`<br>Stride: `(4,1,2)` | `[a, b, e, f, c, d, g, h]` | `idx = inner_product(coord, stride)` |
+
+
+## Functions
+
+`cute::cosize_v<CuteLayout>`: Compile time function that results the cosize of a layout. Cosize is the min number of elements needed to store all elemtns addressed by the layout accounting for potential non-contiguous access patterns (strides > 1) For contiguous layouts, cosize equals size 
+
+`cute::ArrayEgnine<Type, N>`: Fixed sizse array storage class
+
+`CUTE_DEVICE` - Macro that expands to `__device__` for CUDA, marking the function as callable only from GPU code.
+
+`make_tensor`: Creates a tensor view. A tensor in CuTe is pointer + layout pair. It doesnt own memory just views it.
+ Parameters:
+- `ptr`: A pointer (raw or CuTe smart pointer) to the data
+- `layout`: A CuTe Layout describing the shape and memory access pattern
+
+`make_smem_ptr(ptr)`: SMEM requires a special pointer type so the function wraps a raw pointer to indicate it points to shared memory (SMEM). This enables CuTe to select optimal copy operations and generates SMEM-specific PTX. Returns a special pointer type that carries SMEM address space information.
+
+```cpp
+make_tensor(make_smem_ptr(A.begin()), ASmemLayout{});
+```
+
+`tiled_divide`: 
+
+![alt text](../../images/cute_tiled_divide.png)
+
+```cpp
+// Example: divide a 4x6 layout
+auto layout_4x6 = make_layout(make_shape(Int<4>{}, Int<6>{}));  // (4, 6)
+auto tile_2x3   = make_tile(Int<2>{}, Int<3>{});                // Tile: (2, 3)
+
+auto result_2d = tiled_divide(layout_4x6, tile_2x3);
+// Result shape: ((2, 3), 2, 2)
+//   - Inner mode (2,3): elements within each tile
+//   - Outer modes 2,2 : grid of tiles (4/2=2 tiles in M, 6/3=2 tiles in N)
+```
 
 ### Examples
 

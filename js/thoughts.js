@@ -8,7 +8,7 @@
   }
 
   const { API_BASE, getAuthState, setAuthState, clearAuthState, formatTimeAgo,
-          getInitials, escapeHtml, processContent } = InteractionsCommon;
+          getInitials, escapeHtml, processContent, loadTwitterWidgets } = InteractionsCommon;
 
   // API endpoints
   const API = {
@@ -366,6 +366,7 @@
 
     feed.innerHTML = posts.map(post => renderPost(post)).join('');
     attachPostEventListeners();
+    loadTwitterWidgets();
   }
 
   // Render single post
@@ -442,7 +443,7 @@
       </button>
     ` : '';
 
-    const processedContent = processContent(post.text);
+    const processedContent = processContent(post.text, post.link_previews || []);
 
     return `
       <article class="post-card fade-in" data-post-id="${post.id}">
@@ -634,8 +635,10 @@
           throw new Error('Failed to edit post');
         }
 
-        post.text = newText;
-        contentEl.innerHTML = processContent(newText);
+        const updatedPost = await response.json();
+        post.text = updatedPost.text;
+        post.link_previews = updatedPost.link_previews || [];
+        contentEl.innerHTML = processContent(post.text, post.link_previews);
 
         textarea.remove();
         actionsDiv.remove();

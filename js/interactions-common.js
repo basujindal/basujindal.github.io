@@ -200,11 +200,131 @@
     }
   }
 
-  function renderLinkPreview(url) {
+  function getYouTubeVideoId(url) {
+    try {
+      const urlObj = new URL(url);
+      // Handle youtube.com/watch?v=ID
+      if (urlObj.hostname.includes('youtube.com')) {
+        return urlObj.searchParams.get('v');
+      }
+      // Handle youtu.be/ID
+      if (urlObj.hostname === 'youtu.be') {
+        return urlObj.pathname.slice(1).split('?')[0];
+      }
+    } catch {}
+    return null;
+  }
+
+  function getTwitterTweetId(url) {
+    try {
+      const urlObj = new URL(url);
+      // Handle twitter.com/user/status/ID or x.com/user/status/ID
+      if (urlObj.hostname.includes('twitter.com') || urlObj.hostname.includes('x.com')) {
+        const match = urlObj.pathname.match(/\/status\/(\d+)/);
+        return match ? match[1] : null;
+      }
+    } catch {}
+    return null;
+  }
+
+  function renderYouTubeEmbed(videoId) {
+    return `<div class="embed-container youtube-embed">
+      <iframe
+        src="https://www.youtube.com/embed/${escapeHtml(videoId)}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>`;
+  }
+
+  function renderTwitterEmbed(url, tweetId) {
+    // Twitter's widget requires twitter.com URLs, convert x.com if needed
+    const twitterUrl = url.replace(/(:\/\/)(www\.)?x\.com\//, '$1twitter.com/');
+
+    // Use Twitter's blockquote embed which will be hydrated by their script
+    return `<div class="embed-container twitter-embed" data-tweet-id="${escapeHtml(tweetId)}">
+      <blockquote class="twitter-tweet" data-dnt="true">
+        <a href="${escapeHtml(twitterUrl)}">Loading tweet...</a>
+      </blockquote>
+    </div>`;
+  }
+
+  function loadTwitterWidgets() {
+    // Load Twitter widgets script if not already loaded
+    if (window.twttr && window.twttr.widgets) {
+      window.twttr.widgets.load();
+    } else if (!document.querySelector('script[src*="platform.twitter.com/widgets.js"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://platform.twitter.com/widgets.js';
+      script.async = true;
+      script.charset = 'utf-8';
+      document.body.appendChild(script);
+    }
+  }
+
+  function renderLinkPreview(url, metadata = null) {
+    // Check for YouTube
+    const youtubeId = getYouTubeVideoId(url);
+    if (youtubeId) {
+      return renderYouTubeEmbed(youtubeId);
+    }
+
+    // Check for Twitter/X
+    const tweetId = getTwitterTweetId(url);
+    if (tweetId) {
+      // Schedule Twitter widget loading
+      setTimeout(loadTwitterWidgets, 0);
+      return renderTwitterEmbed(url, tweetId);
+    }
+
     const domain = extractDomain(url);
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-preview">
+    // If we have rich metadata with title or image, render rich preview
+    if (metadata && (metadata.title || metadata.image)) {
+      const hasImage = metadata.image && metadata.image.length > 0;
+      const hasTitle = metadata.title && metadata.title.length > 0;
+      const hasDescription = metadata.description && metadata.description.length > 0;
+      const siteName = metadata.site_name || domain;
+
+      if (hasImage) {
+        return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="link-preview rich">
+          <img src="${escapeHtml(metadata.image)}" alt="" class="link-preview-image" onerror="this.parentElement.classList.remove('rich');this.remove();">
+          <div class="link-preview-body">
+            <img src="${faviconUrl}" alt="" class="link-preview-favicon" onerror="this.style.display='none'">
+            <div class="link-preview-content">
+              ${hasTitle ? `<span class="link-preview-title">${escapeHtml(metadata.title)}</span>` : ''}
+              ${hasDescription ? `<span class="link-preview-description">${escapeHtml(metadata.description)}</span>` : ''}
+              <span class="link-preview-site">${escapeHtml(siteName)}</span>
+            </div>
+            <svg class="link-preview-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </div>
+        </a>`;
+      } else if (hasTitle) {
+        // No image but has title - show title instead of URL
+        return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="link-preview">
+          <img src="${faviconUrl}" alt="" class="link-preview-favicon" onerror="this.style.display='none'">
+          <div class="link-preview-content">
+            <span class="link-preview-title">${escapeHtml(metadata.title)}</span>
+            ${hasDescription ? `<span class="link-preview-description">${escapeHtml(metadata.description)}</span>` : ''}
+            <span class="link-preview-site">${escapeHtml(siteName)}</span>
+          </div>
+          <svg class="link-preview-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>`;
+      }
+    }
+
+    // Fallback to basic preview (domain + URL)
+    return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="link-preview">
       <img src="${faviconUrl}" alt="" class="link-preview-favicon" onerror="this.style.display='none'">
       <div class="link-preview-content">
         <span class="link-preview-domain">${escapeHtml(domain)}</span>
@@ -218,8 +338,18 @@
     </a>`;
   }
 
-  function processContent(text) {
+  function processContent(text, linkPreviews = []) {
     if (!text) return '';
+
+    // Create a map of URL to metadata for quick lookup
+    const previewMap = {};
+    if (linkPreviews && linkPreviews.length > 0) {
+      linkPreviews.forEach(preview => {
+        if (preview.url) {
+          previewMap[preview.url] = preview;
+        }
+      });
+    }
 
     // First, extract URLs before escaping to preserve them
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -272,10 +402,11 @@
       processed = processed.replace(placeholder, codeHtml);
     });
 
-    // Restore URLs as link previews
+    // Restore URLs as link previews (with metadata if available)
     Object.keys(urlPlaceholders).forEach(placeholder => {
       const url = urlPlaceholders[placeholder];
-      processed = processed.replace(placeholder, renderLinkPreview(url));
+      const metadata = previewMap[url] || null;
+      processed = processed.replace(placeholder, renderLinkPreview(url, metadata));
     });
 
     // Hashtags: #tag
@@ -312,6 +443,8 @@
     renderDeleteButton,
     // API
     getAuthHeaders,
-    fetchWithAuth
+    fetchWithAuth,
+    // Embeds
+    loadTwitterWidgets
   };
 })();
