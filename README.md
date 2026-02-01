@@ -100,7 +100,7 @@ Move to `/blogs/` when ready to publish.
 
 ## To Do 
 
-- [ ] Move logout button to the bottom
+- [ ] Show everthing in admin portal
 - [ ] Login at blog return no blog selected nad login is not successful
 - [ ] Update comments UI
 - [ ] Visit count for all pages (blogs, thoughts, diffchecker, photos) on login just visible to basujindal
@@ -111,3 +111,4 @@ Move to `/blogs/` when ready to publish.
 - [x] No need to display exact time on hover on post in thoughts, just date is good
 - [x] Show full preview
 - [x] Check how multiple images are posted
+- [x] Move logout button to the bottom

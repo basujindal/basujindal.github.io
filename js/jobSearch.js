@@ -113,70 +113,32 @@ function createFormOptions() {
 function addOptionToFieldset(container, category, value, isCustom = false) {
     const div = document.createElement('div');
     div.className = 'option-tag' + (isCustom ? ' custom-option' : '');
-
-    const input = document.createElement('input');
-    const label = document.createElement('label');
     const id = `${category}-${value.replace(/\W+/g, '').toLowerCase()}`;
 
-    input.type = 'checkbox';
-    input.id = id;
-    input.name = category;
-    input.value = value;
-    input.onchange = () => updateSelectionCount(category);
-
-    label.htmlFor = id;
-    label.textContent = value;
-
-    div.appendChild(input);
-    div.appendChild(label);
-
-    // Add delete button for custom options
-    if (isCustom) {
-        const deleteBtn = document.createElement('button');
-        deleteBtn.type = 'button';
-        deleteBtn.className = 'option-delete';
-        deleteBtn.title = 'Remove option';
-        deleteBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            removeOption(category, value);
-        };
-        div.appendChild(deleteBtn);
-    }
-
+    div.innerHTML = `
+        <input type="checkbox" id="${id}" name="${category}" value="${value}" onchange="updateSelectionCount('${category}')">
+        <label for="${id}">${value}</label>
+        ${isCustom ? `<button type="button" class="option-delete" title="Remove option" onclick="event.stopPropagation();removeOption('${category}','${value}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>` : ''}
+    `;
     container.appendChild(div);
 
     const masterCheckbox = document.getElementById(`master-${category}`);
-    if (masterCheckbox && masterCheckbox.checked) {
-        input.checked = true;
-    }
+    if (masterCheckbox?.checked) div.querySelector('input').checked = true;
 }
 
 function addMasterCheckbox(container, category) {
-    const masterDiv = document.createElement('div');
-    masterDiv.className = 'master-checkbox';
-
-    const masterCheckbox = document.createElement('input');
-    const masterLabel = document.createElement('label');
     const masterId = `master-${category}`;
+    const div = document.createElement('div');
+    div.className = 'master-checkbox';
+    div.innerHTML = `<input type="checkbox" id="${masterId}" name="${masterId}"><label for="${masterId}">Select All</label>`;
 
-    masterCheckbox.type = 'checkbox';
-    masterCheckbox.id = masterId;
-    masterCheckbox.name = `master-${category}`;
-    masterCheckbox.addEventListener('change', function() {
-        const allCheckboxes = document.querySelectorAll(`input[name="${category}"]`);
-        allCheckboxes.forEach(checkbox => {
-            checkbox.checked = masterCheckbox.checked;
-        });
+    div.querySelector('input').addEventListener('change', function() {
+        document.querySelectorAll(`input[name="${category}"]`).forEach(cb => cb.checked = this.checked);
         updateSelectionCount(category);
     });
-
-    masterLabel.htmlFor = masterId;
-    masterLabel.textContent = 'Select All';
-
-    masterDiv.appendChild(masterCheckbox);
-    masterDiv.appendChild(masterLabel);
-    container.appendChild(masterDiv);
+    container.appendChild(div);
 }
 
 function toggleFieldset(category) {
@@ -196,206 +158,105 @@ function updateSelectionCount(category) {
     }
 }
 
-function generateSearch() {
-    const roles = document.querySelectorAll('input[name="roles"]:checked');
-    const excludeRoles = document.querySelectorAll('input[name="excludeRoles"]:checked');
-    const excludeCompanies = document.querySelectorAll('input[name="excludeCompanies"]:checked');
-    const sites = document.querySelectorAll('input[name="sites"]:checked');
+function buildSearchUrl() {
+    const get = name => document.querySelectorAll(`input[name="${name}"]:checked`);
     const afterDate = document.getElementById('afterDate').value;
-    const excludeTerms = document.querySelectorAll('input[name="excludeTerms"]:checked');
-    const includeTerms = document.querySelectorAll('input[name="includeTerms"]:checked');
-    let dateQuery = '';
-    let queryParts = [];
+    const queryParts = [];
 
-    if (sites.length) {
-        queryParts.push(`( ${Array.from(sites, site => `site:${site.value}`).join(' OR ')} )`);
-    }
+    const sites = get('sites');
+    if (sites.length) queryParts.push(`( ${[...sites].map(s => `site:${s.value}`).join(' OR ')} )`);
 
-    if (roles.length) {
-        queryParts.push(`(${Array.from(roles, role => `"${role.value}"`).join(' OR ')})`);
-    }
+    const roles = get('roles');
+    if (roles.length) queryParts.push(`(${[...roles].map(r => `"${r.value}"`).join(' OR ')})`);
 
-    if (includeTerms.length) {
-        queryParts.push(`(${Array.from(includeTerms, term => `"${term.value}"`).join(' OR ')})`);
-    }
+    const includeTerms = get('includeTerms');
+    if (includeTerms.length) queryParts.push(`(${[...includeTerms].map(t => `"${t.value}"`).join(' OR ')})`);
 
-    let excludeQuery = '';
+    const excludeItems = [...get('excludeRoles'), ...get('excludeCompanies'), ...get('excludeTerms')];
+    const excludeQuery = excludeItems.map(item => {
+        const val = item.value.startsWith('-') ? item.value.slice(1) : item.value;
+        return ` -"${val}"`;
+    }).join('');
+    if (excludeQuery) queryParts.push(excludeQuery);
+    if (afterDate) queryParts.push(` after:${afterDate}`);
 
-    excludeRoles.forEach(role => {
-        excludeQuery += ` -"${role.value.startsWith('-') ? role.value.slice(1) : role.value}"`;
-    });
+    return `https://www.google.com/search?q=${encodeURIComponent(queryParts.join(' '))}`;
+}
 
-    excludeCompanies.forEach(company => {
-        excludeQuery += ` -"${company.value.startsWith('-') ? company.value.slice(1) : company.value}"`;
-    });
-
-    excludeTerms.forEach(term => {
-        excludeQuery += ` -"${term.value.startsWith('-') ? term.value.slice(1) : term.value}"`;
-    });
-
-    if (excludeQuery) {
-        queryParts.push(excludeQuery);
-    }
-
-    if (afterDate) {
-        dateQuery += ` after:${afterDate}`;
-    }
-
-    if (dateQuery) {
-        queryParts.push(dateQuery);
-    }
-
-    const finalQuery = queryParts.join(' ');
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(finalQuery)}`;
-
+function generateSearch() {
+    const searchUrl = buildSearchUrl();
     const urlEl = document.getElementById('searchUrl');
     urlEl.textContent = searchUrl;
     urlEl.style.display = 'block';
-
     window.open(searchUrl, '_blank');
 }
 
 function copySearchUrl() {
     const urlEl = document.getElementById('searchUrl');
-    const url = urlEl.textContent;
+    if (!urlEl.textContent) generateSearchUrl();
 
-    if (!url) {
-        // Generate URL first if not exists
-        generateSearchUrl();
-    }
-
-    const textToCopy = urlEl.textContent;
-    if (textToCopy) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const btn = document.getElementById('copyBtn');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.classList.remove('copied');
-            }, 2000);
-        });
-    }
+    navigator.clipboard.writeText(urlEl.textContent).then(() => {
+        const btn = document.getElementById('copyBtn');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('copied');
+        }, 2000);
+    });
 }
 
 function generateSearchUrl() {
-    const roles = document.querySelectorAll('input[name="roles"]:checked');
-    const excludeRoles = document.querySelectorAll('input[name="excludeRoles"]:checked');
-    const excludeCompanies = document.querySelectorAll('input[name="excludeCompanies"]:checked');
-    const sites = document.querySelectorAll('input[name="sites"]:checked');
-    const afterDate = document.getElementById('afterDate').value;
-    const excludeTerms = document.querySelectorAll('input[name="excludeTerms"]:checked');
-    const includeTerms = document.querySelectorAll('input[name="includeTerms"]:checked');
-    let dateQuery = '';
-    let queryParts = [];
-
-    if (sites.length) {
-        queryParts.push(`( ${Array.from(sites, site => `site:${site.value}`).join(' OR ')} )`);
-    }
-
-    if (roles.length) {
-        queryParts.push(`(${Array.from(roles, role => `"${role.value}"`).join(' OR ')})`);
-    }
-
-    if (includeTerms.length) {
-        queryParts.push(`(${Array.from(includeTerms, term => `"${term.value}"`).join(' OR ')})`);
-    }
-
-    let excludeQuery = '';
-    excludeRoles.forEach(role => {
-        excludeQuery += ` -"${role.value.startsWith('-') ? role.value.slice(1) : role.value}"`;
-    });
-    excludeCompanies.forEach(company => {
-        excludeQuery += ` -"${company.value.startsWith('-') ? company.value.slice(1) : company.value}"`;
-    });
-    excludeTerms.forEach(term => {
-        excludeQuery += ` -"${term.value.startsWith('-') ? term.value.slice(1) : term.value}"`;
-    });
-
-    if (excludeQuery) queryParts.push(excludeQuery);
-    if (afterDate) dateQuery += ` after:${afterDate}`;
-    if (dateQuery) queryParts.push(dateQuery);
-
-    const finalQuery = queryParts.join(' ');
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(finalQuery)}`;
-
+    const searchUrl = buildSearchUrl();
     const urlEl = document.getElementById('searchUrl');
     urlEl.textContent = searchUrl;
     urlEl.style.display = 'block';
-
     return searchUrl;
 }
 
 function loadOptionsFromLocalStorage() {
-    const savedOptions = localStorage.getItem('jobSearchOptions');
+    const saved = localStorage.getItem('jobSearchOptions');
     const savedCustom = localStorage.getItem('jobSearchCustomOptions');
-    if (savedOptions) {
-        Object.assign(options, JSON.parse(savedOptions));
-    }
-    if (savedCustom) {
-        customOptions = JSON.parse(savedCustom);
-    }
+    if (saved) Object.assign(options, JSON.parse(saved));
+    if (savedCustom) customOptions = JSON.parse(savedCustom);
 }
 
 function populateOptionCategories() {
     const select = document.getElementById('optionCategory');
-    Object.keys(options).forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = categoryNames[category] || category;
-        select.appendChild(option);
+    Object.keys(options).forEach(cat => {
+        select.innerHTML += `<option value="${cat}">${categoryNames[cat] || cat}</option>`;
     });
 }
 
 function addOption() {
     const category = document.getElementById('optionCategory').value;
     const newOption = document.getElementById('newOption').value.trim();
-    if (newOption && category && options[category]) {
-        if (!options[category].includes(newOption)) {
-            options[category].push(newOption);
+    if (!newOption || !category || !options[category] || options[category].includes(newOption)) return;
 
-            // Track as custom option
-            if (!customOptions[category]) {
-                customOptions[category] = [];
-            }
-            customOptions[category].push(newOption);
+    options[category].push(newOption);
+    customOptions[category] = customOptions[category] || [];
+    customOptions[category].push(newOption);
+    updateLocalStorage();
 
-            updateLocalStorage();
-            const content = document.getElementById(`content-${category}`);
-            if (content) {
-                addOptionToFieldset(content, category, newOption, true);
-            }
-            document.getElementById('newOption').value = '';
-            updateSelectionCount(category);
-        }
-    }
+    const content = document.getElementById(`content-${category}`);
+    if (content) addOptionToFieldset(content, category, newOption, true);
+    document.getElementById('newOption').value = '';
+    updateSelectionCount(category);
 }
 
 function removeOption(category, value) {
-    // Remove from options
     const idx = options[category].indexOf(value);
-    if (idx > -1) {
-        options[category].splice(idx, 1);
-    }
+    if (idx > -1) options[category].splice(idx, 1);
 
-    // Remove from custom options
     if (customOptions[category]) {
         const customIdx = customOptions[category].indexOf(value);
-        if (customIdx > -1) {
-            customOptions[category].splice(customIdx, 1);
-        }
+        if (customIdx > -1) customOptions[category].splice(customIdx, 1);
     }
-
     updateLocalStorage();
 
-    // Remove from DOM
     const id = `${category}-${value.replace(/\W+/g, '').toLowerCase()}`;
-    const input = document.getElementById(id);
-    if (input) {
-        input.closest('.option-tag').remove();
-    }
-
+    document.getElementById(id)?.closest('.option-tag')?.remove();
     updateSelectionCount(category);
 }
 
@@ -405,12 +266,8 @@ function updateLocalStorage() {
 }
 
 function addEnterKeyListener() {
-    const newOptionInput = document.getElementById('newOption');
-    newOptionInput.addEventListener('keypress', function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            addOption();
-        }
+    document.getElementById('newOption').addEventListener('keypress', e => {
+        if (e.key === 'Enter') { e.preventDefault(); addOption(); }
     });
 }
 
@@ -420,31 +277,17 @@ function setupDatePresets() {
 
     presetBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const days = parseInt(btn.dataset.days);
             const date = new Date();
-            date.setDate(date.getDate() - days);
+            date.setDate(date.getDate() - parseInt(btn.dataset.days));
             dateInput.value = date.toISOString().split('T')[0];
-
-            // Update active state
             presetBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         });
     });
 
-    // Update preset highlight when date manually changes
     dateInput.addEventListener('change', () => {
-        const inputDate = new Date(dateInput.value);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const diffDays = Math.round((today - inputDate) / (1000 * 60 * 60 * 24));
-
-        presetBtns.forEach(btn => {
-            if (parseInt(btn.dataset.days) === diffDays) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+        const diffDays = Math.round((new Date().setHours(0,0,0,0) - new Date(dateInput.value)) / 86400000);
+        presetBtns.forEach(btn => btn.classList.toggle('active', parseInt(btn.dataset.days) === diffDays));
     });
 }
 
