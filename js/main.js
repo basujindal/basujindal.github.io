@@ -31,6 +31,9 @@
   // Don't track stats page visits
   if (page.includes('stats.html')) return;
 
+  // Don't track owner's visits
+  if (localStorage.getItem('thoughts_is_owner') === 'true') return;
+
   // Track the visit
   fetch(`${API_BASE}/visit`, {
     method: 'POST',
