@@ -67,18 +67,8 @@
       if (toc) {
         const tocSidebar = document.createElement('aside');
         tocSidebar.className = 'toc-sidebar';
-        tocSidebar.innerHTML = toc + '<div id="mapmyvisitors-container" style="margin-top: 20px; text-align: center;"></div>';
+        tocSidebar.innerHTML = toc;
         document.body.appendChild(tocSidebar);
-
-        // Load MapMyVisitors
-        const mapContainer = document.getElementById('mapmyvisitors-container');
-        if (mapContainer) {
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.id = 'mapmyvisitors';
-          script.src = '//mapmyvisitors.com/map.js?d=LUhlD2Iz8BXSBnyy03hiL6D4dAgpWL8TXVMoAiF7lyQ&cl=ffffff&w=a';
-          mapContainer.appendChild(script);
-        }
 
         const mobileTocBtn = document.createElement('button');
         mobileTocBtn.className = 'mobile-toc-btn';

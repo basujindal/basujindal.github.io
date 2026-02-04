@@ -103,12 +103,15 @@
   }
 
   function renderStats(data) {
-    // Render totals
-    document.getElementById('stat-total-visits').textContent = formatNumber(data.totals.total_visits);
-    document.getElementById('stat-posts').textContent = formatNumber(data.totals.posts);
-    document.getElementById('stat-blog-posts').textContent = formatNumber(data.totals.blog_posts);
-    document.getElementById('stat-unique-users').textContent = formatNumber(data.totals.unique_users);
-    document.getElementById('stat-total-logins').textContent = formatNumber(data.totals.total_logins);
+    // Calculate visits by page type from visit_locations
+    const visitsByType = calculateVisitsByType(data.visit_locations);
+
+    // Render visits by page type
+    document.getElementById('stat-total-visits').textContent = formatNumber(visitsByType.total);
+    document.getElementById('stat-blog-visits').textContent = formatNumber(visitsByType.blogs);
+    document.getElementById('stat-thoughts-visits').textContent = formatNumber(visitsByType.thoughts);
+    document.getElementById('stat-diffchecker-visits').textContent = formatNumber(visitsByType.diffchecker);
+    document.getElementById('stat-other-visits').textContent = formatNumber(visitsByType.other);
 
     // Render visitor details table
     renderVisitorDetails(data.visit_locations);
@@ -124,6 +127,37 @@
 
     // Render blog table
     renderBlogTable(data.blog_stats);
+  }
+
+  function calculateVisitsByType(locations) {
+    const result = {
+      total: 0,
+      blogs: 0,
+      thoughts: 0,
+      diffchecker: 0,
+      other: 0
+    };
+
+    if (!locations || locations.length === 0) {
+      return result;
+    }
+
+    locations.forEach(visit => {
+      result.total++;
+      const page = (visit.page || '').toLowerCase();
+
+      if (page.includes('section=blogs') || page.includes('/blogs')) {
+        result.blogs++;
+      } else if (page.includes('section=posts') || page.includes('/posts') || page.includes('section=thoughts') || page.includes('/thoughts')) {
+        result.thoughts++;
+      } else if (page.includes('diff') || page.includes('diffchecker')) {
+        result.diffchecker++;
+      } else {
+        result.other++;
+      }
+    });
+
+    return result;
   }
 
   function renderVisitsChart(visitsByDay) {
@@ -292,13 +326,8 @@
       `);
     });
 
-    // Fit bounds if we have locations
-    if (Object.keys(locationGroups).length > 0) {
-      const bounds = Object.values(locationGroups).map(g => [g.lat, g.lng]);
-      if (bounds.length > 1) {
-        visitorMap.fitBounds(bounds, { padding: [50, 50] });
-      }
-    }
+    // Always show world view (markers will be placed on it)
+    visitorMap.setView([20, 0], 2);
 
     // Fix map rendering issues
     setTimeout(() => {

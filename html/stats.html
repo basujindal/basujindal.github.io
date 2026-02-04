@@ -47,7 +47,7 @@
         <div id="stats-content" class="stats-content hidden">
           <!-- Overview Cards -->
           <section class="stats-section fade-in">
-            <h2 class="section-title">Overview</h2>
+            <h2 class="section-title">Visits by Page Type</h2>
             <div class="stats-grid stats-grid-5">
               <div class="stat-card accent-orange" data-stat="total_visits">
                 <div class="stat-icon">
@@ -58,21 +58,10 @@
                 </div>
                 <div class="stat-info">
                   <span class="stat-value" id="stat-total-visits">-</span>
-                  <span class="stat-label">Total Visits</span>
+                  <span class="stat-label">Total</span>
                 </div>
               </div>
-              <div class="stat-card" data-stat="posts">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  </svg>
-                </div>
-                <div class="stat-info">
-                  <span class="stat-value" id="stat-posts">-</span>
-                  <span class="stat-label">Thoughts</span>
-                </div>
-              </div>
-              <div class="stat-card" data-stat="blog_posts">
+              <div class="stat-card" data-stat="blog_visits">
                 <div class="stat-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -82,35 +71,46 @@
                   </svg>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-value" id="stat-blog-posts">-</span>
-                  <span class="stat-label">Blog Posts</span>
+                  <span class="stat-value" id="stat-blog-visits">-</span>
+                  <span class="stat-label">Blogs</span>
                 </div>
               </div>
-              <div class="stat-card" data-stat="unique_users">
+              <div class="stat-card" data-stat="thoughts_visits">
                 <div class="stat-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-value" id="stat-unique-users">-</span>
-                  <span class="stat-label">Unique Users</span>
+                  <span class="stat-value" id="stat-thoughts-visits">-</span>
+                  <span class="stat-label">Thoughts</span>
                 </div>
               </div>
-              <div class="stat-card" data-stat="total_logins">
+              <div class="stat-card" data-stat="diffchecker_visits">
                 <div class="stat-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                    <polyline points="10 17 15 12 10 7"/>
-                    <line x1="15" y1="12" x2="3" y2="12"/>
+                    <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="16 3 16 8 21 8"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                    <line x1="8" y1="16" x2="16" y2="16"/>
                   </svg>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-value" id="stat-total-logins">-</span>
-                  <span class="stat-label">Total Logins</span>
+                  <span class="stat-value" id="stat-diffchecker-visits">-</span>
+                  <span class="stat-label">Diff Checker</span>
+                </div>
+              </div>
+              <div class="stat-card" data-stat="other_visits">
+                <div class="stat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value" id="stat-other-visits">-</span>
+                  <span class="stat-label">Other</span>
                 </div>
               </div>
             </div>
