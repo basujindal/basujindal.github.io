@@ -43,6 +43,17 @@
   const header = document.querySelector('header');
   if (header && !header.innerHTML.trim()) {
     header.innerHTML = headerHTML;
+
+    // Add Stats link if logged in as owner
+    if (localStorage.getItem('thoughts_is_owner') === 'true') {
+      const nav = header.querySelector('nav');
+      if (nav) {
+        const statsLink = document.createElement('a');
+        statsLink.href = '/stats/';
+        statsLink.textContent = 'Stats';
+        nav.appendChild(statsLink);
+      }
+    }
   }
 
   // Hamburger menu functionality
@@ -98,6 +109,7 @@
           (pagePath.startsWith('diffchecker') && href.includes('diffchecker')) ||
           (pagePath.startsWith('job_search') && href.includes('job_search')) ||
           (pagePath.startsWith('thoughts') && href.includes('thoughts')) ||
+          (pagePath.startsWith('stats') && href.includes('stats')) ||
           (pagePath.startsWith('post') && href.includes('/blogs/'))) {
         link.classList.add('active');
       }
