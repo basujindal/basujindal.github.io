@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://basujindal.github.io/</loc>
+    <loc>https://basujindal.me/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/blogs.html</loc>
+    <loc>https://basujindal.me/blogs/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/thoughts.html</loc>
+    <loc>https://basujindal.me/thoughts/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/photography.html</loc>
+    <loc>https://basujindal.me/photography/</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/job_search.html</loc>
+    <loc>https://basujindal.me/job_search/</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/diffchecker.html</loc>
+    <loc>https://basujindal.me/diffchecker/</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=llm</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=llm</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=diffusion</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=diffusion</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=generative_models</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=generative_models</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=parameter_estimation</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=parameter_estimation</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=probability_statistics</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=probability_statistics</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=cuda</loc>
+    <loc>https://basujindal.me/post/?section=blogs&amp;p=cuda</loc>
     <priority>0.6</priority>
   </url>
 </urlset>

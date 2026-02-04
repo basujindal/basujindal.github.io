@@ -4,7 +4,7 @@
 
 ### 1. Create the Markdown File
 
-Create a new file in `/blogs/` with the naming format `POST_NAME.md`:
+Create a new file in `/blog-posts/` with the naming format `POST_NAME.md`:
 
 ```markdown
 ---
@@ -24,7 +24,7 @@ Your content here...
 
 ### 2. Add Images (if needed)
 
-Place any images in `/blogs/images/` and reference them in your markdown:
+Place any images in `/blog-posts/images/` and reference them in your markdown:
 
 ```markdown
 ![Description](../../images/your-image.png)
@@ -32,7 +32,7 @@ Place any images in `/blogs/images/` and reference them in your markdown:
 
 ### 3. Add Blog Entry to Listing Page
 
-Edit `/html/blogs.html` and add a new entry to the `blogs` array:
+Edit `/blogs/index.html` and add a new entry to the `blogs` array:
 
 ```javascript
 { slug: 'POST_NAME', description: 'Brief description of the post' }
@@ -46,7 +46,7 @@ Add the new post to `sitemap.xml`:
 
 ```xml
 <url>
-  <loc>https://basujindal.github.io/html/post.html?section=blogs&amp;p=POST_NAME</loc>
+  <loc>https://basujindal.me/post/?section=blogs&amp;p=POST_NAME</loc>
   <priority>0.6</priority>
 </url>
 ```
@@ -65,7 +65,7 @@ Place your image in the `/astrophotos/` directory. Supported formats: `.jpg`, `.
 
 ### 2. Add Gallery Entry
 
-Edit `/html/photography.html` and add a new figure inside the gallery:
+Edit `/photography/index.html` and add a new figure inside the gallery:
 
 ```html
 <figure class="gallery-item"
@@ -91,12 +91,12 @@ Commit and push to `main` branch.
 
 ## Draft/In-Progress Content
 
-For work-in-progress posts, use the `/inprogress/` directory instead:
-- Markdown files go in `/inprogress/`
-- Images go in `/inprogress/images/`
-- Access via `html/post.html?section=inprogress&p=POST_NAME`
+For work-in-progress posts, use the `/drafts/` directory instead:
+- Markdown files go in `/drafts/`
+- Images go in `/drafts/images/`
+- Access via `/post/?section=inprogress&p=POST_NAME`
 
-Move to `/blogs/` when ready to publish.
+Move to `/blog-posts/` when ready to publish.
 
 ## To Do 
 

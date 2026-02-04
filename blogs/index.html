@@ -37,7 +37,7 @@
     async function loadBlogs() {
       const grid = document.getElementById('blog-grid');
       const blogData = (await Promise.all(blogs.map(async (blog) => {
-        const res = await fetch(`../blogs/${blog.slug}.md`);
+        const res = await fetch(`../blog-posts/${blog.slug}.md`);
         const text = await res.text();
         const frontMatter = text.match(/^---\n([\s\S]*?)\n---/);
         let title = blog.slug;
@@ -61,7 +61,7 @@
         const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const delay = Math.min(index + 2, 5); // Cap delay at 0.5s
         grid.innerHTML += `
-          <a href="post.html?section=blogs&p=${blog.slug}" class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
+          <a href="/post/?section=blogs&p=${blog.slug}" class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
             <div class="blog-card-content">
               <time datetime="${blog.date}">${formatted}</time>
               <h2>${blog.title}</h2>

@@ -10,8 +10,7 @@ show: false
 
 A group of threads executed physically in parallel (SIMD). Every consecutive 32 threads in a threadblock is assigned into a warp eg: `Kernel0 <<< 5, 40 >>>` kernel0: total 200 threads (5*40) , 10 warps (not 7 warps) 40 threads: 2 warps 0-31 -> warp0, 32-39 -> warp1
 
-SMs are similar to a CPU core. The threads of a thread block execute concurrently on one SM. As thread blocks terminate, new blocks are launched on the vacated multiprocessors. SMs have different cores/units that can execute different types of instructions. For example, they have units that do integer operations, load-store units, units that do single precision floating point operations, and units that do double precision floating point operations. The number of units for each type of operation can vary between different GPUs. Once a thread block is scheduled to an SM, threads in the thread block are further partitioned into warps. A warp consists of 32 consecutive threads, all threads in a warp are executed in Single Instruction Multiple Thread (SIMT) fashion. That is, all threads execute the same instruction, and each thread carries out that operation on its own private data. A threadblock consists of up to 1024 threads.
-The PTX implementation of a thread block is called CTA “Cooperative Thread Array".
+SMs are similar to a CPU core. The threads of a thread block execute concurrently on one SM. As thread blocks terminate, new blocks are launched on the vacated multiprocessors. SMs have different cores/units that can execute different types of instructions. For example, they have units that do integer operations, load-store units, units that do single precision floating point operations, and units that do double precision floating point operations. The number of units for each type of operation can vary between different GPUs. Once a thread block is scheduled to an SM, threads in the thread block are further partitioned into warps. A warp consists of 32 consecutive threads, all threads in a warp are executed in Single Instruction Multiple Thread (SIMT) fashion. That is, all threads execute the same instruction, and each thread carries out that operation on its own private data. A threadblock consists of up to 1024 threads. The PTX implementation of a thread block is called CTA “Cooperative Thread Array".
 
 Grid is a group of threadblocks which executes a single kernel. Multiple Grids are created if you call multiple kernels. For example, `dim3 blocks(3,4)` creates
 
@@ -34,24 +33,13 @@ blockIdx.x=0, blockIdx.x=1 (2 threadblocks)
 threadIdx.x = 0~3 (4 threads/threadblock)
 ```
 
-A thread block cluster is a newer CUDA concept (introduced in Hopper SM90, also in Blackwell SM100). It's a grouping of thread blocks that can cooperate more tightly.
+A thread block cluster (introduced in Hopper SM90). is a grouping of thread blocks that can cooperate more tightly.
 
 ```cpp
 Grid
-  └── Cluster (new!)      ← Group of thread blocks that can sync & share memory
+  └── Cluster            ← Group of thread blocks that can sync & share memory
       └── Thread Block   ← blockDim.x * blockDim.y * blockDim.z threads
-            └── Warp      ← 32 threads
-
-
-┌────────────┬─────────────────────────────────────┬─────────────────────────────┐
-│  Concept   │         What it represents          │        Size variable        │
-├────────────┼─────────────────────────────────────┼─────────────────────────────┤
-│ gridDim    │ Number of thread blocks in the grid │ gridDim.x/y/z               │
-├────────────┼─────────────────────────────────────┼─────────────────────────────┤
-│ blockDim   │ Number of threads per block         │ blockDim.x/y/z              │
-├────────────┼─────────────────────────────────────┼─────────────────────────────┤
-│ clusterDim │ Number of thread blocks per cluster │ cluster_shape (e.g., 2×2×1) │
-└────────────┴─────────────────────────────────────┴─────────────────────────────┘
+            └── Warp     ← 32 threads
 ```
 
 #### Example
@@ -60,58 +48,11 @@ cluster_shape = (2, 2, 1)   // 2×2×1 = 4 thread blocks per cluster
 gridDim       = (8, 4, 1)   // 32 total thread blocks
 blockDim      = (128, 1, 1) // 128 threads per block
 
-- Total clusters = 32 / 4 = 8 clusters
-- Each cluster has 4 thread blocks that can:
-1. Synchronize with each other (cluster.sync())
-2. Access each other's shared memory (distributed shared memory)
-3. Coordinate on tensor core operations
+Total clusters = 32 / 4 = 8 clusters. Each cluster has 4 thread blocks that can 
+- Synchronize using  `_cluster_barrier_arrive() / __cluster_barrier_wait()`
+- Share memory - Distributed Shared Memory (DSMEM) allows one block to read another block's shared memory within the cluster
+- Coordinate MMA - Multiple CTAs can cooperate on large matrix multiplies
 
-#### Why Clusters?
-
-Thread blocks in the same cluster can:
-1. Synchronize - __cluster_barrier_arrive() / __cluster_barrier_wait()
-2. Share memory - Distributed Shared Memory (DSMEM) allows one block to read another block's shared memory within the cluster
-3. Coordinate MMA - Multiple CTAs can cooperate on large matrix multiplies
-
-
-## Memory types
-
-<img src="../../images/cuda_memory.png" alt="CUDA memory hierarchy showing global, shared, and local memory" style="max-width: 550px; display: block; margin: 0 auto;">
-
-### Global Memory
-
-### Shared Memory
-
-### Bank Conflicts
-
-Shared memory is divided into 32 banks. Each succesive word (4 bytes/ 32 bits, which could be a 32 bit int, float, etc) in stored different bank upto bank the last bank (32), so $word_32$ in in $bank_0$. Each bank can read or write one 32-bit word per clock cycle. If multiple threads in the same warp access the same bank, a bank conflict occurs. This means that the bank has to serialize the accesses, which can slow down the memory access. On the contrary, if each thread in a warp access the same word, it will be broadcasted to all the threads.
-
-Although if threads from different warps in the same block read from the same bank, conflict does not occur.
-- [Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
-
-### Tensor Memory
-
-N.B: The consumer Blackwell architecture (compute capability 12.0) differs from the data center Blackwell architecture (compute capability 10.0) in some major ways, notably lacking Tensor Memory.
-
-The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
-
-TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both tcgen05.alloc and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the tcgen05.alloc instruction stores the base 32-bit address of the allocation to a given location in shared memory. The TMEM base address should then be set as the offset to the accumulator tensor for the UMMA, as we show below. Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using tcgen05.ld for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through tcgen05.cp or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Luckily for us, CUTLASS provides utility functions that we’ll cover later that simplify the process of organizing data via swizzling. That said, those interested can find the layout information in the PTX guide. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM. Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM
-
-### Register File
-
----
-
-### Moving data between memory types
-
-Every time we move data from one memory to another, lets say from $m_a$ to $m_b$, we need to keep in mind the instruction used for data transfer might exect the data in a particular layout and what hardware unit will perform that instruction. 
-
-```copied
-For example, the Ampere PTX instruction `ldmatrix.m8n8.x1.b16` loads data from the SMEM to RF. Each call to `ldmatrix` will load a M=8, K=8 (or a 8x16B) subtile from SMEM into RF. This suggests that for whatever layout the A tile is stored in SMEM, it has to support the `8x16B` subtile load pattern of `ldmatrix.m8n8` at full SMEM read bandwidth (128B/cycle).
-```
-
-## Optimizations and Latency Hiding
-
-The two main ways to reduce or hide CUDA latency is to have a high memory bandwidth usage and and a high number of warps or threads in flight.
 
 ### Warp Scheduling
 
@@ -128,7 +69,18 @@ When a block is deposited on a SM, a number of things happen. Among those are in
 <!-- Kernel <<< 8, 1024>>> () One or two SMs can run even if your GPU has 4 SMs
 Kernel <<< 8, 256>>> () 4 SMs can run simultaneously -->
 
-### Memory Colaescing and High Bandwidth Usage 
+## Memory types
+
+<img src="../../images/cuda_memory.png" alt="CUDA memory hierarchy showing global, shared, and local memory" style="max-width: 550px; display: block; margin: 0 auto;">
+
+### Global Memory
+
+### Shared Memory
+
+
+### Memory access and coleascing
+
+The GPU supports 32B, 64B and 128B memory accesses instructions from GMEM. It makes sense to use the 128B ld instruction to make optimal use of GPU memory bandwidth.
 
 Sequential memory accesses by threads that are part of the same warp can be grouped and executed as one. This is referred to as global memory coalescing. Data within a warp can be easily broadcasted to other threads. So if each thread in a warp is accessing the same data, it will not access the same data it multiple times due.
 
@@ -169,6 +121,31 @@ __global__ void column_sums(const float *A, float *sums, size_t ds){
 | L2 Cache Throughput        | 8.87%            | 31.95%              |
 | Achieved Occupancy         | 42.06%           | 52.95%              |
 
+### Bank Conflicts
+
+Shared memory is divided into 32 banks. Each succesive word (4 bytes/ 32 bits, which could be a 32 bit int, float, etc) in stored different bank upto bank the last bank (32), so $word_32$ in in $bank_0$. Each bank can read or write one 32-bit word per clock cycle. If multiple threads in the same warp access the same bank, a bank conflict occurs. This means that the bank has to serialize the accesses, which can slow down the memory access. On the contrary, if each thread in a warp access the same word, it will be broadcasted to all the threads.
+
+Although if threads from different warps in the same block read from the same bank, conflict does not occur.
+[Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
+
+### Tensor Memory
+
+N.B: The consumer Blackwell architecture (compute capability 12.0) differs from the data center Blackwell architecture (compute capability 10.0) in some major ways, notably lacking Tensor Memory.
+
+The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
+
+TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both tcgen05.alloc and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the tcgen05.alloc instruction stores the base 32-bit address of the allocation to a given location in shared memory. The TMEM base address should then be set as the offset to the accumulator tensor for the UMMA, as we show below. Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using tcgen05.ld for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through tcgen05.cp or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Luckily for us, CUTLASS provides utility functions that we’ll cover later that simplify the process of organizing data via swizzling. That said, those interested can find the layout information in the PTX guide. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM. Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM
+
+### Register File
+
+---
+
+### Moving data between memory types
+
+One of the ways to move data from GMEM to SMEM is to read from GMEM to thread register and then to store to SMEM. Recent architectures have specialized instructions for the same such as `ldmatrix` in Ampere which we will look in a later section. Loading from SMEM to TMEM can be done using ...
+
+
+## Reduction (Sum of elements in a vector)
 
 We can reduce the row sum latency by using shared memory and adding the elements using parallel reduction. 
 
@@ -193,19 +170,15 @@ __global__ void row_sums(const float *A, float *sums, size_t ds){
 
 ```
 
-## Reduction (Sum of elements in a vector)
-
 https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
 
 
 ## General Matrix-Matrix multiplication (GEMM) 
 
-
-- [Outperforming cuBLAS on H100](https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396)
-- [Follow-up Video on H100](https://www.youtube.com/watch?v=ErTmTCRP1_U)
+<!-- Add simple CUDA code and diagrams for all sections -->
 
 It can be defined $$C = \alpha A B + \beta C$$ 
-Although on the surface level, multiplying two matrices is one of the simplest algoritms but it starts to show its beauty as you dig deep into it and try to parallelize the algoritm.
+Although on the surface level, multiplying two matrices is one of the simplest algoritms but it starts to show its beauty as you dig deep into it and try to parallelize the algoritm. [Simons blog on GMEM](https://siboehm.com/articles/22/CUDA-MMM) is a must read to understand the depth of a seeming simple task of multiplying two matmuls efficiently. A follow up blog by Pranjal about [Outperforming cuBLAS on H100](https://cudaforfun.substack.com/p/outperforming-cublas-on-h100-a-worklog#footnote-2-152317396) and [related video] (https://www.youtube.com/watch?v=ErTmTCRP1_U) is great to dive deeper into using Tensor cores.
 
 ### Inner Product Formulation
 
@@ -261,17 +234,116 @@ from both A and B into SMEM As and Bs. Each thread in the blocks uses the SMEM e
 
 ### 1D Blocktiling
 
+<!-- Expand -->
+
 While using shared memory approach with BLOCK_SIZE of 32, we load 32x32 elements from both A and B into smem As and Bs. What if we load 64x8 and 8x64 elements from A and B resp. Now the tile size of C being computed is 64x64. Which means we can compute more elements per elements in SMEM. Also this allows us to use a single thread for more (8 times) work. Here each warp computes 32 x 8 elements.
 
 ### 2D Blocktiling
 
+<!-- To Add -->
 
 ### Tensor Cores
 
-For Ampere, CUDA WMMA API, or PTX mma.sync instructions are issued by a warp and are warp-synchronous: all 32 threads participate in the instruction. Each thread contributes part of the operand “fragments” (held in registers) and receives part of the result fragment. Therefore a warp executes the MMA instruction, and the hardware executes it on tensor cores with data distributed across the warp’s lanes.
+Ampere introduced specially hardware to multiply matrices called Tensor cores. 
+In Ampere, the tensor core instructions are excuted by at wrap ( PTX mma.sync) instructions and are warp-synchronous: all 32 threads participate in the instruction. Each thread contributes part of the operand “fragments” (held in registers) and receives part of the result fragment. Let us take the example of the mma atom of `mma.sync.aligned.m16n8k8.row.col.f32.bf16.bf16.f32`. 
+
+It computes a tile GEMM of shape $M=16, N=8, K=8$:
+$$
+D_{16\times 8} ;=; A_{16\times 8} \times B_{8\times 8} ;+; C_{16\times 8}
+$$
+
+- `row.col`: A is treated as row-major (rows are contiguous along K) and B is treated as column-major (columns are contiguous along K)
+- `f32.bf16.bf16.f32`: data types of D, A, B, C in order
+- `sync`: warp-synchronous—threads wait until all lanes execute the same MMA before continuing
+- `aligned`:all 32 lanes must execute the same instruction (no divergence); otherwise behavior is undefined
+
+The inputs/output data from the tensor core is stored in thread registers as follows:
+
+- `A fragment`: 2 registers of type `f16x2` -> 4 bf16 elements (packed 2-per-32b reg)
+- `B fragment`: 1 register of type `f16x2` -> 2 bf16 elements
+- `C fragment`: 4 `f32` registers -> 4 fp32 accum elements
+- `D fragment`: 4 `f32` registers output (same per-thread footprint as C).
+
+### A minimal PTX-style shape of the instruction
+
+This is essentially the example pattern shown in the PTX ISA docs (note: BF16 fragments are still carried in `f16x2` packing).
+
+```ptx
+// Per-thread registers (each lane has its own)
+.reg .f16x2 a<2>;     // A fragment: 2 regs, each packs 2 bf16 => 4 bf16 total
+.reg .f16x2 b<1>;     // B fragment: 1 reg, packs 2 bf16 => 2 bf16 total
+.reg .f32   c<4>;     // C fragment: 4 fp32 accum values
+.reg .f32   d<4>;     // D fragment: 4 fp32 outputs
+
+mma.sync.aligned.m16n8k8.row.col.f32.bf16.bf16.f32
+  {d0, d1, d2, d3},
+  {a0, a1},
+  {b0},
+  {c0, c1, c2, c3};
+```
+
+<!-- print using cute like https://yang-yifan.github.io/blogs/mma_swizzle/figures/mma_layout.svg -->
+
+The Tensor core expects data to be in the SMEM from where it is loaded into the registers using `ldmatrix` instructions.
+Let us directly understand using an example load atom `ldmatrix.sync.aligned.m8n8.x1.shared.b16`.
+
+It `collectively loads` (at warp granularity) `one 8×8 matrix of 16-bit elements` from `shared memory` into `per-thread registers`, in exactly the register-fragment layout expected by `mma.sync` consumers. So each row is $8 \times 2\text{B} = 16\text{B}$, and the whole tile is $8 \times 16\text{B} = 128\text{B}$. 
+
+- `m8n8`: load an `8×8` matrix of `16-bit` elements. 
+- `x1`: load `one` such matrix (as opposed to `.x2` or `.x4`). 
+- `shared`: the address operand `p` is in `shared memory`; if generic addressing is used and the address doesn’t fall in `.shared`, behavior is undefined. 
+- `b16`: the matrix elements are `16-bit`. 
+- `sync.aligned`: this is a `warp-collective` load “across all threads in a warp.” 
+
+
+Conceptually, the warp needs `8 row-start addresses` (one per row). 
+
+- `Rows don’t have to be stored contiguously` in memory. 
+* For `.x1`, those 8 addresses (`addr0..addr7`) are `provided by threads 0–7` (one per thread). Each address corresponds to the start of a matrix row. 
+
+### What comes out (register fragments per thread)
+
+For `.m8n8.x1.b16`:
+
+* Each thread receives a `fragment` in its destination register `r` (type `.b32`). The official examples show `.reg .b32 d; ... ldmatrix ... {d}, [addr];`. 
+- `A group of 4 consecutive threads loads 16 bytes` — i.e., `one entire row (16B)` at a time. This implies each thread in that 4-thread group gets `4 bytes`, which for `.b16` is `two 16-bit elements` in its `.b32` register. 
+* The doc also states: “Each thread in a warp loads fragments of a row, with thread 0 receiving the first fragment in its register `r`, and so on.” 
+
+### Alignment requirement
+
+Because `4 threads collectively load 16 bytes`, “the matrix addresses must be naturally aligned accordingly” (i.e., row-start alignment must match the 16B row transaction). 
+
+### A minimal PTX-style shape of the instruction
+
+```ptx
+// Per-thread registers (each lane has its own)
+.reg .b64 addr;   // shared-memory address (generic or shared)
+.reg .b32 d;      // destination fragment: 1x 32-bit register per lane for .x1
+
+// Load one 8x8 matrix of 16-bit elements from shared memory into warp-distributed regs
+ldmatrix.sync.aligned.m8n8.x1.shared::cta.b16 {d}, [addr];
+```
+
+
+## Swizzling
+
+I recommend reading the [excellent blog by Yifan Yang](https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html#6-how-transposed-input-is-handled) blog to understand swizzling. This section is basically a condensation of the blog and a few of notes.
+
+Swizzling refers to arranging the data in the SMEM in a manner to avoid bank conflits while reading or writing data to and from SMEM. 
+
+<img src="https://yang-yifan.github.io/blogs/mma_swizzle/figures/swizzle_none_k.png" alt="Swizzle pattern for shared memory" style="max-width: 600px; display: block; margin: 0 auto;">
+
+For the Tensor core instriction requires $8 x 16B$ data from GMEM which can be loaded into the SMEM using threads // check if any other way// and fed into the tensor core using the above `ldmatrix` instruction. This works well since there are no bank conflicts in this case. Thread 0 loads from 32bits bank 0, thread 1 from bank 1, and so on till thread 31 from bank31. 
+
+This works well but notice that while loading from GMEM we load 8 chunks of 16B contiguous memory, which means 8 load instructions, whereas GPUs support up to 128B contiguous load. Also since loading from GMEM has a very high latency as compared loading from L2, SMEM or registers, we would like to load larger chunks.
+
+But if we load 8 chunks of 32B contigous memory and store them in SMEM contiguously, we will have bank conflicts while reading from SMEM. 
+
+Now we will have multiple 2 way bank conflicts since both $\text{thread}\_0$ and $\text{thread}\_{16}$ will read from bank 0 and same for every $\text{thread}\_i$ and $\text{thread}\_{i+16}$ . If we add a 32B swizzling, we avoid bank conflicts.
+<img src="https://yang-yifan.github.io/blogs/mma_swizzle/figures/why_swizzle.png" alt="Swizzle pattern for shared memory" style="max-width: 800px; display: block; margin: 0 auto;">
 
 ```copied
-Tensor Cores expect the data in threads in a particular layout. For example, the mma atom of mma.sync.aligned.m16n8k8.row.col.f32.bf16.bf16.f32 is SM80_16x8x8_F32BF16BF16F32_TN. We can draw the fragment layout by using print_svg function and will get the following figure
+A new concept called 16B atomicity. This is saying for a 16B chunk that is contiguous in GMEM, it’s also contiguous in SMEM after swizzling. Our 16B chunk organization is exactly that. Even though the chunk orders are swizzled in SMEM, the data within each chunk still remains contiguous. All swizzle layout by default uses 16B atomicity. There are exceptions with swizzle 128B layout which could allow 32B/64B atomicity (i.e. chunk size is 32B/64B instead of 16B). But for simplicity we ignore them in this blog.
 ```
 
 
@@ -286,17 +358,15 @@ Tensor Cores expect the data in threads in a particular layout. For example, the
 
 The producer can feed data to Tensor cores of Consumers. While one consumer is using the Tensor cores for Main Loop (MMA), the other can work on Epilogue which uses the CUDA cores. Thereby maximizing the utilization of Tensor cores -->
 
-## GEMM flow in blackwell
+## GEMM flow in Blackwell
 
 Full GEMM: (Gemm_M × Gemm_N) output, iterating over Gemm_K
     │
-    ▼
 Cluster Tile: Multiple CTAs in a cluster TOGETHER compute a larger tile
     │          Size: (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N)
-    ▼
 CTA Tile: Each CTA within the cluster computes its portion
     │      Size: MmaTile_M × MmaTile_N (one CTA's responsibility)
-    ▼
+
 MMA Atom: The hardware instruction (tcgen05.mma)
             Size: e.g., 64×256×16 for SM100
 
@@ -312,7 +382,7 @@ So the relationship is:
 ├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
 │ MMA atom     │ 1 MMA instruction         │ ~64×256×16                                        │
 └──────────────┴───────────────────────────┴───────────────────────────────────────────────────┘
-Example
+Example:
 
 cluster_shape = (2, 1, 1)   // 2 CTAs per cluster in M
 MmaTile_M = 128, MmaTile_N = 256
@@ -321,12 +391,6 @@ MmaTile_M = 128, MmaTile_N = 256
 // Each CTA in the cluster handles: 128 × 256 (half the M dimension)
 
 The cluster doesn't work on ONE MMA tile together - rather, multiple CTAs in a cluster each handle their own MMA tile, but they can share data via distributed shared memory and synchronize.
-
-## Swizzling
-
-https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html#6-how-transposed-input-is-handled
-
-
 
 
 ## Blackwell Architecture 
@@ -362,25 +426,18 @@ GPU Memory controller can issue upto 128B load from SMEM in a single cycle. Also
 28, 29, 30, 31 ....
 ... ... ... ...
 
+### Sync operations
+
 [Blog on sync operations](https://medium.com/@fatlip/cuda-sync-co-b475c3dbd57f)
 
 
 ### Load tiles into SMEM using TMA
 
-- Load BMxBK and BKxBN tiles from 64x64 fp16 (8192B) tiles from GMEM to SMEM
-- TMA and tensor cores operates on "core matrices" which are 8x16B of data which for half is 8x8 tile of data. Which means we need to load (64/8)x(64/8) == (8x8) core matrices
-
-- While loading data in SMEM we need to keep in mind that it will be fed to Tensor cores (tcgen05) which expects the data in a certain format ...
-
-- TMA can load a column of 8 core matrices (1024B) (8,1) at a time which means to load 8192B we load 8 times.
-
-
- Use Tcgen05.mma instruction and store the results in TMEM. Move results from TMEM to registers and finally to GMEM
+Load BMxBK and BKxBN tiles from 64x64 fp16 (8192B) tiles from GMEM to SMEM. TMA and tensor cores operates on "core matrices" which are 8x16B of data which for half is 8x8 tile of data. Which means we need to load (64/8)x(64/8) == (8x8) core matrices. While loading data in SMEM we need to keep in mind that it will be fed to Tensor cores (tcgen05) which expects the data in a certain format. TMA can load a column of 8 core matrices (1024B) (8,1) at a time which means to load 8192B we load 8 times. Use Tcgen05.mma instruction and store the results in TMEM. Move results from TMEM to registers and finally to GMEM
 
 
 
 ## References
-
 
 - [CUDA Training Series by NVIDIA and OLCF](https://www.olcf.ornl.gov/cuda-training-series/)
 - [CUDA Training Series YouTube Playlist](https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)

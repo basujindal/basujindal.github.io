@@ -4,12 +4,19 @@
   const postName = params.get('p');
   const section = params.get('section') || 'blogs';
 
+  // Map section names to content folder paths
+  const sectionFolders = {
+    'blogs': 'blog-posts',
+    'inprogress': 'drafts'
+  };
+  const contentFolder = sectionFolders[section] || section;
+
   if (!postName) {
     document.getElementById('content').innerHTML = '<p class="error">No post specified.</p>';
     return;
   }
 
-  fetch(`../${section}//${postName}.md`)
+  fetch(`../${contentFolder}/${postName}.md`)
     .then(res => { if (!res.ok) throw new Error('Post not found'); return res.text(); })
     .then(text => {
       let content = text, title = postName, date = '';
@@ -50,7 +57,7 @@
         image(token) {
           let href = token.href;
           const prefixes = ['../images/', '', 'images/', '/assets/img/', '/static/images/'];
-          const targets = [`../${section}/images/`, `../${section}/images/`, `../${section}/`, `../${section}/images/`, `../${section}/images/`];
+          const targets = [`../${contentFolder}/images/`, `../${contentFolder}/images/`, `../${contentFolder}/`, `../${contentFolder}/images/`, `../${contentFolder}/images/`];
           prefixes.forEach((p, i) => {
             if (href?.startsWith(p) || (p === '' && href && !href.includes('/')))
               href = targets[i] + href.substring(p.length);

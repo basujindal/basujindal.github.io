@@ -119,6 +119,9 @@
     // Render visits chart
     renderVisitsChart(data.visits_by_day);
 
+    // Render visits by page
+    renderVisitsByPage(data.visits_by_page);
+
     // Render visitor map
     renderVisitorMap(data.visit_locations);
 
@@ -261,6 +264,33 @@
     });
   }
 
+  function renderVisitsByPage(visitsByPage) {
+    const tbody = document.querySelector('#visits-by-page-table tbody');
+    const toggle = document.getElementById('visits-by-page-toggle');
+    const content = document.getElementById('visits-by-page-content');
+
+    // Setup collapsible toggle
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('collapsed');
+      content.classList.toggle('collapsed');
+    });
+
+    if (!visitsByPage || visitsByPage.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-secondary);">No page data yet</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = visitsByPage.map(page => {
+      const pageStr = page.page || '(homepage)';
+      return `
+        <tr>
+          <td class="page-path">${escapeHtml(pageStr)}</td>
+          <td>${page.count}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
   function renderVisitorMap(locations) {
     const mapContainer = document.getElementById('visitor-map');
 
@@ -377,7 +407,7 @@
     tbody.innerHTML = blogStats.map(blog => `
       <tr>
         <td class="blog-slug">
-          <a href="post.html?section=blogs&p=${encodeURIComponent(blog.slug)}" target="_blank">
+          <a href="/post/?section=blogs&p=${encodeURIComponent(blog.slug)}" target="_blank">
             ${escapeHtml(blog.slug)}
           </a>
         </td>

@@ -110,6 +110,37 @@
   margin-left: 1rem;
 }
 
+.section-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1.25rem 0 0.75rem 0;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-subtitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin-left: 1rem;
+}
+
+.section-subtitle.collapsible {
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-subtitle.collapsible:hover {
+  color: var(--accent);
+}
+
+.section-subtitle.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
@@ -463,6 +494,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.page-path {
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+  font-size: 0.875rem;
 }
 
 /* Users Grid (Recent Logins) */

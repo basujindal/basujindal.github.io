@@ -12,11 +12,11 @@
       <span></span>
     </button>
     <nav>
-      <a href="/html/blogs.html">Blogs</a>
-      <a href="/html/thoughts.html">Thoughts</a>
-      <a href="/html/diffchecker.html">Diff Checker</a>
-      <a href="/html/job_search.html">Search Jobs</a>
-      <a href="/html/photography.html">Astro Photography</a>
+      <a href="/blogs/">Blogs</a>
+      <a href="/thoughts/">Thoughts</a>
+      <a href="/diffchecker/">Diff Checker</a>
+      <a href="/job_search/">Search Jobs</a>
+      <a href="/photography/">Astro Photography</a>
     </nav>
   `;
 
@@ -88,17 +88,17 @@
   navLinks.forEach(link => {
     const href = link.getAttribute('href');
     if (href && !href.startsWith('http')) {
-      const linkPath = href.replace(/^\//, '');
-      const pagePath = currentPath.replace(/^\//, '');
+      const linkPath = href.replace(/^\//, '').replace(/\/$/, '');
+      const pagePath = currentPath.replace(/^\//, '').replace(/\/$/, '').replace(/\/index\.html$/, '');
 
       if (linkPath === pagePath ||
-          (pagePath.startsWith('html/blogs') && href.includes('blogs.html')) ||
-          (pagePath.startsWith('html/photography') && href.includes('photography.html')) ||
-          (pagePath.startsWith('html/inprogress') && href.includes('inprogress.html')) ||
-          (pagePath.startsWith('html/diffchecker') && href.includes('diffchecker')) ||
-          (pagePath.startsWith('html/job_search') && href.includes('job_search.html')) ||
-          (pagePath.startsWith('html/thoughts') && href.includes('thoughts.html')) ||
-          (pagePath.startsWith('html/post') && href.includes('blogs.html'))) {
+          (pagePath.startsWith('blogs') && href.includes('/blogs/')) ||
+          (pagePath.startsWith('photography') && href.includes('photography')) ||
+          (pagePath.startsWith('inprogress') && href.includes('inprogress')) ||
+          (pagePath.startsWith('diffchecker') && href.includes('diffchecker')) ||
+          (pagePath.startsWith('job_search') && href.includes('job_search')) ||
+          (pagePath.startsWith('thoughts') && href.includes('thoughts')) ||
+          (pagePath.startsWith('post') && href.includes('/blogs/'))) {
         link.classList.add('active');
       }
     }
