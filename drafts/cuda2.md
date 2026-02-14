@@ -94,7 +94,42 @@ If you allocate your host memory with cudaMallocHost and initialize the data the
 
 ### Compiling CUDA code
 
-CUDA code can be compiled using the `nvcc` command. It does code-generation in two stages:
+CUDA code can be compiled using the `nvcc` command
+
+```bash
+nvcc -std=c++17 \
+  -arch=sm_100a \
+  -I/Users/basujindal/cutlass/include \
+  -I/Users/basujindal/cutlass/examples/cute/tutorial/blackwell \
+  -o mma \
+  examples/cute/tutorial/blackwell/mma.cu
+```
+
+Or use a Makefile
+
+```Makefile
+NVCC = nvcc
+FLAGS = -std=c++17 -arch=sm_100a
+SRC = examples/cute/tutorial/blackwell/mma.cu
+INCLUDES = -I/opt/cutlass/include -I/opt/cutlass/examples/cute/tutorial/blackwell
+
+mma: mma.o
+	$(NVCC) $(FLAGS) -o $@ $^
+
+mma.o: $(SRC)
+	$(NVCC) $(FLAGS) $(INCLUDES) -dc -o $@ $<
+
+clean:
+	rm -f *.o mma
+```
+
+Run the command
+
+```bash
+make && ./mma
+```
+
+It does code-generation in two stages:
 
 Stage | 	What nvcc produces | 	Option that drives it
 1. Front-end | 	PTX for a virtual architecture (“compute XX…”)	| arch= inside -gencode (or --gpu-architecture)
@@ -159,6 +194,82 @@ This will generate PTX code for compute capability 3.0, 5.2, and 7.0. Generate S
 
 `compute_XX` refers to a PTX version and sm_XX refers to a cubin version and the `arch=` clause must always be a PTX version, while the `code=` clause can be cubin or PTX or both
 
+# CUTLASS/CuTe Development
+
+clangd for IDE features like, Go to definition, Hover documentation, Auto-completion, Error diagnostics. Clangd is part of the LLVM/Clang project and understands C++ deeply. Unlike simple syntax highlighting, clangd actually compiles the code in the background to understand types, templates, and symbols.
+
+- Install `clangd` Extension in VS Code. If prompted, let it download the clangd binary
+- If you have Microsoft's "C/C++" extension installed, disable its IntelliSense to avoid conflicts by: Settings → search `C_Cpp.intelliSenseEngine` → set to `disabled`
+- Create a `.clangd` file in the project root. This file tells clangd how to compile your code.
+
+---
+
+### Example Configuration
+
+```yaml
+CompileFlags:
+  Add:
+    - "-xc++"
+    - "-std=c++17"
+    - "-I/path/to/cutlass/include"
+    - "-I/path/to/cutlass/tools/util/include"
+  Remove:
+    - "-forward-unknown-to-host-compiler"
+    - "--generate-code*"
+    - "-gencode*"
+```
+
+### Flag Explanations
+
+| Flag | Purpose |
+|------|---------|
+| `-xc++` | Treat `.cu` files as C++ (clangd doesn't understand CUDA natively) |
+| `-std=c++17` | Use C++17 standard (CUTLASS requires C++17) |
+| `-I/path/to/include` | Include paths - where to find headers |
+
+### Remove Flags
+
+These are nvcc-specific flags that clang doesn't understand:
+- `-forward-unknown-to-host-compiler`
+- `--generate-code*`
+- `-gencode*`
+---
+
+- Finally Restart clangd using  `Cmd+Shift+P` → `clangd: Restart language server`
+
+---
+
+## Optional: Thrust/CUB Support
+
+If you want Thrust headers to work (for `thrust::device_vector`, etc.), download them separately:
+
+```bash
+# Clone Thrust (header-only library)
+git clone https://github.com/NVIDIA/thrust.git ~/thrust
+
+# Clone CUB (Thrust dependency)
+git clone https://github.com/NVIDIA/cub.git ~/cub
+```
+
+Then add to `.clangd`:
+```yaml
+CompileFlags:
+  Add:
+    # ... existing flags ...
+    - "-I/Users/yourusername/thrust"
+    - "-I/Users/yourusername/cub"
+```
+
+---
+
+### Check clangd status
+- Cmd+Shift+P → "clangd: Check status"
+
+### View clangd logs
+- View → Output → Select "clangd" from dropdown
+
+---
+
 ## Profiling and Debugging
 
 **nsys**: CLI for Nsight Systems which supports system wide profiling.
@@ -168,7 +279,6 @@ This will generate PTX code for compute capability 3.0, 5.2, and 7.0. Generate S
 **nvprof**: CLI for the NVIDIA Visual Profiler which supports profiling and tracing of CUDA applications. It is deprecated in CUDA 11.0 and will be removed in a future release.
 
 ###
-
 - [CUDA Debugging Video](https://www.youtube.com/watch?v=nAsMhH1tnYw)
 - [CUDA Debugging by vLLM](https://blog.vllm.ai/2025/08/11/cuda-debugging.html)
 

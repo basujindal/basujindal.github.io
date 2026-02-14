@@ -327,19 +327,19 @@ ldmatrix.sync.aligned.m8n8.x1.shared::cta.b16 {d}, [addr];
 
 ## Swizzling
 
-I recommend reading the [excellent blog by Yifan Yang](https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html#6-how-transposed-input-is-handled) blog to understand swizzling. This section is basically a condensation of the blog and a few of notes.
+I recommend reading the [excellent blog by Yifan Yang](https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html#6-how-transposed-input-is-handled) blog to understand swizzling. This section is basically a quick summary of the blog.
 
-Swizzling refers to arranging the data in the SMEM in a manner to avoid bank conflits while reading or writing data to and from SMEM. 
+Swizzling refers to arranging the data in the SMEM in a manner to avoid bank conflits while reading or writing data from SMEM. 
 
 <img src="https://yang-yifan.github.io/blogs/mma_swizzle/figures/swizzle_none_k.png" alt="Swizzle pattern for shared memory" style="max-width: 600px; display: block; margin: 0 auto;">
 
-For the Tensor core instriction requires $8 x 16B$ data from GMEM which can be loaded into the SMEM using threads // check if any other way// and fed into the tensor core using the above `ldmatrix` instruction. This works well since there are no bank conflicts in this case. Thread 0 loads from 32bits bank 0, thread 1 from bank 1, and so on till thread 31 from bank31. 
+For the Tensor core instruction requires 8 x 16B data from GMEM which can be loaded into the SMEM using threads // check if any other way// and fed into the tensor core using the above `ldmatrix` instruction. This works well since there are no bank conflicts in this case. Thread 0 loads from 32bits bank 0, thread 1 from bank 1, and so on till thread 31 from bank31. 
 
 This works well but notice that while loading from GMEM we load 8 chunks of 16B contiguous memory, which means 8 load instructions, whereas GPUs support up to 128B contiguous load. Also since loading from GMEM has a very high latency as compared loading from L2, SMEM or registers, we would like to load larger chunks.
 
 But if we load 8 chunks of 32B contigous memory and store them in SMEM contiguously, we will have bank conflicts while reading from SMEM. 
 
-Now we will have multiple 2 way bank conflicts since both $\text{thread}\_0$ and $\text{thread}\_{16}$ will read from bank 0 and same for every $\text{thread}\_i$ and $\text{thread}\_{i+16}$ . If we add a 32B swizzling, we avoid bank conflicts.
+Now we will have multiple 2 way bank conflicts since both thread0 and thread16 will read from bank 0 and same for every $\text{thread}\_i$ and $\text{thread}\_{i+16}$ . If we add a 32B swizzling, we avoid bank conflicts.
 <img src="https://yang-yifan.github.io/blogs/mma_swizzle/figures/why_swizzle.png" alt="Swizzle pattern for shared memory" style="max-width: 800px; display: block; margin: 0 auto;">
 
 ```copied
@@ -352,48 +352,47 @@ A new concept called 16B atomicity. This is saying for a 16B chunk that is conti
 - [CUDA Mode Video on Tensor Cores](https://www.youtube.com/watch?v=hQ9GPnV0-50&t=3968s)
 
 
-### Ping-Pong
+<!-- ### Ping-Pong -->
 
 <!-- For Ping-Pong, each warp group takes on a specialized role of either Data producer or Data consumer. The producer warp group focuses on producing data movement to fill the shared memory buffers (via TMA). Two other warp groups are dedicated consumers that process the math (MMA) portion with tensor cores, and then do any follow up work and write their results back to global memory (epilogue)
 
 The producer can feed data to Tensor cores of Consumers. While one consumer is using the Tensor cores for Main Loop (MMA), the other can work on Epilogue which uses the CUDA cores. Thereby maximizing the utilization of Tensor cores -->
 
-## GEMM flow in Blackwell
+## Architecture Comparison
 
-Full GEMM: (Gemm_M × Gemm_N) output, iterating over Gemm_K
-    │
-Cluster Tile: Multiple CTAs in a cluster TOGETHER compute a larger tile
-    │          Size: (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N)
-CTA Tile: Each CTA within the cluster computes its portion
-    │      Size: MmaTile_M × MmaTile_N (one CTA's responsibility)
-
-MMA Atom: The hardware instruction (tcgen05.mma)
-            Size: e.g., 64×256×16 for SM100
-
-So the relationship is:
-┌──────────────┬───────────────────────────┬───────────────────────────────────────────────────┐
-│    Level     │     What computes it      │                       Size                        │
-├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
-│ Full output  │ Entire grid               │ Gemm_M × Gemm_N                                   │
-├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
-│ Cluster tile │ 1 cluster (multiple CTAs) │ (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N) │
-├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
-│ CTA tile     │ 1 CTA (thread block)      │ MmaTile_M × MmaTile_N                             │
-├──────────────┼───────────────────────────┼───────────────────────────────────────────────────┤
-│ MMA atom     │ 1 MMA instruction         │ ~64×256×16                                        │
-└──────────────┴───────────────────────────┴───────────────────────────────────────────────────┘
-Example:
-
-cluster_shape = (2, 1, 1)   // 2 CTAs per cluster in M
-MmaTile_M = 128, MmaTile_N = 256
-
-// One CLUSTER handles: (2 × 128) × (1 × 256) = 256 × 256 output tile
-// Each CTA in the cluster handles: 128 × 256 (half the M dimension)
-
-The cluster doesn't work on ONE MMA tile together - rather, multiple CTAs in a cluster each handle their own MMA tile, but they can share data via distributed shared memory and synchronize.
+| Category                | Feature                             |    A100 (Ampere) | H100 (Hopper) | B100 (Blackwell) | B200 (Blackwell) |
+| ----------------------- | ----------------------------------- | ---------------: | ------------: | ---------------: | ---------------: |
+| **Compute / SM**        | Tensor Core generation              |          3rd Gen |       4th Gen |          5th Gen |          5th Gen |
+|                         | FP32 cores / SM                     |               64 |           128 |              128 |              128 |
+|                         | FP64 cores / SM                     |               32 |            64 |               64 |               64 |
+|                         | INT32 cores / SM                    |               64 |            64 |              64* |              64* |
+|                         | SM count *(check)*                  |              108 |           132 |              140 |              148 |
+| **Scheduling / Limits** | Max resident warps / SM             |               64 |            64 |               64 |               64 |
+|                         | Register file / SM (32-bit regs)    |           65,536 |        65,536 |           65,536 |           65,536 |
+|                         | Max registers / thread              |              255 |           255 |              255 |              255 |
+|                         | Max threads / block                 |             1024 |          1024 |             1024 |             1024 |
+|                         | Max threads / SM                    |             2048 |          2048 |             2048 |             2048 |
+|                         | Max thread blocks / SM              |               32 |            32 |               32 |               32 |
+| **On-chip memory**      | L1/Texture + Shared (combined) / SM |           192 KB |        256 KB |           256 KB |           256 KB |
+|                         | Shared memory capacity / SM (max)   |           164 KB |        228 KB |           228 KB |           228 KB |
+|                         | Max shared / thread block (opt-in)  |                — |        227 KB |           227 KB |           227 KB |
+|                         | Tensor Memory / SM                  |                — |        —      |           256 KB |           256 KB |
+| **HBM / Bandwidth**     | Total memory                        | 40 / 80 GB HBM2e |    80 GB HBM3 |     192 GB HBM3e |     192 GB HBM3e |
+|                         | Memory bandwidth *(check  one way)* |     1.6–2.0 TB/s |     3.35 TB/s |        ~8.0 TB/s |         8.0 TB/s |
+| **Numeric formats**     | FP8 support                         |               No |           Yes |              Yes |              Yes |
+|                         | FP4 / FP6 support                   |               No |            No |              Yes |              Yes |
+| **Interconnect**        | NVLink                              |    v3 (600 GB/s) | v4 (900 GB/s) |    v5 (1.8 TB/s) |    v5 (1.8 TB/s) |
+| **Power / Silicon**     | TDP (max) *(check)*                 |            400 W |         700 W |            700 W |           1000 W |
+|                         | Transistor count *(check)*          |              54B |           80B |             208B |             208B |
 
 
-## Blackwell Architecture 
+Notice that **Scheduling / Limits** have not changed across generations.
+
+## Blackwell 
+
+[GTC video on CuTe for Blackwell](https://www.nvidia.com/en-us/on-demand/session/gtc25-s72720/)
+
+[Tuning guide for Blackwell](https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html)
 
 https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability-10-x
 
@@ -414,7 +413,35 @@ A Streaming Multiprocessor (SM) level:
 Block Level: Maximum shared memory per thread block is 227 KB.
 Thread level: The maximum number of registers per thread is 255.
 
+### GEMM flow
 
+Full GEMM: (Gemm_M × Gemm_N) output, iterating over Gemm_K
+    │
+Cluster Tile: Multiple CTAs in a cluster TOGETHER compute a larger tile
+    │          Size: (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N)
+CTA Tile: Each CTA within the cluster computes its portion
+    │      Size: MmaTile_M × MmaTile_N (one CTA's responsibility)
+
+MMA Atom: The hardware instruction (tcgen05.mma)
+            Size: e.g., 64×256×16 for SM100
+
+So the relationship is:
+| Level | What computes it | Size |
+|---|---|---|
+| Full output | Entire grid | Gemm_M × Gemm_N |
+| Cluster tile | 1 cluster (multiple CTAs) | (cluster_M × MmaTile_M) × (cluster_N × MmaTile_N) |
+| CTA tile | 1 CTA (thread block) | MmaTile_M × MmaTile_N |
+| MMA atom | 1 MMA instruction | ~64×256×16 |
+
+Example:
+
+cluster_shape = (2, 1, 1)   // 2 CTAs per cluster in M
+MmaTile_M = 128, MmaTile_N = 256
+
+// One CLUSTER handles: (2 × 128) × (1 × 256) = 256 × 256 output tile
+// Each CTA in the cluster handles: 128 × 256 (half the M dimension)
+
+The cluster doesn't work on ONE MMA tile together - rather, multiple CTAs in a cluster each handle their own MMA tile, but they can share data via distributed shared memory and synchronize.
 
 ### Loading from SMEM in Blackwell
 
@@ -433,12 +460,13 @@ GPU Memory controller can issue upto 128B load from SMEM in a single cycle. Also
 
 ### Load tiles into SMEM using TMA
 
-Load BMxBK and BKxBN tiles from 64x64 fp16 (8192B) tiles from GMEM to SMEM. TMA and tensor cores operates on "core matrices" which are 8x16B of data which for half is 8x8 tile of data. Which means we need to load (64/8)x(64/8) == (8x8) core matrices. While loading data in SMEM we need to keep in mind that it will be fed to Tensor cores (tcgen05) which expects the data in a certain format. TMA can load a column of 8 core matrices (1024B) (8,1) at a time which means to load 8192B we load 8 times. Use Tcgen05.mma instruction and store the results in TMEM. Move results from TMEM to registers and finally to GMEM
+Load BMxBK and BKxBN tiles from 64x64 fp16 (8192B) tiles from GMEM to SMEM. TMA and tensor cores operates on "core matrices" which are 8x16B of data which for half is 8x8 tile of data. Which means we need to load (64/8)x(64/8) == (8x8) core matrices. While loading data in SMEM we need to keep in mind that it will be fed to Tensor cores (tcgen05) which expects the data in a certain format. TMA can load a column of 8 core matrices (1024B) (8,1) at a time which means to load 8192B we load 8 times. Use `Tcgen05.mma` instruction and store the results in TMEM. Move results from TMEM to registers and finally to GMEM
 
 
 
-## References
+## References & Recommended resources
 
+- [Articles by colfax research](https://research.colfax-intl.com/blog/)
 - [CUDA Training Series by NVIDIA and OLCF](https://www.olcf.ornl.gov/cuda-training-series/)
 - [CUDA Training Series YouTube Playlist](https://www.youtube.com/playlist?app=desktop&list=PL6RdenZrxrw-zNX7uuGppWETdxt_JxdMj)
 - [CUDA Training Exercises](https://github.com/olcf/cuda-training-series/tree/master/exercises)
