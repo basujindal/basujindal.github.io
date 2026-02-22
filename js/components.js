@@ -17,6 +17,7 @@
       <a href="/diffchecker/">Diff Checker</a>
       <a href="/job_search/">Search Jobs</a>
       <a href="/photography/">Astro Photography</a>
+      <a href="/fp-visualizer/">FP Visualizer</a>
     </nav>
   `;
 

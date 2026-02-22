@@ -194,6 +194,19 @@ This will generate PTX code for compute capability 3.0, 5.2, and 7.0. Generate S
 
 `compute_XX` refers to a PTX version and sm_XX refers to a cubin version and the `arch=` clause must always be a PTX version, while the `code=` clause can be cubin or PTX or both
 
+In --cuda_architectures "100-real" the real suffix is CMake’s way of saying “generate native GPU machine code (SASS / cubin) for this SM”.
+CMake distinguishes two kinds of targets:
+<sm>-real → build SASS for sm_<sm> (e.g., 100-real ⇒ sm_100 cubins)
+<sm>-virtual → build PTX only (the “virtual architecture”), i.e. compute_<sm> that the driver can JIT at runtime
+No suffix (e.g., 100) → CMake generates both real + virtual code for that arch by default
+How that maps to nvcc flags (conceptually):
+100-real ≈ -gencode arch=compute_100,code=sm_100
+100-virtual ≈ -gencode arch=compute_100,code=compute_100 (PTX)
+In TensorRT-LLM, build_wheel.py passes your --cuda_architectures string straight into CMake’s CUDA_ARCHITECTURES setting.
+Practical guidance for B200
+If you’re only running on B200 and want no JIT + smallest “works for B200” target, use 100-real.
+If you want a “PTX fallback” (more forward flexibility but possible first-run JIT cost), you can include both: 100-real;100-virtual (or just 100 to get both implicitly).
+
 # CUTLASS/CuTe Development
 
 clangd for IDE features like, Go to definition, Hover documentation, Auto-completion, Error diagnostics. Clangd is part of the LLVM/Clang project and understands C++ deeply. Unlike simple syntax highlighting, clangd actually compiles the code in the background to understand types, templates, and symbols.

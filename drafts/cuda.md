@@ -390,28 +390,11 @@ Notice that **Scheduling / Limits** have not changed across generations.
 
 ## Blackwell 
 
-[GTC video on CuTe for Blackwell](https://www.nvidia.com/en-us/on-demand/session/gtc25-s72720/)
+[Good intoduction to using blackwell specific features using CuTe](https://www.nvidia.com/en-us/on-demand/session/gtc25-s72720/)
 
 [Tuning guide for Blackwell](https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html)
 
 https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability-10-x
-
-A Streaming Multiprocessor (SM) level:
-
-- 128 FP32 cores for single-precision arithmetic operations,
-- 64 FP64 cores for double-precision arithmetic operations,
-- 64 INT32 cores for integer math,
-- 4 mixed-precision fifth-generation Tensor Cores supporting FP8 input type in either E4M3 or E5M2 for exponent (E) and mantissa (M), half-precision (fp16), __nv_bfloat16, tf32, INT8 and double precision (fp64) matrix arithmetic (see Warp Matrix Functions for details) with sparsity support,
-- 16 special function units for single-precision floating-point transcendental functions,
-- 4 warp schedulers.
-- Max concurrent warp 64
-- The register file size is 64K 32-bit registers (65,536 32 bit registers per SM)
-- Unified data cache and shared memory with a total size of 256 KB 
-- The maximum number of thread blocks per SM is 32
-- Shared memory capacity is 228 KB.
-
-Block Level: Maximum shared memory per thread block is 227 KB.
-Thread level: The maximum number of registers per thread is 255.
 
 ### GEMM flow
 
