@@ -32,7 +32,7 @@ Place any images in `/blog-posts/images/` and reference them in your markdown:
 
 ### 3. Add Blog Entry to Listing Page
 
-Edit `/blogs/index.html` and add a new entry to the `blogs` array:
+Edit `/blogs/index.html` and add a new entry to the `BLOG_LIST_CONFIG.items` array:
 
 ```javascript
 { slug: 'POST_NAME', description: 'Brief description of the post' }
@@ -63,13 +63,29 @@ Commit and push to `main` branch. GitHub Actions will automatically deploy.
 
 Place your image in the `/astrophotos/` directory. Supported formats: `.jpg`, `.png`
 
-### 2. Add Gallery Entry
+### 2. Generate WebP Versions
+
+Convert to full-res and thumbnail WebP:
+```bash
+# For 16-bit PNGs, convert to 8-bit JPEG first:
+sips -s format jpeg "astrophotos/YourImage.png" --out /tmp/temp.jpg
+cwebp -q 85 /tmp/temp.jpg -o "astrophotos/YourImage.webp"
+
+# For JPEGs, convert directly:
+cwebp -q 85 "astrophotos/YourImage.jpg" -o "astrophotos/YourImage.webp"
+
+# Generate 800px thumbnail:
+sips -Z 800 /tmp/temp.jpg --out /tmp/thumb.jpg
+cwebp -q 80 /tmp/thumb.jpg -o "astrophotos/thumbnails/YourImage.webp"
+```
+
+### 3. Add Gallery Entry
 
 Edit `/photography/index.html` and add a new figure inside the gallery:
 
 ```html
 <figure class="gallery-item"
-        data-src="../astrophotos/YourImage.jpg"
+        data-src="../astrophotos/YourImage.webp"
         data-title="Photo Title"
         data-description="Description of the photo"
         data-camera="Camera Model"
@@ -78,12 +94,12 @@ Edit `/photography/index.html` and add a new figure inside the gallery:
         data-location="Location"
         data-date="YYYY-MM-DD"
         data-alt="Alt text for accessibility">
-  <img src="../astrophotos/YourImage.jpg" alt="Alt text" loading="lazy">
+  <img src="../astrophotos/thumbnails/YourImage.webp" alt="Alt text" loading="lazy">
   <figcaption><h3>Photo Title</h3></figcaption>
 </figure>
 ```
 
-### 3. Deploy
+### 4. Deploy
 
 Commit and push to `main` branch.
 
@@ -98,17 +114,11 @@ For work-in-progress posts, use the `/drafts/` directory instead:
 
 Move to `/blog-posts/` when ready to publish.
 
-## To Do 
+## To Do
 
+- [ ] Create another private repo like thoughts-api with all the blogs/data and only add the final built (maybe also add minify) output to the public repo
 - [ ] Show everthing in admin portal
-- [ ] Login at blog return no blog selected nad login is not successful
+- [ ] Login at blog return no blog selected and login is not successful
 - [ ] Update comments UI
-- [ ] Visit count for all pages (blogs, thoughts, diffchecker, photos) on login just visible to basujindal
 - [ ] Display the blog posts and like and views in admin portal
-- [ ] Split large files into smaller, eespcially thoughts.js and any files greater than 500 lines
-- [ ] Keep deleted posts and edit history for thoughts just in database
-- [x] Add like and comment option to blogs similar to thoughts but allow anonymous or github login 
-- [x] No need to display exact time on hover on post in thoughts, just date is good
-- [x] Show full preview
-- [x] Check how multiple images are posted
-- [x] Move logout button to the bottom
+- [ ] Keep deleted posts and edit history for thoughts just in database?

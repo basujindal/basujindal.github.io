@@ -19,7 +19,7 @@
 
 // Visit tracking
 (function() {
-  const API_BASE = 'https://server.basujindal.me/api';
+  const API_BASE = window.APP_CONFIG.API_BASE;
   const VISIT_KEY = 'last_visit_tracked';
 
   // Only track once per session per page
@@ -38,6 +38,7 @@
   fetch(`${API_BASE}/visit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({
       page: page,
       referrer: document.referrer || ''
@@ -110,3 +111,10 @@
     if (e.key === 'f') toggleFullscreen();
   });
 })();
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}

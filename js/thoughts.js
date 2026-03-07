@@ -1,7 +1,7 @@
 // Thoughts - Twitter-like feed functionality
-// Uses shared InteractionsCommon module
+// Uses shared InteractionsCommon and ThoughtsUI modules
 (function() {
-  // Wait for common module to load
+  // Wait for common modules to load
   if (typeof InteractionsCommon === 'undefined') {
     console.error('InteractionsCommon not loaded');
     return;
@@ -9,25 +9,30 @@
 
   const { API_BASE, getAuthState, setAuthState, clearAuthState, formatTimeAgo,
           getInitials, escapeHtml, processContent, loadTwitterWidgets } = InteractionsCommon;
+  const { showToast, showModal, closeModal, showLoading } = window.ThoughtsUI;
 
   // API endpoints
   const API = {
-    getPosts: `${API_BASE}/get_posts`,
+    getPosts: (page, limit) => `${API_BASE}/get_posts?page=${page}&limit=${limit}`,
     submit: `${API_BASE}/submit`,
     like: `${API_BASE}/like`,
     comment: `${API_BASE}/comment`,
     githubLogin: `${API_BASE}/auth/github`,
     deletePost: (id) => `${API_BASE}/post/${id}`,
     deleteComment: (id) => `${API_BASE}/comment/${id}`,
-    editPost: (id) => `${API_BASE}/post/${id}`
+    editPost: (id) => `${API_BASE}/post/${id}`,
+    postComments: (id) => `${API_BASE}/post/${id}/comments`
   };
 
   // State
   let posts = [];
-  let authToken = null;
+  let authToken = null; // Kept for UI checks; actual auth is via HttpOnly cookie
   let isOwner = false;
   let currentUser = null;
   let selectedImages = [];
+  let currentPage = 1;
+  let hasMore = false;
+  let totalPosts = 0;
 
   // DOM Elements
   const feed = document.getElementById('thoughts-feed');
@@ -42,13 +47,6 @@
   const loginBtn = document.getElementById('github-login-btn');
   const logoutBtn = document.getElementById('logout-btn');
   const logoutContainer = document.getElementById('logout-container');
-  const toastContainer = document.getElementById('toast-container');
-  const modalOverlay = document.getElementById('modal-overlay');
-  const modalTitle = document.getElementById('modal-title');
-  const modalMessage = document.getElementById('modal-message');
-  const modalContent = document.getElementById('modal-content');
-  const modalCancel = document.getElementById('modal-cancel');
-  const modalConfirm = document.getElementById('modal-confirm');
 
   // Initialize
   document.addEventListener('DOMContentLoaded', init);
@@ -60,22 +58,22 @@
     updateAuthUI();
   }
 
-  // Handle OAuth callback - check for token in URL
+  // Handle OAuth callback - check for auth params in URL
   function handleAuthCallback() {
     const result = InteractionsCommon.handleAuthCallback();
 
     if (result) {
       if (result.success) {
-        authToken = result.token;
+        authToken = true;
         isOwner = result.isOwner;
         currentUser = result.user;
       } else if (result.error) {
         showToast(result.error, 'error');
       }
     } else {
-      // Check for existing token
+      // Check for existing auth state
       const authState = getAuthState();
-      authToken = authState.token;
+      authToken = InteractionsCommon.isLoggedIn();
       isOwner = authState.isOwner;
       currentUser = authState.user;
     }
@@ -115,6 +113,8 @@
     authToken = null;
     isOwner = false;
     currentUser = null;
+    currentPage = 1;
+    hasMore = false;
     updateAuthUI();
     loadPosts();
   }
@@ -176,89 +176,40 @@
           if (lightbox.classList.contains('active')) {
             closeLightbox();
           }
-          if (modalOverlay.classList.contains('active')) {
+          const modalOverlay = document.getElementById('modal-overlay');
+          if (modalOverlay && modalOverlay.classList.contains('active')) {
             closeModal();
           }
         }
       });
     }
-
-    if (modalCancel) {
-      modalCancel.addEventListener('click', closeModal);
-    }
-    if (modalOverlay) {
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-          closeModal();
-        }
-      });
-    }
-  }
-
-  // ===== TOAST NOTIFICATIONS =====
-  const toastIcons = {
-    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
-    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
-  };
-
-  function showToast(message, type = 'info', duration = 4000) {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<div class="toast-icon">${toastIcons[type]}</div><span class="toast-message">${escapeHtml(message)}</span><button class="toast-close">&times;</button>`;
-    toast.querySelector('.toast-close').addEventListener('click', () => removeToast(toast));
-    toastContainer.appendChild(toast);
-    setTimeout(() => removeToast(toast), duration);
-  }
-
-  function removeToast(toast) {
-    toast.style.animation = 'slideOut 0.3s ease forwards';
-    setTimeout(() => toast.remove(), 300);
-  }
-
-  // ===== MODAL DIALOGS =====
-  let modalResolve = null;
-
-  function showModal(title, message, options = {}) {
-    return new Promise(resolve => {
-      modalResolve = resolve;
-      modalTitle.textContent = title;
-      modalMessage.textContent = message;
-      modalContent.innerHTML = options.content || '';
-      modalConfirm.textContent = options.confirmText || 'Confirm';
-      modalConfirm.className = `modal-btn ${options.confirmClass || 'confirm'}`;
-      modalCancel.textContent = options.cancelText || 'Cancel';
-      modalConfirm.onclick = () => { modalResolve = null; modalOverlay.classList.remove('active'); document.body.style.overflow = ''; resolve(true); };
-      modalOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-  }
-
-  function closeModal() {
-    modalOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-    if (modalResolve) { modalResolve(false); modalResolve = null; }
   }
 
   // ===== LOADING STATES =====
-  const skeletonCard = `<div class="skeleton-card"><div style="display:flex;gap:0.75rem;margin-bottom:1rem;"><div class="skeleton skeleton-avatar"></div><div style="flex:1;"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line" style="width:20%;height:10px;"></div></div></div><div class="skeleton skeleton-line long"></div><div class="skeleton skeleton-line medium"></div><div class="skeleton skeleton-image"></div></div>`;
 
-  function showLoading() { if (feed) feed.innerHTML = skeletonCard + skeletonCard.replace('skeleton-image', 'skeleton-line short'); }
+  function showFeedLoading() { showLoading(feed); }
 
   function showLoginRequired() {
     if (feed) feed.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6V7a4 4 0 10-8 0v4h8z"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg><h3>Login to View Thoughts</h3><p>Sign in with GitHub to see posts, like, and comment.</p></div><div class="login-preview"><div class="login-preview-title">Preview of what you'll see</div><div class="preview-post"><div class="preview-avatar"></div><div class="preview-content"><div class="preview-line"></div><div class="preview-line"></div><div class="preview-line"></div></div></div></div>`;
   }
 
   // Load posts from API
-  async function loadPosts() {
-    showLoading();
+  async function loadPosts(append = false) {
+    if (!append) showFeedLoading();
     if (!authToken) { showLoginRequired(); return; }
 
     try {
-      const response = await fetch(API.getPosts, { headers: { 'Authorization': `Bearer ${authToken}` } });
+      const response = await fetch(API.getPosts(currentPage, 10), { credentials: 'include' });
       if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
       if (!response.ok) throw new Error('Failed to load posts');
-      posts = await response.json();
+      const data = await response.json();
+      if (append) {
+        posts = posts.concat(data.posts);
+      } else {
+        posts = data.posts;
+      }
+      hasMore = data.has_more;
+      totalPosts = data.total;
       renderPosts();
     } catch (error) {
       console.error('Error loading posts:', error);
@@ -273,9 +224,24 @@
       feed.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><h3>No thoughts yet</h3><p>Check back later for updates.</p></div>`;
       return;
     }
-    feed.innerHTML = posts.map(post => renderPost(post)).join('');
+    let html = posts.map(post => renderPost(post)).join('');
+    if (hasMore) {
+      html += `<div class="load-more-container"><button class="load-more-btn" id="load-more-btn">Load more</button></div>`;
+    }
+    feed.innerHTML = html;
     attachPostEventListeners();
     loadTwitterWidgets();
+
+    // Attach load more listener
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => {
+        currentPage++;
+        loadMoreBtn.textContent = 'Loading...';
+        loadMoreBtn.disabled = true;
+        loadPosts(true);
+      });
+    }
   }
 
   // Render single post
@@ -284,7 +250,7 @@
     const timeAgo = formatTimeAgo(postDate);
     const fullDate = postDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const images = post.images || [], comments = post.comments || [];
-    const likeCount = post.likes || 0, commentCount = comments.length, isLiked = post.user_liked || false;
+    const likeCount = post.likes || 0, commentCount = post.comment_count || comments.length, isLiked = post.user_liked || false;
 
     const avatarContent = post.author_avatar ? `<img src="${escapeHtml(post.author_avatar)}" alt="${escapeHtml(post.author)}">` : getInitials(post.author);
 
@@ -297,6 +263,9 @@
       const cAvatar = c.author_avatar ? `<img src="${escapeHtml(c.author_avatar)}" alt="${escapeHtml(c.author)}">` : getInitials(c.author);
       return `<div class="comment" data-comment-id="${c.id}"><div class="comment-avatar">${cAvatar}</div><div class="comment-content"><span class="comment-author">${escapeHtml(c.author)}</span><p class="comment-text">${escapeHtml(c.text)}</p><span class="comment-time">${formatTimeAgo(new Date(c.created_at))}</span></div>${isOwner ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${post.id}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : ''}</div>`;
     }).join('');
+
+    const showAllCommentsBtn = (commentCount > comments.length) ?
+      `<button class="show-all-comments-btn" data-post-id="${post.id}" data-comment-count="${commentCount}">Show all ${commentCount} comments</button>` : '';
 
     const ownerBtns = isOwner ? `<button class="post-edit-btn" data-post-id="${post.id}" title="Edit post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="post-delete-btn" data-post-id="${post.id}" title="Delete post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : '';
 
@@ -311,7 +280,7 @@
         <button class="post-action comment-btn" data-post-id="${post.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="post-action-count">${commentCount > 0 ? commentCount : ''}</span></button>
         <button class="post-action share-btn" data-post-id="${post.id}" title="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
       </div>
-      <div class="post-comments hidden" data-post-id="${post.id}">${commentsHTML}<div class="comment-input-container"><div class="comment-input-avatar">${userAvatar}</div><input type="text" class="comment-input" placeholder="Write a comment..." data-post-id="${post.id}"><button class="comment-submit" data-post-id="${post.id}">Post</button></div></div>
+      <div class="post-comments hidden" data-post-id="${post.id}">${commentsHTML}${showAllCommentsBtn}<div class="comment-input-container"><div class="comment-input-avatar">${userAvatar}</div><input type="text" class="comment-input" placeholder="Write a comment..." data-post-id="${post.id}"><button class="comment-submit" data-post-id="${post.id}">Post</button></div></div>
     </article>`;
   }
 
@@ -333,6 +302,54 @@
     document.querySelectorAll('.comment-input').forEach(input => {
       input.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submitComment(input.dataset.postId); } });
     });
+
+    // "Show all comments" buttons
+    document.querySelectorAll('.show-all-comments-btn').forEach(btn => {
+      btn.addEventListener('click', () => loadAllComments(btn.dataset.postId, btn));
+    });
+  }
+
+  // Load all comments for a post
+  async function loadAllComments(postId, btn) {
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+    try {
+      const response = await fetch(API.postComments(postId), { credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to load comments');
+      const allComments = await response.json();
+
+      // Update the post's comments in local state
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        post.comments = allComments;
+        post.comment_count = allComments.length;
+      }
+
+      // Re-render just the comments section
+      const commentsContainer = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+      if (commentsContainer) {
+        const inputContainer = commentsContainer.querySelector('.comment-input-container');
+        const commentsHTML = allComments.map(c => {
+          const cAvatar = c.author_avatar ? `<img src="${escapeHtml(c.author_avatar)}" alt="${escapeHtml(c.author)}">` : getInitials(c.author);
+          return `<div class="comment" data-comment-id="${c.id}"><div class="comment-avatar">${cAvatar}</div><div class="comment-content"><span class="comment-author">${escapeHtml(c.author)}</span><p class="comment-text">${escapeHtml(c.text)}</p><span class="comment-time">${formatTimeAgo(new Date(c.created_at))}</span></div>${isOwner ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : ''}</div>`;
+        }).join('');
+        commentsContainer.innerHTML = commentsHTML;
+        commentsContainer.appendChild(inputContainer);
+
+        // Re-attach delete listeners
+        commentsContainer.querySelectorAll('.comment-delete-btn').forEach(delBtn => {
+          delBtn.addEventListener('click', () => handleDeleteComment(delBtn.dataset.commentId, delBtn.dataset.postId));
+        });
+        commentsContainer.querySelector('.comment-input')?.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submitComment(postId); }
+        });
+      }
+    } catch (error) {
+      console.error('Error loading comments:', error);
+      showToast('Failed to load comments.', 'error');
+      btn.textContent = 'Retry';
+      btn.disabled = false;
+    }
   }
 
   // ===== SHARE FUNCTIONALITY =====
@@ -394,8 +411,9 @@
       try {
         const response = await fetch(API.editPost(postId), {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-          body: JSON.stringify({ text: newText })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: newText }),
+          credentials: 'include'
         });
         if (!response.ok) throw new Error('Failed to edit post');
         const updatedPost = await response.json();
@@ -434,8 +452,9 @@
     try {
       const response = await fetch(API.like, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ post_id: postId, unlike: isLiked })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, unlike: isLiked }),
+        credentials: 'include'
       });
       if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
       if (!response.ok) throw new Error('Failed to like post');
@@ -476,8 +495,9 @@
     try {
       const response = await fetch(API.comment, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ post_id: postId, text })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, text }),
+        credentials: 'include'
       });
       if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
       if (!response.ok) throw new Error('Failed to post comment');
@@ -513,7 +533,7 @@
     if (!await showModal('Delete Post', 'Are you sure you want to delete this post? This action cannot be undone.', { confirmText: 'Delete', confirmClass: 'confirm' })) return;
 
     try {
-      const response = await fetch(API.deletePost(postId), { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` } });
+      const response = await fetch(API.deletePost(postId), { method: 'DELETE', credentials: 'include' });
       if (response.status === 401 || response.status === 403) { showToast('You do not have permission to delete this post.', 'error'); return; }
       if (!response.ok) throw new Error('Failed to delete post');
 
@@ -532,7 +552,7 @@
     if (!await showModal('Delete Comment', 'Are you sure you want to delete this comment?', { confirmText: 'Delete', confirmClass: 'confirm' })) return;
 
     try {
-      const response = await fetch(API.deleteComment(commentId), { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` } });
+      const response = await fetch(API.deleteComment(commentId), { method: 'DELETE', credentials: 'include' });
       if (response.status === 401 || response.status === 403) { showToast('You do not have permission to delete this comment.', 'error'); return; }
       if (!response.ok) throw new Error('Failed to delete comment');
 
@@ -561,7 +581,7 @@
       if (text) formData.append('text', text);
       selectedImages.forEach((file, i) => formData.append(`image_${i}`, file));
 
-      const response = await fetch(API.submit, { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: formData });
+      const response = await fetch(API.submit, { method: 'POST', credentials: 'include', body: formData });
       if (response.status === 401) { showToast('Session expired. Please login again.', 'error'); logout(); return; }
       if (!response.ok) throw new Error('Failed to submit post');
 

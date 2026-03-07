@@ -25,10 +25,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://basujindal.me/post/?section=blogs&amp;p=llm</loc>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://basujindal.me/post/?section=blogs&amp;p=diffusion</loc>
     <priority>0.6</priority>
   </url>
@@ -42,10 +38,6 @@
   </url>
   <url>
     <loc>https://basujindal.me/post/?section=blogs&amp;p=probability_statistics</loc>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://basujindal.me/post/?section=blogs&amp;p=cuda</loc>
     <priority>0.6</priority>
   </url>
   <url>

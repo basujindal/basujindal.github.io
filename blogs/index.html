@@ -21,56 +21,22 @@
 
     <footer></footer>
   </div>
+  <script src="../js/config.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/main.js"></script>
   <script>
-    const blogs = [
-      { slug: 'diffusion', description: 'Understanding diffusion models' },
-      { slug: 'generative_models', description: 'Overview of image generative models.' },
-      { slug: 'parameter_estimation', description: 'Notes on parameter estimation techniques.' },
-      { slug: 'probability_statistics', description: 'Foundations of probability and statistics.' },
-      { slug: 'llm', description: 'Notes on LLMs' },
-    ];
-
-    async function loadBlogs() {
-      const grid = document.getElementById('blog-grid');
-      const blogData = (await Promise.all(blogs.map(async (blog) => {
-        const res = await fetch(`../blog-posts/${blog.slug}.md`);
-        const text = await res.text();
-        const frontMatter = text.match(/^---\n([\s\S]*?)\n---/);
-        let title = blog.slug;
-        let date = '';
-        let show = true;
-        if (frontMatter) {
-          const titleMatch = frontMatter[1].match(/title:\s*["']?(.+?)["']?\s*$/m);
-          const dateMatch = frontMatter[1].match(/date:\s*(\d{4}-\d{2}-\d{2})/);
-          const showMatch = frontMatter[1].match(/show:\s*(true|false)/);
-          if (titleMatch) title = titleMatch[1];
-          if (dateMatch) date = dateMatch[1];
-          if (showMatch) show = showMatch[1] === 'true';
-        }
-        return { ...blog, title, date, show };
-      }))).filter(blog => blog.show);
-
-      blogData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      blogData.forEach((blog, index) => {
-        const dateObj = new Date(blog.date + 'T00:00:00');
-        const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const delay = Math.min(index + 2, 5); // Cap delay at 0.5s
-        grid.innerHTML += `
-          <a href="/post/?section=blogs&p=${blog.slug}" class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
-            <div class="blog-card-content">
-              <time datetime="${blog.date}">${formatted}</time>
-              <h2>${blog.title}</h2>
-              <p>${blog.description}</p>
-            </div>
-            <span class="blog-card-arrow">&rarr;</span>
-          </a>
-        `;
-      });
-    }
-    loadBlogs();
+    window.BLOG_LIST_CONFIG = {
+      items: [
+        { slug: 'diffusion', description: 'Understanding diffusion models' },
+        { slug: 'generative_models', description: 'Overview of image generative models.' },
+        { slug: 'parameter_estimation', description: 'Notes on parameter estimation techniques.' },
+        { slug: 'probability_statistics', description: 'Foundations of probability and statistics.' },
+      ],
+      folder: 'blog-posts',
+      section: 'blogs',
+      defaultShow: true
+    };
   </script>
+  <script src="../js/blog-list.js"></script>
 </body>
 </html>

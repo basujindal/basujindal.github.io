@@ -1,7 +1,7 @@
 ---
 title: "CUDA Software"
 date: 2026-02-01
-show: false
+show: true
 ---
 
 ## CuTe

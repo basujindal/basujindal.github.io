@@ -1,267 +1,10 @@
 'use strict';
 
 // ============================================================
-// FP Visualizer – supports FP4 E2M1, FP8 E4M3, FP8 E5M2, FP16, BF16
+// FP Visualizer – UI rendering, canvas drawing, controls, init
+// Depends on: fp-formats.js (FORMAT_DEFS, visibility, helpers)
+//             fp-decoder.js (TABLES, DTYPE_STATS, pickNearest, classifyAndFields)
 // ============================================================
-
-// ---------- Format definitions ----------
-const FORMAT_DEFS = [
-  {
-    key: 'fp4',     title: 'FP4 E2M1',   solidColor: 'var(--fp4-solid)',
-    bits: 4,  signBits: 1, expBits: 2, mantBits: 1, bias: 1,
-    hexWidth: 1, hasInf: false, hasNaN: false,
-    meta: '1s / 2e / 1m (bias 1)',
-  },
-  {
-    key: 'fp8e4m3', title: 'FP8 E4M3',   solidColor: 'var(--fp8e4m3-solid)',
-    bits: 8,  signBits: 1, expBits: 4, mantBits: 3, bias: 7,
-    hexWidth: 2, hasInf: false, hasNaN: true,
-    meta: '1s / 4e / 3m (bias 7)',
-  },
-  {
-    key: 'fp8e5m2', title: 'FP8 E5M2',   solidColor: 'var(--fp8e5m2-solid)',
-    bits: 8,  signBits: 1, expBits: 5, mantBits: 2, bias: 15,
-    hexWidth: 2, hasInf: true, hasNaN: true,
-    meta: '1s / 5e / 2m (bias 15)',
-  },
-  {
-    key: 'fp16',    title: 'FP16',        solidColor: 'var(--fp16-solid)',
-    bits: 16, signBits: 1, expBits: 5, mantBits: 10, bias: 15,
-    hexWidth: 4, hasInf: true, hasNaN: true,
-    meta: '1s / 5e / 10m (bias 15)',
-  },
-  {
-    key: 'bf16',    title: 'BF16',        solidColor: 'var(--bf16-solid)',
-    bits: 16, signBits: 1, expBits: 8, mantBits: 7, bias: 127,
-    hexWidth: 4, hasInf: true, hasNaN: true,
-    meta: '1s / 8e / 7m (bias 127)',
-  },
-];
-
-// Visibility state – all on by default
-const visibility = {};
-FORMAT_DEFS.forEach(f => visibility[f.key] = true);
-
-// ---------- low-level helpers ----------
-function isNegZero(x) { return x === 0 && (1 / x) === -Infinity; }
-
-function cmpNum(a, b) {
-  const aNZ = isNegZero(a), bNZ = isNegZero(b);
-  if (aNZ && b === 0 && !bNZ) return -1;
-  if (bNZ && a === 0 && !aNZ) return 1;
-  if (a === b) return 0;
-  return a < b ? -1 : 1;
-}
-
-function lowerBound(arr, x) {
-  let lo = 0, hi = arr.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (cmpNum(arr[mid].value, x) < 0) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-
-function upperBound(arr, x) {
-  let lo = 0, hi = arr.length;
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (cmpNum(arr[mid].value, x) <= 0) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-
-function midpoint(a, b) {
-  if (a === -Infinity || b === Infinity) return a === -Infinity ? -Infinity : Infinity;
-  return (a + b) / 2;
-}
-
-function fmtNumber(x, decimals) {
-  if (Number.isNaN(x)) return 'NaN';
-  if (x === Infinity) return '+Inf';
-  if (x === -Infinity) return '-Inf';
-  if (isNegZero(x)) return '-0';
-  const ax = Math.abs(x);
-  if (ax !== 0 && (ax >= 1e6 || ax < 1e-5)) {
-    return x.toExponential(Math.min(6, decimals));
-  }
-  return x.toFixed(decimals);
-}
-
-function hex(n, width) {
-  return '0x' + n.toString(16).toUpperCase().padStart(width, '0');
-}
-
-function binStr(n, width) {
-  return n.toString(2).padStart(width, '0');
-}
-
-// ---------- Generic minifloat decoder ----------
-function decodeMinifloat(bits, expBits, mantBits, bias, hasInf, hasNaN) {
-  const totalBits = 1 + expBits + mantBits;
-  const s = (bits >>> (totalBits - 1)) & 1;
-  const eMask = (1 << expBits) - 1;
-  const mMask = (1 << mantBits) - 1;
-  const e = (bits >>> mantBits) & eMask;
-  const m = bits & mMask;
-  const sign = s ? -1 : 1;
-  const eMax = eMask;
-
-  if (e === eMax && hasInf && m === 0) return sign * Infinity;
-  if (e === eMax && hasNaN && m !== 0) return NaN;
-  if (!hasInf && hasNaN && e === eMax && m === mMask) return NaN;
-
-  if (e === 0) {
-    if (m === 0) return s ? -0 : 0;
-    return sign * Math.pow(2, 1 - bias) * (m / Math.pow(2, mantBits));
-  }
-  return sign * Math.pow(2, e - bias) * (1 + m / Math.pow(2, mantBits));
-}
-
-const _buf4 = new ArrayBuffer(4);
-const _dv4 = new DataView(_buf4);
-function decodeBF16(bits16) {
-  _dv4.setUint32(0, (bits16 << 16) >>> 0, true);
-  return _dv4.getFloat32(0, true);
-}
-
-// ---------- Build format tables ----------
-function buildTable(def) {
-  const entries = [];
-  const count = 1 << def.bits;
-  for (let bits = 0; bits < count; bits++) {
-    let v;
-    if (def.key === 'bf16') {
-      v = decodeBF16(bits);
-    } else {
-      v = decodeMinifloat(bits, def.expBits, def.mantBits, def.bias, def.hasInf, def.hasNaN);
-    }
-    if (Number.isNaN(v)) continue;
-    entries.push({ bits, value: v });
-  }
-  entries.sort((a, b) => cmpNum(a.value, b.value));
-  return { entries };
-}
-
-const TABLES = {};
-FORMAT_DEFS.forEach(def => { TABLES[def.key] = buildTable(def); });
-
-// ---------- Compute dtype stats ----------
-function computeDtypeStats(def) {
-  const table = TABLES[def.key];
-  const entries = table.entries;
-  const finiteEntries = entries.filter(e => Number.isFinite(e.value));
-
-  let maxVal = -Infinity, minPos = Infinity, maxNeg = -Infinity, minVal = Infinity;
-  let totalFinite = finiteEntries.length;
-  let positiveCount = 0;
-
-  for (const e of finiteEntries) {
-    const v = e.value;
-    if (v > maxVal) maxVal = v;
-    if (v < minVal) minVal = v;
-    if (v > 0 && v < minPos) minPos = v;
-    if (v < 0 && v > maxNeg) maxNeg = v;
-    if (v > 0) positiveCount++;
-  }
-
-  const smallestSub = minPos === Infinity ? 0 : minPos;
-  let smallestNormal = Infinity;
-  for (const e of finiteEntries) {
-    const v = e.value;
-    if (v <= 0) continue;
-    const bits = e.bits;
-    const exp = (bits >>> def.mantBits) & ((1 << def.expBits) - 1);
-    if (exp > 0 && v < smallestNormal) smallestNormal = v;
-  }
-  if (smallestNormal === Infinity) smallestNormal = smallestSub;
-
-  const eps = Math.pow(2, -def.mantBits);
-
-  return {
-    maxVal,
-    minVal,
-    smallestSub,
-    smallestNormal,
-    eps,
-    totalBits: def.bits,
-    hasInf: def.hasInf,
-    hasNaN: def.hasNaN,
-    totalFinite,
-    positiveCount,
-  };
-}
-
-const DTYPE_STATS = {};
-FORMAT_DEFS.forEach(def => { DTYPE_STATS[def.key] = computeDtypeStats(def); });
-
-// ---------- Quantization ----------
-function pickNearest(table, x, def) {
-  if (Number.isNaN(x)) {
-    if (!def.hasNaN) {
-      return { ...table.entries[table.entries.length - 1] };
-    }
-    const nanBits = ((1 << def.expBits) - 1) << def.mantBits | ((1 << def.mantBits) - 1);
-    return { bits: nanBits, value: NaN, special: true };
-  }
-
-  if (x === 0) {
-    const bits = isNegZero(x) ? (1 << (def.bits - 1)) : 0;
-    return { bits, value: isNegZero(x) ? -0 : 0 };
-  }
-
-  if (x === Infinity || x === -Infinity) {
-    if (!def.hasInf) {
-      const e = x > 0 ? table.entries[table.entries.length - 1] : table.entries[0];
-      return { ...e };
-    }
-    const idx = lowerBound(table.entries, x);
-    const e = table.entries[Math.min(idx, table.entries.length - 1)];
-    return { ...e };
-  }
-
-  const arr = table.entries;
-  const idx = lowerBound(arr, x);
-  const right = (idx < arr.length) ? arr[idx] : null;
-  const left = (idx > 0) ? arr[idx - 1] : null;
-
-  if (!left) return { ...right };
-  if (!right) return { ...left };
-
-  const dl = Math.abs(x - left.value);
-  const dr = Math.abs(right.value - x);
-
-  if (dl < dr) return { ...left };
-  if (dr < dl) return { ...right };
-
-  const leftEven = (left.bits & 1) === 0;
-  const rightEven = (right.bits & 1) === 0;
-  if (leftEven && !rightEven) return { ...left };
-  if (rightEven && !leftEven) return { ...right };
-
-  return cmpNum(left.value, right.value) <= 0 ? { ...left } : { ...right };
-}
-
-function classifyAndFields(bits, def) {
-  const eMask = (1 << def.expBits) - 1;
-  const mMask = (1 << def.mantBits) - 1;
-  const e = (bits >>> def.mantBits) & eMask;
-  const m = bits & mMask;
-  const eMax = eMask;
-  const sign = (bits >>> (def.bits - 1)) & 1;
-
-  let cls;
-  if (def.hasInf && e === eMax && m === 0) cls = 'inf';
-  else if (def.hasNaN && e === eMax && m !== 0) cls = 'nan';
-  else if (!def.hasInf && def.hasNaN && e === eMax && m === mMask) cls = 'nan';
-  else if (e === 0 && m === 0) cls = 'zero';
-  else if (e === 0) cls = 'subnormal';
-  else cls = 'normal';
-
-  return { sign, exp: e, mant: m, cls };
-}
 
 // ---------- Bit display ----------
 function renderBitDisplay(bitString, signBits, expBits, mantBits) {
@@ -335,7 +78,6 @@ function renderPropsTable(x, dec) {
 
   if (visibleDefs.length === 0) return results;
 
-  // Compute quantization data
   const data = [];
   for (const def of visibleDefs) {
     const q = pickNearest(TABLES[def.key], x, def);
@@ -349,7 +91,6 @@ function renderPropsTable(x, dec) {
     data.push({ def, q, qv, absErr, relErr, binInfo, bStr, fields });
   }
 
-  // Header
   let html = '<table><thead><tr><th>Property</th>';
   for (const d of data) {
     html += `<th><span class="fp-dtype-dot" style="background:${d.def.solidColor}"></span>${d.def.title}</th>`;
@@ -366,7 +107,6 @@ function renderPropsTable(x, dec) {
     }
   }
 
-  // Section: Quantization of x
   html += `<tr class="fp-section-row"><td colspan="${colCount}">Quantization of x</td></tr>`;
 
   renderRows([
@@ -377,10 +117,9 @@ function renderPropsTable(x, dec) {
     { label: 'prev / next', fn: d => `${d.binInfo.prev ? fmtNumber(d.binInfo.prev.value, dec) : '\u2014'} / ${d.binInfo.next ? fmtNumber(d.binInfo.next.value, dec) : '\u2014'}` },
   ]);
 
-  // Section: Dtype info
   html += `<tr class="fp-section-row"><td colspan="${colCount}">Format</td></tr>`;
 
-  const dtypeRows = [
+  renderRows([
     { label: 'Total bits',       fn: d => d.def.bits },
     { label: 'Exponent bits',    fn: d => d.def.expBits },
     { label: 'Mantissa bits',    fn: d => d.def.mantBits },
@@ -393,14 +132,10 @@ function renderPropsTable(x, dec) {
     { label: 'Has Inf',          fn: d => d.def.hasInf ? 'yes' : 'no' },
     { label: 'Has NaN',          fn: d => d.def.hasNaN ? 'yes' : 'no' },
     { label: 'Finite values',    fn: d => DTYPE_STATS[d.def.key].totalFinite },
-  ];
+  ]);
 
-  renderRows(dtypeRows);
-
-  // Section: Bit encoding
   html += `<tr class="fp-section-row"><td colspan="${colCount}">Encoding</td></tr>`;
 
-  // Bits row
   html += '<tr><td>bits</td>';
   for (const d of data) {
     html += `<td>${renderBitDisplay(d.bStr, d.def.signBits, d.def.expBits, d.def.mantBits)}</td>`;

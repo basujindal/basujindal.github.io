@@ -1,10 +1,9 @@
 // Shared Interactions - Common code for blog and thoughts interactions
 (function() {
-  const API_BASE = 'https://server.basujindal.me/api';
+  const API_BASE = window.APP_CONFIG.API_BASE;
 
-  // Storage keys
+  // Storage keys (token is now in HttpOnly cookie, not stored in localStorage)
   const STORAGE_KEYS = {
-    token: 'thoughts_token',
     isOwner: 'thoughts_is_owner',
     userName: 'thoughts_user_name',
     userAvatar: 'thoughts_user_avatar'
@@ -19,7 +18,7 @@
 
   function getAuthState() {
     return {
-      token: localStorage.getItem(STORAGE_KEYS.token),
+      token: true, // Token is in HttpOnly cookie, not accessible from JS
       isOwner: localStorage.getItem(STORAGE_KEYS.isOwner) === 'true',
       user: {
         name: localStorage.getItem(STORAGE_KEYS.userName),
@@ -28,36 +27,40 @@
     };
   }
 
-  function setAuthState(token, isOwner, userName, userAvatar) {
-    localStorage.setItem(STORAGE_KEYS.token, token);
+  function isLoggedIn() {
+    return !!localStorage.getItem(STORAGE_KEYS.userName);
+  }
+
+  function setAuthState(isOwner, userName, userAvatar) {
     localStorage.setItem(STORAGE_KEYS.isOwner, isOwner ? 'true' : 'false');
     if (userName) localStorage.setItem(STORAGE_KEYS.userName, userName);
     if (userAvatar) localStorage.setItem(STORAGE_KEYS.userAvatar, userAvatar);
   }
 
   function clearAuthState() {
-    localStorage.removeItem(STORAGE_KEYS.token);
     localStorage.removeItem(STORAGE_KEYS.isOwner);
     localStorage.removeItem(STORAGE_KEYS.userName);
     localStorage.removeItem(STORAGE_KEYS.userAvatar);
+    // Also clear the HttpOnly cookie via the backend
+    fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
   }
 
   function handleAuthCallback(cleanUrlCallback) {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
     const ownerParam = params.get('is_owner');
     const userName = params.get('user_name');
     const userAvatar = params.get('user_avatar');
     const error = params.get('error');
 
-    if (token) {
-      setAuthState(token, ownerParam === 'true', userName, userAvatar);
+    if (userName) {
+      // Token is now in HttpOnly cookie set by the backend
+      setAuthState(ownerParam === 'true', userName, userAvatar);
       if (cleanUrlCallback) {
         cleanUrlCallback();
       } else {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
-      return { success: true, token, isOwner: ownerParam === 'true', user: { name: userName, avatar: userAvatar } };
+      return { success: true, isOwner: ownerParam === 'true', user: { name: userName, avatar: userAvatar } };
     } else if (error) {
       const errorMessages = {
         'github_denied': 'GitHub authorization was denied.',
@@ -170,17 +173,13 @@
 
   // ===== API HELPERS =====
 
-  function getAuthHeaders(token) {
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    return headers;
+  function getAuthHeaders() {
+    return { 'Content-Type': 'application/json' };
   }
 
-  async function fetchWithAuth(url, options = {}, token) {
-    const headers = { ...getAuthHeaders(token), ...options.headers };
-    const response = await fetch(url, { ...options, headers });
+  async function fetchWithAuth(url, options = {}) {
+    const headers = { ...getAuthHeaders(), ...options.headers };
+    const response = await fetch(url, { ...options, headers, credentials: 'include' });
 
     if (response.status === 401 || response.status === 403) {
       return { error: 'unauthorized', response };
@@ -426,6 +425,7 @@
     STORAGE_KEYS,
     // Auth
     getAuthState,
+    isLoggedIn,
     setAuthState,
     clearAuthState,
     handleAuthCallback,

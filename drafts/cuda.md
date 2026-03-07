@@ -1,7 +1,7 @@
 ---
 title: "CUDA Programming"
 date: 2026-01-19
-show: false
+show: true
 ---
 
 ## Threads, Warps, Thread Blocks, Thread Block cluster and Grid
@@ -129,12 +129,39 @@ Although if threads from different warps in the same block read from the same ba
 [Video on Bank Conflicts](https://www.youtube.com/watch?v=CZgM3DEBplE)
 
 ### Tensor Memory
+The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
+
+<img src="https://docs.nvidia.com/cuda/parallel-thread-execution/_images/tensor-memory-layout.png
+" alt="Tensor Memory Layout & Addressing" style="max-width: 550px; display: block; margin: 0 auto;">
+
+Note that TMEM uses 32-bit addresses, where bits 31-16 denote the lane ID while 15-0 denote the column. The CuTe layout for the entire memory in row major would be `((128, 512),(65536, 1))` (65536 = 1 << 16)
+
+TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both `tcgen05.alloc` and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the `tcgen05.alloc` instruction stores the base 32-bit address of the allocation to a given location in shared memory.
 
 N.B: The consumer Blackwell architecture (compute capability 12.0) differs from the data center Blackwell architecture (compute capability 10.0) in some major ways, notably lacking Tensor Memory.
 
-The 5th generation TensorCore has dedicated on-chip memory that is specialized for use by TensorCore operations. This Tensor Memory is organized as a two-dimensional matrix where the horizontal rows are called lanes and the vertical columns are called columns. On architecture sm_100a, the 5th generation TensorCore’s Tensor Memory has a two-dimensional structure of 512 columns and 128 rows per CTA, with each cell being 32-bits in size.
 
-TMEM is allocated dynamically using the `tcgen05.alloc` instruction. Furthermore, allocation is in units of columns, so in particular every lane of a column is allocated when a column is allocated. The number of columns allocated must be a power of 2 and at least 32. Finally, TMEM must be explicitly deallocated with `tcgen05.dealloc`. Both tcgen05.alloc and `tcgen05.dealloc` must be called from a single warp, and the same warp should both allocate and deallocate. Note that the tcgen05.alloc instruction stores the base 32-bit address of the allocation to a given location in shared memory. The TMEM base address should then be set as the offset to the accumulator tensor for the UMMA, as we show below. Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using tcgen05.ld for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through tcgen05.cp or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Luckily for us, CUTLASS provides utility functions that we’ll cover later that simplify the process of organizing data via swizzling. That said, those interested can find the layout information in the PTX guide. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM. Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM
+Typically, data gets into TMEM via UMMA operations, and is explicitly moved out to registers using `tcgen05.ld` for post-processing. It’s also possible for threads to manually load data into TMEM, either from SMEM through `tcgen05.cp` or from registers through `tcgen05.st`. However, TMEM access patterns for explicit load and store are very restricted. Each warp within a warpgroup can only access 32 lanes (with warp 0 associated to lanes 0-31, warp 1 to lanes 32-63, and so forth). Additionally, both the UMMA operation and the data movement operations expect certain data layouts. Finally, besides UMMA operations and these data movement instructions, no other operations access data from TMEM. In other words, all pre-processing must happen before the data is loaded onto TMEM, and all post-processing must happen after the data is retrieved out of TMEM.
+
+```cpp
+tcgen05.st.sync.aligned.{.shape1 }.{num}.b32 [taddr], r;
+
+.shape1 = { .16x64b, .16x128b, .16x256b, .32x32b }
+.num    = { .x1, .x2, .x4, .x8, .x16, .x32, .x64, .x128 }
+```
+
+
+Instruction `tcgen05.st` asynchronously stores data from the source register r into the Tensor Memory at the location specified by the 32-bit address operand taddr, collectively across all threads of the warps.
+
+The .shape qualifier and the .num qualifier together determines the total dimension of the data which is stored to the Tensor Memory. The .shape qualifier indicates the base dimension of data to be accessed as described in the Data Movement Shape. The .num qualifier indicates the repeat factor on the base dimension resulting in the total dimension of the data that is accessed.
+
+The shape `.16x32bx2` performs two accesses into Tensor Memory of the shape .16x32b. The base address of the first access is specified by taddr and the base address of the second access is specified by taddr+immHalfSplitoff, where immHalfSplitoff is an immediate argument.
+
+The mandatory `.sync` qualifier indicates that tcgen05.st causes the executing thread to wait until all threads in the warp execute the same `tcgen05.st` instruction before resuming execution. Note that the operation itself is asynchronous ie the kernel can proceed with other instructions while the memory is being transferred.
+
+The mandatory `.aligned` qualifier indicates that all threads in the warp must execute the same `tcgen05.st` instruction. In conditionally executed code, a tcgen05.st instruction should only be used if it is known that all threads in the warp evaluate the condition identically, otherwise behavior is undefined.
+
+The behavior of `tcgen05.st` is undefined if all threads do not use the same values of `taddr`, or if any thread in the warp has exited.
 
 ### Register File
 
@@ -395,8 +422,11 @@ Notice that **Scheduling / Limits** have not changed across generations.
 [Tuning guide for Blackwell](https://docs.nvidia.com/cuda/blackwell-tuning-guide/index.html)
 
 https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability-10-x
+https://research.colfax-intl.com/cutlass-tutorial-writing-gemm-kernels-using-tensor-memory-for-nvidia-blackwell-gpus/
 
 ### GEMM flow
+
+For the UMMA operation, Operand A can be in TMEM or SMEM, Operand B must be in SMEM and Accumulator must be in TMEM.
 
 Full GEMM: (Gemm_M × Gemm_N) output, iterating over Gemm_K
     │

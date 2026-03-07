@@ -17,8 +17,6 @@
   <div class="fp-container">
     <h1 class="page-title fade-in">FP Visualizer</h1>
     <p class="fp-description fade-in fade-in-delay-1">
-      Interactive visualizer for floating-point formats: <strong>FP4 E2M1</strong>, <strong>FP8 E4M3</strong>,
-      <strong>FP8 E5M2</strong>, <strong>FP16</strong>, and <strong>BF16</strong>.
       Shows how a real input <code>x</code> rounds to each format, with a zoomed 1D map of rounding bins.
       Each colored segment is the interval of reals that round to a single representable value.
       Rounding mode: <code>round-to-nearest, ties-to-even</code>.
@@ -110,8 +108,11 @@
     <footer></footer>
   </div>
 
+  <script src="../js/config.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/fp-formats.js"></script>
+  <script src="../js/fp-decoder.js"></script>
   <script src="../js/fp-visualizer.js"></script>
 </body>
 </html>

@@ -13,31 +13,32 @@
     <header></header>
 
     <main>
-      <h1 style="margin-bottom: 0.5rem;">In Progress</h1>
-      <p style="color: var(--text-secondary); margin-bottom: 2rem;">Draft posts and notes - work in progress</p>
+      <h1 class="page-title fade-in">In Progress</h1>
+      <p style="color: var(--text-secondary); margin-bottom: 2rem;" class="fade-in">Draft posts and notes - work in progress</p>
 
-      <ul class="blog-list">
-        <li class="blog-item">
-          <h2><a href="/post/?section=inprogress&p=cuda">CUDA</a></h2>
-        </li>
-        <li class="blog-item">
-          <h2><a href="/post/?section=inprogress&p=cuda2">CUDA 2</a></h2>
-        </li>
-        <li class="blog-item">
-          <h2><a href="/post/?section=inprogress&p=quantization">Quantization 101</a></h2>
-        </li>
-        <li class="blog-item">
-          <h2><a href="/post/?section=inprogress&p=linux-essentials">Linux Essentials</a></h2>
-        </li>
-        <li class="blog-item">
-          <h2><a href="/post/?section=inprogress&p=deep-space-astro">Deep Space Astrophotography</a></h2>
-        </li>
-      </ul>
+      <div class="blog-grid" id="blog-grid">
+      </div>
     </main>
 
     <footer></footer>
   </div>
+  <script src="../js/config.js"></script>
   <script src="../js/components.js"></script>
   <script src="../js/main.js"></script>
+  <script>
+    // To add a new draft: add its slug here, then set show: true in its frontmatter
+    window.BLOG_LIST_CONFIG = {
+      items: [
+        'ClassicalCV', 'DSA', 'Deep_Learning_Tips', 'Docker-Commands-CheatSheet',
+        'Neural-Architecture-Search', 'RL-Notes', 'RL-Tips-and-Tricks', 'Screen-Resolution',
+        'allegories', 'cuda', 'cuda2', 'deep-space-astro', 'dockerfile', 'linal',
+        'linux-essentials', 'llm', 'math', 'multi-gpu', 'quantization', 'system-design',
+      ],
+      folder: 'drafts',
+      section: 'inprogress',
+      defaultShow: false
+    };
+  </script>
+  <script src="../js/blog-list.js"></script>
 </body>
 </html>

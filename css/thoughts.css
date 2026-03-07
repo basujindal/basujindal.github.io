@@ -155,3 +155,12 @@
   .compose-option { width: 44px; height: 44px; }
   .compose-option svg { width: 24px; height: 24px; }
 }
+
+/* Load more and show all comments */
+.load-more-container { text-align: center; padding: 1.5rem 0; }
+.load-more-btn { padding: 0.6rem 2rem; background: var(--bg-tertiary, #f0f0f0); color: var(--text-primary); border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
+.load-more-btn:hover { background: var(--bg-secondary, #e5e5e5); }
+.load-more-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.show-all-comments-btn { display: block; width: 100%; padding: 0.5rem; margin: 0.5rem 0; background: none; border: none; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; transition: color 0.2s; }
+.show-all-comments-btn:hover { color: var(--text-primary); }
+.show-all-comments-btn:disabled { opacity: 0.6; cursor: not-allowed; }

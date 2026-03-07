@@ -38,7 +38,7 @@
 
     // Check for existing auth
     const authState = getAuthState();
-    authToken = authState.token;
+    authToken = InteractionsCommon.isLoggedIn();
     isOwner = authState.isOwner;
     currentUser = authState.user;
 
@@ -57,7 +57,7 @@
     });
 
     if (result && result.success) {
-      authToken = result.token;
+      authToken = true;
       isOwner = result.isOwner;
       currentUser = result.user;
     }
@@ -183,12 +183,7 @@
 
   async function loadInteractions() {
     try {
-      const headers = {};
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
-
-      const response = await fetch(API.getBlogInteractions(blogSlug), { headers });
+      const response = await fetch(API.getBlogInteractions(blogSlug), { credentials: 'include' });
 
       if (!response.ok) {
         throw new Error('Failed to load interactions');
@@ -298,13 +293,11 @@
 
     try {
       const headers = { 'Content-Type': 'application/json' };
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
 
       const response = await fetch(API.blogLike, {
         method: 'POST',
         headers,
+        credentials: 'include',
         body: JSON.stringify({
           blog_slug: blogSlug,
           unlike: wasLiked
@@ -350,13 +343,11 @@
 
     try {
       const headers = { 'Content-Type': 'application/json' };
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
 
       const response = await fetch(API.blogComment, {
         method: 'POST',
         headers,
+        credentials: 'include',
         body: JSON.stringify({
           blog_slug: blogSlug,
           text: text
@@ -393,9 +384,7 @@
     try {
       const response = await fetch(API.deleteBlogComment(commentId), {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+        credentials: 'include'
       });
 
       if (!response.ok) {

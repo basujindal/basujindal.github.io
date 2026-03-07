@@ -1,7 +1,7 @@
 ---
 title: "Large Language Models"
 date: 2024-04-03
-show: false
+show: true
 ---
 
 ## Decoding Strategies
@@ -130,41 +130,62 @@ Let the input embeddings be $X \in \mathbb{R}^{D \times L}$, where $L$ is the le
 
 Therefore the Attention matrix is calculated as follows:
 
-$$ A_{mn} = Q_m^T K_n = \(X_m + PE_n\)^T W_q^T W_k\(X_m + PE_n\) $$
+$$ A_{mn} = Q_m^T K_n = \left(X_m + PE_n\right)^T W_q^T W_k\left(X_m + PE_n\right) $$
 
 where $PE_m$ and $PE_n$ are the positional embeddings for the mth and nth words in the sequence.
 
 ### Rotational Positional Embeddings (RoPE)
 
-Suggested Reading:
-
-- [RoPE Paper](https://arxiv.org/abs/2104.09864)
-- [Video Explaining RoPE](https://www.youtube.com/watch?v=C6rV8BsrrCc)
-
 Rotational Positional Embeddings use the relative distance between the words in the sequence to generate the positional embeddings. Instead of adding a positional embedding to the entire embedding, they treat the embedded vector as a concatenation of multiple tuples and each tuple as a vector in complex plane. They multiply each vector by a 2D rotation matrix $R$.
 
 <img src="../../images/rope.png" alt="Rotary Positional Embedding (RoPE) visualization showing 2D rotation of embedding vectors" style="max-width: 600px; display: block; margin: 0 auto;">
 
-Let the input embeddings be $X \in \mathbb{R}^{D \times L}$, where $L$ is the length of the sequence and $D$ is the dimension of the input embeddings. Also the K weight matrix be $W_k \in \mathbb{R}^{D \times D}$, the Q weight matrix be $W_q \in \mathbb{R}^{D \times D}$, the attention matrix be $A \in \mathbb{R}^{L \times L}$ and the Rotation matrix be $R \in \mathbb{R}^{D \times D}$.
+Let the input embeddings be $X \in \mathbb{R}^{d \times L}$, where $L$ is the length of the sequence and $d$ is the dimension of the embeddings. Also the K weight matrix be $W_k \in \mathbb{R}^{d \times d}$, the Q weight matrix be $W_q \in \mathbb{R}^{d \times d}$, the attention matrix be $A \in \mathbb{R}^{L \times L}$ and the Rotation matrix be $R \in \mathbb{R}^{d \times d}$.
 
 
 The Q and K matrices are calculated as follows:
 
-$$K_i = R_i W_k X_i \\\ Q_j = R_j W_q X_j$$
+$$K_m = R_m W_k X_m \\\ Q_n = R_n W_q X_n$$
 
 $R$ is a block diagonal matrix with each block being a 2D rotation matrix. The $i$ th block is given by:
 
-$$R_i = \begin{bmatrix} \cos(\theta_i) & -\sin(\theta_i) \\\ \sin(\theta_i) & \cos(\theta_i) \end{bmatrix}$$
+$$\begin{bmatrix} x_{2i}\ \\\ x_{2i+1}  \end{bmatrix} = \begin{bmatrix} \cos m\theta_i & -\sin m\theta_i\ \\\ \sin m\theta_i & \cos m\theta_i \end{bmatrix} \begin{bmatrix} x_{2i}\ \\\ x_{2i+1} \end{bmatrix}$$
 
-The angle $\theta_i$ is calculation is similar to the Attention paper:
+- $m$ = token position (0, 1, 2, …)
+- $i$ = which 2D plane $0..d/2-1$
+- $\theta_i = \text{base}^{-2i/d}$ with $base=10000$
 
-$$ \theta_i = 10000^{-2(i-1)/d}, i \in \{1, 2, \dots, d/2\} $$
 
 The attention matrix is calculated as follows:
 
-$$ A_{ij} = Q_i^T K_j = X_i^T W_q^T R_i^T R^d_j W_k X_j $$
+$$ A_{mn} = Q_m^T K_n = X_m^T W_q^T R_m^T R_n W_k X_n $$
 
-$ R_i^T R_j = R_{j-i} $ is only dependent on the relative position of the words in the sequence and can be computed in advance for all relative positions.
+$ R_m^T R_n = R_{n-m} $ is only dependent on the relative position of the words in the sequence and can be computed in advance for all relative positions.
+
+
+The full rotation matrix is:
+
+$$\mathbf{R}_{\Theta,m}^d = \begin{bmatrix} \textcolor{#e06c75}{\cos m\theta_0} & \textcolor{#61afef}{-\sin m\theta_0} & 0 & 0 & \cdots & 0 & 0 \\\ \textcolor{#61afef}{\sin m\theta_0} & \textcolor{#e06c75}{\cos m\theta_0} & 0 & 0 & \cdots & 0 & 0 \\\ 0 & 0 & \cos m\theta_1 & -\sin m\theta_1 & \cdots & 0 & 0 \\\ 0 & 0 & \sin m\theta_1 & \cos m\theta_1 & \cdots & 0 & 0 \\\ \vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\\ 0 & 0 & 0 & 0 & \cdots & \cos m\theta_{d/2-1} & -\sin m\theta_{d/2-1} \\\ 0 & 0 & 0 & 0 & \cdots & \sin m\theta_{d/2-1} & \cos m\theta_{d/2-1} \end{bmatrix}$$
+
+where $m$ is the token position and $\theta_i = \text{base}^{-2i/d}$.
+
+#### Non-interleaved (LLaMA-style) RoPE
+
+The original RoPE paper pairs adjacent dimensions: $(x_0, x_1)$, $(x_2, x_3)$, etc. LLaMA and most modern models use a **non-interleaved** pattern instead, pairing the first half with the second half: $(x_0, x_{d/2})$, $(x_1, x_{d/2+1})$, etc.
+
+This is equivalent to splitting the vector into two halves and applying rotations across them. The full rotation matrix for the non-interleaved pattern is:
+
+$$\mathbf{R}_{\Theta,m}^d = \begin{bmatrix} \textcolor{#e06c75}{\cos m\theta_0} & 0 & \cdots & 0 & \textcolor{#61afef}{-\sin m\theta_0} & 0 & \cdots & 0 \\\ 0 & \cos m\theta_1 & \cdots & 0 & 0 & -\sin m\theta_1 & \cdots & 0 \\\ \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\\ 0 & 0 & \cdots & \cos m\theta_{d/2-1} & 0 & 0 & \cdots & -\sin m\theta_{d/2-1} \\\ \textcolor{#61afef}{\sin m\theta_0} & 0 & \cdots & 0 & \textcolor{#e06c75}{\cos m\theta_0} & 0 & \cdots & 0 \\\ 0 & \sin m\theta_1 & \cdots & 0 & 0 & \cos m\theta_1 & \cdots & 0 \\\ \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\\ 0 & 0 & \cdots & \sin m\theta_{d/2-1} & 0 & 0 & \cdots & \cos m\theta_{d/2-1} \end{bmatrix}$$
+
+Which can be computed element-wise as:
+
+$$\text{RoPE}(x, m) = \begin{bmatrix} x_0 \\\ x_1 \\\ \vdots \\\ x_{d/2-1} \\\ x_{d/2} \\\ x_{d/2+1} \\\ \vdots \\\ x_{d-1} \end{bmatrix} \odot \begin{bmatrix} \cos m\theta_0 \\\ \cos m\theta_1 \\\ \vdots \\\ \cos m\theta_{d/2-1} \\\ \cos m\theta_0 \\\ \cos m\theta_1 \\\ \vdots \\\ \cos m\theta_{d/2-1} \end{bmatrix} + \begin{bmatrix} -x_{d/2} \\\ -x_{d/2+1} \\\ \vdots \\\ -x_{d-1} \\\ x_0 \\\ x_1 \\\ \vdots \\\ x_{d/2-1} \end{bmatrix} \odot \begin{bmatrix} \sin m\theta_0 \\\ \sin m\theta_1 \\\ \vdots \\\ \sin m\theta_{d/2-1} \\\ \sin m\theta_0 \\\ \sin m\theta_1 \\\ \vdots \\\ \sin m\theta_{d/2-1} \end{bmatrix}$$
+
+where $\odot$ is element-wise multiplication. This avoids any dimension permutation and is more hardware-friendly since the two halves can be computed with simple slicing and concatenation.
+
+
+- [Original Paper](https://arxiv.org/abs/2104.09864) 
+- [Video Explanation](https://www.youtube.com/watch?v=C6rV8BsrrCc)
 
 ## Normalization
 

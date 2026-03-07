@@ -49,6 +49,18 @@
 
       // Configure marked
       marked.setOptions({ gfm: true, breaks: false });
+
+      // Protect math blocks from markdown processing (underscores get eaten)
+      const mathPlaceholders = [];
+      content = content.replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
+        mathPlaceholders.push(match);
+        return `<!--MATH${mathPlaceholders.length - 1}-->`;
+      });
+      content = content.replace(/\$([^\$\n]+?)\$/g, (match) => {
+        mathPlaceholders.push(match);
+        return `<!--MATH${mathPlaceholders.length - 1}-->`;
+      });
+
       marked.use({ renderer: {
         heading(token) {
           const id = token.text.toLowerCase().replace(/[^\w]+/g, '-');
@@ -66,9 +78,13 @@
         }
       }});
 
+      let html = marked.parse(content);
+      // Restore math blocks
+      html = html.replace(/<!--MATH(\d+)-->/g, (_, i) => mathPlaceholders[parseInt(i)]);
+
       document.getElementById('content').innerHTML = `
         <div class="post-header"><h1>${title}</h1>${date ? `<time class="post-date">${date}</time>` : ''}</div>
-        ${marked.parse(content)}`;
+        ${html}`;
 
       // Add TOC sidebar
       if (toc) {

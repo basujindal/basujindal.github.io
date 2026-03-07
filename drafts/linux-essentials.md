@@ -9,6 +9,7 @@ cover:
   caption: 
   relative: true
 showtoc: true
+show: true
 draft: false
 math: true
 ---
