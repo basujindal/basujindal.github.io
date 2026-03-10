@@ -32,7 +32,6 @@ function renderBitDisplay(bitString, signBits, expBits, mantBits) {
 const el = (id) => document.getElementById(id);
 const xInput = el('xInput');
 const xSlider = el('xSlider');
-const sliderSpan = el('sliderSpan');
 const zoomSpan = el('zoomSpan');
 const decimalsSel = el('decimals');
 const propsTableEl = el('propsTable');
@@ -164,7 +163,7 @@ function safeParseNumber(s) {
 }
 
 function updateSliderRange() {
-  const span = Number(sliderSpan.value);
+  const span = Number(zoomSpan.value);
   xSlider.min = String(currentCenter - span);
   xSlider.max = String(currentCenter + span);
   const step = span / 5000;
@@ -279,7 +278,7 @@ function drawMap(x, span, dec, q) {
     q: q[def.key],
   }));
 
-  let downsampled = false;
+  const downsampledFormats = [];
   const MAX_SEGS = 2200;
 
   for (const t of tracks) {
@@ -301,7 +300,6 @@ function drawMap(x, span, dec, q) {
 
     let drawSegs = segs;
     if (segs.length > MAX_SEGS) {
-      downsampled = true;
       const stride = Math.ceil(segs.length / MAX_SEGS);
       drawSegs = [];
       for (let i = 0; i < segs.length; i += stride) drawSegs.push(segs[i]);
@@ -311,6 +309,8 @@ function drawMap(x, span, dec, q) {
         if (exact) drawSegs.push(exact);
       }
       drawSegs.sort((a,b) => a.L - b.L);
+      const pct = Math.round(100 * drawSegs.length / segs.length);
+      downsampledFormats.push(`${t.label} (${pct}% shown)`);
     }
 
     // Track label
@@ -368,17 +368,21 @@ function drawMap(x, span, dec, q) {
     }
     ctx.restore();
 
-    // Labels near x
+    // Labels near x (with collision detection)
     const labelCount = Math.min(5, ticks.length);
     const sortedByDist = [...ticks].sort((a,b) => Math.abs(a.px - xToPx(x)) - Math.abs(b.px - xToPx(x)));
     const labels = sortedByDist.slice(0, labelCount).sort((a,b) => a.px - b.px);
     ctx.save();
     ctx.fillStyle = colors.text;
     ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
+    const drawnRanges = [];
     for (const tt of labels) {
       const txt = fmtNumber(tt.value, dec);
       const tw = ctx.measureText(txt).width;
-      ctx.fillText(txt, Math.max(padL, Math.min(tt.px - tw / 2, W - padR - tw)), t.y - 18);
+      const lx = Math.max(padL, Math.min(tt.px - tw / 2, W - padR - tw));
+      if (drawnRanges.some(([a, b]) => lx < b + 4 && lx + tw > a - 4)) continue;
+      drawnRanges.push([lx, lx + tw]);
+      ctx.fillText(txt, lx, t.y - 18);
     }
     ctx.restore();
   }
@@ -410,7 +414,12 @@ function drawMap(x, span, dec, q) {
   ctx.fillText(hiTxt, W - padR - ctx.measureText(hiTxt).width, H - 8);
   ctx.restore();
 
-  warnEl.style.display = downsampled ? 'block' : 'none';
+  if (downsampledFormats.length) {
+    warnEl.textContent = `Rendering is downsampled for: ${downsampledFormats.join(', ')}. Zoom in for full detail.`;
+    warnEl.style.display = 'block';
+  } else {
+    warnEl.style.display = 'none';
+  }
 }
 
 // ---------- Lists (multi-column) ----------
@@ -469,6 +478,12 @@ function updateAll() {
   }
 }
 
+// ---------- Throttled update for hot paths ----------
+let _rafId = 0;
+function scheduleUpdate() {
+  if (!_rafId) _rafId = requestAnimationFrame(() => { _rafId = 0; updateAll(); });
+}
+
 // ---------- Zoom controls on canvas ----------
 function getZoomIndex() {
   return zoomSpan.selectedIndex;
@@ -478,6 +493,11 @@ function setZoomIndex(idx) {
   const clamped = Math.max(0, Math.min(zoomSpan.options.length - 1, idx));
   zoomSpan.selectedIndex = clamped;
   syncZoomLabel();
+  updateSliderRange();
+  const x = safeParseNumber(xInput.value);
+  if (Number.isFinite(x)) {
+    xSlider.value = String(Math.max(Number(xSlider.min), Math.min(Number(xSlider.max), x)));
+  }
   updateAll();
 }
 
@@ -489,36 +509,44 @@ function syncZoomLabel() {
 zoomInBtn.addEventListener('click', () => setZoomIndex(getZoomIndex() - 1));
 zoomOutBtn.addEventListener('click', () => setZoomIndex(getZoomIndex() + 1));
 
+// Click on canvas to set x
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const padL = 70, padR = 20;
+  const W = rect.width;
+  const zspan = Number(zoomSpan.value);
+  const cx = safeParseNumber(xInput.value);
+  if (!Number.isFinite(cx)) return;
+  const frac = (px - padL) / (W - padL - padR);
+  if (frac < 0 || frac > 1) return;
+  const newX = (cx - zspan) + frac * 2 * zspan;
+  xInput.value = String(newX);
+  syncSliderToX(newX);
+  updateAll();
+});
+
 // ---------- Events ----------
 xInput.addEventListener('input', () => {
   const x = safeParseNumber(xInput.value);
   if (Number.isFinite(x)) syncSliderToX(x);
-  updateAll();
+  scheduleUpdate();
 });
 
 xSlider.addEventListener('input', () => {
   const v = Number(xSlider.value);
   xInput.value = String(v);
   sliderValEl.textContent = v.toPrecision(6);
-  updateAll();
-});
-
-sliderSpan.addEventListener('change', () => {
-  updateSliderRange();
-  const x = safeParseNumber(xInput.value);
-  if (Number.isFinite(x)) {
-    xSlider.value = String(Math.max(Number(xSlider.min), Math.min(Number(xSlider.max), x)));
-  }
-  updateAll();
+  scheduleUpdate();
 });
 
 decimalsSel.addEventListener('change', updateAll);
 
 // Redraw on theme change
-new MutationObserver(() => updateAll())
+new MutationObserver(() => scheduleUpdate())
   .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-window.addEventListener('resize', updateAll);
+window.addEventListener('resize', scheduleUpdate);
 
 // ---------- Init ----------
 buildLegend();

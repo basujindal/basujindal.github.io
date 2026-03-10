@@ -4,9 +4,9 @@
 
 Check if the following files need to be updated:
 
-- `sitemap.xml` - Add new pages/posts
+- `sitemap.xml` - Add new pages/posts (not the draft postts)
 - `README.md` - Update documentation if workflows change
 
 ## Code Quality
 
-After updates are done and tested, check if modified JS/CSS files can be made smaller by refactoring, splitting large files, or removing dead code. Aim to keep individual JS files under 400 lines.
+After updates are done and tested, check if modified JS/CSS files can be made smaller by refactoring, splitting large files, or removing dead code. Aim to keep individual files under 400 lines.

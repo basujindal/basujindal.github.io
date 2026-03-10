@@ -16,7 +16,7 @@ function decodeMinifloat(bits, expBits, mantBits, bias, hasInf, hasNaN) {
   const eMax = eMask;
 
   if (e === eMax && hasInf && m === 0) return sign * Infinity;
-  if (e === eMax && hasNaN && m !== 0) return NaN;
+  if (e === eMax && hasInf && hasNaN && m !== 0) return NaN;
   if (!hasInf && hasNaN && e === eMax && m === mMask) return NaN;
 
   if (e === 0) {
@@ -60,17 +60,14 @@ function computeDtypeStats(def) {
   const entries = table.entries;
   const finiteEntries = entries.filter(e => Number.isFinite(e.value));
 
-  let maxVal = -Infinity, minPos = Infinity, maxNeg = -Infinity, minVal = Infinity;
+  let maxVal = -Infinity, minPos = Infinity, minVal = Infinity;
   let totalFinite = finiteEntries.length;
-  let positiveCount = 0;
 
   for (const e of finiteEntries) {
     const v = e.value;
     if (v > maxVal) maxVal = v;
     if (v < minVal) minVal = v;
     if (v > 0 && v < minPos) minPos = v;
-    if (v < 0 && v > maxNeg) maxNeg = v;
-    if (v > 0) positiveCount++;
   }
 
   const smallestSub = minPos === Infinity ? 0 : minPos;
@@ -89,7 +86,7 @@ function computeDtypeStats(def) {
   return {
     maxVal, minVal, smallestSub, smallestNormal, eps,
     totalBits: def.bits, hasInf: def.hasInf, hasNaN: def.hasNaN,
-    totalFinite, positiveCount,
+    totalFinite,
   };
 }
 
@@ -153,7 +150,7 @@ function classifyAndFields(bits, def) {
 
   let cls;
   if (def.hasInf && e === eMax && m === 0) cls = 'inf';
-  else if (def.hasNaN && e === eMax && m !== 0) cls = 'nan';
+  else if (def.hasNaN && def.hasInf && e === eMax && m !== 0) cls = 'nan';
   else if (!def.hasInf && def.hasNaN && e === eMax && m === mMask) cls = 'nan';
   else if (e === 0 && m === 0) cls = 'zero';
   else if (e === 0) cls = 'subnormal';
