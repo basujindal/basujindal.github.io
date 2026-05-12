@@ -116,7 +116,7 @@ Move to `/blog-posts/` when ready to publish.
 
 ## To Do
 
-- [ ] Create another private repo like thoughts-api with all the blogs/data and only add the final built (maybe also add minify) output to the public repo
+- [ ] Create another private repo similar to `thoughts-api` with all the blogs/data and only add the final built (maybe also add minify) output to the public repo
 - [ ] Show everthing in admin portal
 - [ ] Login at blog return no blog selected and login is not successful
 - [ ] Update comments UI

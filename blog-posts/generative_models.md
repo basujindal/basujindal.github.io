@@ -1,5 +1,5 @@
 ---
-title: "Image generative models"
+title: "Image Generative Models"
 date: 2023-12-26
 ---
 

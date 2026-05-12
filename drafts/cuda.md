@@ -54,20 +54,89 @@ Total clusters = 32 / 4 = 8 clusters. Each cluster has 4 thread blocks that can
 - Coordinate MMA - Multiple CTAs can cooperate on large matrix multiplies
 
 
-### Warp Scheduling
+## How a CUDA Kernel Is Scheduled on Blackwell: CTAs, Warps, Occupancy, and Waves
 
-The GPU is designed to hide memory latency by having multiple warps in flight at any given time. Each clock cycle of GPU can do load/store, and arithmetic operations. The load/store can always be done and don't have to wait for the result of the previous operation. When a warp is waiting for data from memory, the GPU will switch to another warp that is ready to execute. This is why it is important to have enough warps in flight to hide memory latency. If there are not enough warps in flight, the GPU will be idle waiting for data from memory.
+When a CUDA kernel launches, the grid is divided into **thread blocks**, which NVIDIA also refers to as **CTAs**. A CTA is the unit that gets placed onto an SM, and all threads in a CTA run on the **same SM**. An SM can execute **multiple CTAs concurrently**, and CTAs are independent: CUDA does not guarantee any particular block execution order across SMs. ([NVIDIA Docs][1])
 
-Warp schedulers that decide which warp to execute next. At each time, each SM can have up to 64 (may change depending on the architecture) warps in flight but it not necessary all the warps will be active since the SMs in a GPU share resources such as registers and shared memory. **Occupancy** is the ratio of the number of active warps to the max number of active warps. 
+Inside a CTA, threads are grouped into **warps of 32 threads**. Execution is ultimately driven at the warp level, not at the CTA level. On Blackwell compute capability 10.0, an SM supports up to **64 resident warps**, uses a **64K 32-bit register file per SM**, and supports up to **32 resident thread blocks per SM**. NVIDIA’s profiling documentation also describes each SM as being split into **four SM sub-partitions**, each with its own **warp scheduler**, register file, and execution pipelines. A warp is assigned to one sub-partition for its lifetime, and the scheduler issues instructions only from **eligible** warps, that is, warps that are ready and not stalled on dependencies, barriers, memory, or unavailable execution units. ([NVIDIA Docs][2])
 
-Therefore, total number of threads per SM is 64 * 32 = 2048 threads. Also, if a GPU has 80 SMs, the total number of threads that is advised for maximum performarmance is 2048 * 80 = 163840 threads. Generally golden rule, create only 2 warps ~ 8 warps per threadblock.
+Consider the concrete example of launching **200 CTAs**, each with **256 threads**. Since a warp contains 32 threads, each CTA contains:
 
-When a block is deposited on a SM, a number of things happen. Among those are included reservations for the various resources that the block will require. These resources include warp slots, registers, and shared memory, amongst others. The reservation of warp slots on a modern GPU is static, amongst the warp schedulers. If a SM has 4 warp schedulers, the warps from a newly deposited block will be statically allocated amongst the 4 warp schedulers. If there is no other activity on the SM at that point, we would presume that the warps would be evenly divided. Static here means that warp ownership does not move from one warp scheduler to another warp scheduler during the lifetime of the warp.
+[
+256 / 32 = 8 \text{ warps}
+]
 
- <!-- Also, 1024 threads (32 warps) are assigned to one SM. Two SMs (64 warps) is possible at the maximum. -->
+Assume each thread uses **32 registers** and, for simplicity, ignore shared-memory limits. Then each CTA consumes:
 
-<!-- Kernel <<< 8, 1024>>> () One or two SMs can run even if your GPU has 4 SMs
-Kernel <<< 8, 256>>> () 4 SMs can run simultaneously -->
+[
+256 \times 32 = 8192 \text{ registers}
+]
+
+For a Blackwell cc 10.0 SM, the relevant limits are **2048 resident threads per SM**, **64 resident warps per SM**, **65536 registers per SM**, and **32 resident CTAs per SM**. ([NVIDIA Docs][2])
+
+From these limits, the maximum number of resident CTAs per SM for this kernel is:
+
+[
+\left\lfloor \frac{2048}{256} \right\rfloor = 8 \quad \text{(thread limit)}
+]
+
+[
+\left\lfloor \frac{64}{8} \right\rfloor = 8 \quad \text{(warp limit)}
+]
+
+[
+\left\lfloor \frac{65536}{8192} \right\rfloor = 8 \quad \text{(register limit)}
+]
+
+[
+32 \quad \text{(architectural CTA cap)}
+]
+
+So the actual per-SM CTA occupancy is:
+
+$\min(8, 8, 8, 32) = 8$
+
+This is what it means to say the kernel is **limited equally by threads, warps, and registers**: each of those three independent resource constraints produces the same answer, namely **8 resident CTAs per SM**. In this example, the 32-CTA architectural cap does not bind. 
+
+It is important to separate **CTA residency** from **warp issue**. Residency answers the question, “How many CTAs fit on an SM at once?” Warp issue answers the question, “Which ready warp issues its next instruction this cycle?” Once multiple CTAs are resident on an SM, the warp schedulers can issue instructions from warps belonging to **different CTAs**. There is no requirement to finish one CTA before issuing instructions from another. The hardware simply picks among the **eligible resident warps** assigned to each SM sub-partition. 
+
+This also means that the warp schedulers do **not** schedule “blocks” directly. The CTA is the placement and residency unit; the warp is the issue unit. A useful mental model is:
+
+[
+\text{Grid} \rightarrow \text{CTAs} \rightarrow \text{resident CTAs on an SM} \rightarrow \text{warps} \rightarrow \text{warp schedulers issue instructions}
+]
+
+That distinction matters because a kernel may have many resident CTAs, but performance still depends on whether enough warps are **eligible** at any moment to keep the issue slots busy.
+
+NVIDIA Nsight Compute uses the term **Wave** for the **total number of CTAs that can run concurrently across the entire GPU**. Wave size therefore depends on two things: the **number of SMs** in the GPU and the **per-SM occupancy of the kernel**. In other words:
+
+[
+\text{Wave size} = \text{SM count} \times \text{active CTAs per SM}
+]
+
+If we take a hypothetical GPU with **148 SMs**, and this kernel can sustain **8 CTAs per SM**, then one wave contains:
+
+[
+148 \times 8 = 1184 \text{ CTAs}
+]
+
+Since the launch has only **200 CTAs**, the entire grid fits within **one wave**. That means all CTAs can become resident without needing a second batch of blocks to wait for the first batch to retire.
+
+A subtle but important point is that the **8** in this wave calculation is **kernel-dependent**, not a universal hardware constant. It comes from the occupancy of the specific kernel launch: block size, registers per thread, static shared memory, dynamic shared memory, and any cluster-related constraints. NVIDIA explicitly exposes this through the runtime occupancy APIs such as `cudaOccupancyMaxActiveBlocksPerMultiprocessor`, and CUDA exposes per-function resource usage through attributes such as `cudaFuncAttributes::numRegs`, which reports the number of registers used by each thread of the loaded function. ([NVIDIA Docs][3])
+
+So if the kernel changes, the wave size can change too. For example, increasing threads per block, increasing registers per thread, or using more shared memory per CTA may reduce the number of CTAs that fit per SM, which directly reduces the GPU-wide wave size. That is why wave size should be thought of as a property of the **kernel launch on a specific GPU**, not just the GPU architecture by itself.
+
+A concise summary is:
+
+* A **CTA** is placed onto one SM and stays there.
+* An SM can hold **multiple resident CTAs** at once.
+* Execution is issued in units of **warps**, not CTAs.
+* Blackwell cc 10.0 supports up to **64 resident warps/SM**, **2048 resident threads/SM**, **64K registers/SM**, and **32 resident CTAs/SM**.
+* For the example kernel with **256 threads/CTA** and **32 registers/thread**, occupancy is **8 CTAs/SM**.
+* A **wave** is the total number of CTAs that can run concurrently across the whole GPU, i.e. **SM count × occupancy per SM**.
+* Therefore, wave size is **kernel-dependent**. ([NVIDIA Docs][2])
+
+
 
 ## Memory types
 

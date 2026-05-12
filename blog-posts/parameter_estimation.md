@@ -1,9 +1,7 @@
 ---
 title: "Parameter Estimation"
-date: 2024-10-05
+date: 2024-07-02
 ---
-
-Let us say we transmit a signal $\theta$ and the receiver gets $y$ which is linear transformation $A$ of the signal plus some additive noise $n$. Now, since the signal gets corrupted due to noise, the receiver has to somehow estimate $\theta$ given the observation $y$. In this blog, we will look at different methods to estimate $\theta$ given $y$ and $A$. We will also look at the different assumptions we make about the noise $n$ and the signal $\theta$. The problem of parameter estimation is highly relevant in the field of deep learning, especially generative models.
 
 ## Classical Estimation
 
