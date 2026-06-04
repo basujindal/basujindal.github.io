@@ -404,19 +404,44 @@ body.hide-romaji #panelWords .jp-word-quiz-romaji { display: none; }
   .jp-match-grid { grid-template-columns: repeat(3, 1fr); }
   .jp-modal-glyph { font-size: 7rem; }
   .jp-study-actions { grid-template-columns: repeat(2, 1fr); }
-  .jp-modes { grid-template-columns: repeat(5, 1fr); gap: 0.3rem; margin-bottom: 1rem; }
-  .jp-mode { padding: 0.6rem 0.25rem; gap: 0.25rem; }
+  .jp-modes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .jp-mode {
+    min-width: 0;
+    min-height: 58px;
+    padding: 0.65rem 0.4rem;
+    gap: 0.25rem;
+    box-sizing: border-box;
+  }
   .jp-mode:hover { transform: none; }
   .jp-mode-icon { font-size: 1.2rem; margin-bottom: 0; }
   .jp-mode-icon svg { width: 1.2rem; height: 1.2rem; stroke-width: 2; }
-  .jp-mode-name { font-size: 0.75rem; line-height: 1.1; }
+  .jp-mode-name {
+    font-size: 0.82rem;
+    line-height: 1.1;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .jp-mode-sub { display: none; }
   .jp-word-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .jp-word-quiz-question { font-size: 2.5rem; }
 }
 @media (max-width: 480px) {
+  .jp-page { padding-left: 1rem; padding-right: 1rem; }
+  .jp-modes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
+  .jp-mode { min-height: 56px; padding: 0.55rem 0.3rem; }
+  .jp-mode-name { font-size: 0.8rem; }
   .jp-filters { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
   .jp-filter-group { width: 100%; flex-direction: column; align-items: flex-start; }
   .jp-pills { width: 100%; }
   .jp-pill { flex: 1; }
+}
+
+@media (max-width: 360px) {
+  .jp-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
