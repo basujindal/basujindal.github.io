@@ -13,8 +13,9 @@
   const TARGET_FLYING = 18;
   const SETTLED_CAP = 220;  // memory cap — oldest settled gets dropped past this
   const SPAWN_INTERVAL_MS = 280;
-  // Petals can settle on any visible surface, big or small.
-  const SURFACE_SEL = '.jp-fact, .jp-card, .jp-card-face, .jp-quiz-prompt, .jp-word-card, .jp-modal-card, .jp-mode, .jp-stat, .jp-opt, .jp-match-tile, .jp-tool-btn, .jp-chart-cell, .jp-pill, .jp-mini-pill, .jp-word-cat, .jp-restart-btn, .jp-btn, .jp-fact-next, .jp-speak-btn';
+  // Petals can settle on most surfaces, but skip the navigation tabs so labels
+  // stay readable.
+  const SURFACE_SEL = '.jp-fact, .jp-card, .jp-card-face, .jp-quiz-prompt, .jp-word-card, .jp-modal-card, .jp-stat, .jp-opt, .jp-match-tile, .jp-tool-btn, .jp-chart-cell, .jp-pill, .jp-mini-pill, .jp-word-cat, .jp-restart-btn, .jp-btn, .jp-fact-next, .jp-speak-btn';
 
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let W = window.innerWidth, H = window.innerHeight;
