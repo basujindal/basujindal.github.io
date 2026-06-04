@@ -11,10 +11,10 @@
   const ctx = canvas.getContext('2d');
   const COLORS = ['#ffb7c5', '#ff8aa3', '#ffc8d5', '#ffd1dc', '#ffa8b8', '#ff95b0'];
   const TARGET_FLYING = 18;
-  const SETTLED_CAP = 60;
-  const SPAWN_INTERVAL_MS = 900;
-  // Only the big surfaces — petals on tiny cells (chart, options) obscure content.
-  const SURFACE_SEL = '.jp-fact, .jp-card, .jp-quiz-prompt, .jp-word-card, .jp-modal-card';
+  const SETTLED_CAP = 220;  // memory cap — oldest settled gets dropped past this
+  const SPAWN_INTERVAL_MS = 280;
+  // Petals can settle on any visible surface, big or small.
+  const SURFACE_SEL = '.jp-fact, .jp-card, .jp-card-face, .jp-quiz-prompt, .jp-word-card, .jp-modal-card, .jp-mode, .jp-stat, .jp-opt, .jp-match-tile, .jp-tool-btn, .jp-chart-cell, .jp-pill, .jp-mini-pill, .jp-word-cat, .jp-restart-btn, .jp-btn, .jp-fact-next, .jp-speak-btn';
 
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let W = window.innerWidth, H = window.innerHeight;
@@ -45,6 +45,16 @@
       if (r.width < 30 || r.bottom < -30 || r.top > H + 30) continue;
       surfaceRects.push({ el, left: r.left, right: r.right, top: r.top });
     }
+  }
+
+  // ===== Wind from the side =====
+  // Layered sines: a slow base direction + slower gust + faster ripple.
+  // Returns a value roughly in [-1, +1.6]; positive = blowing rightward.
+  function wind(t) {
+    return 0.25
+         + Math.sin(t * 0.00035) * 0.55
+         + Math.sin(t * 0.0013)  * 0.25
+         + Math.sin(t * 0.0041)  * 0.1;
   }
 
   // ===== Petal =====
@@ -94,6 +104,7 @@
       // Physics
       this.vy += 0.012;                                                  // gravity
       this.vx += Math.sin(t * 0.001 + this.swayPhase) * 0.018 * this.swayAmp; // gentle wind
+      this.vx += wind(t) * 0.012;                                        // global side wind
       this.vx *= 0.985;                                                  // drag
       if (this.vy > 2.6) this.vy = 2.6;
       if (this.vx > 1.6) this.vx = 1.6;
@@ -155,8 +166,13 @@
   }
 
   const petals = [];
-  // Seed with a handful of flying petals already on screen.
-  for (let i = 0; i < TARGET_FLYING; i++) petals.push(new Petal(true));
+  // Seed petals only ABOVE the viewport so they fall in naturally — no random
+  // in-screen positions at start.
+  for (let i = 0; i < TARGET_FLYING; i++) {
+    const p = new Petal(false);
+    p.y = -20 - Math.random() * H * 2;
+    petals.push(p);
+  }
 
   // Anchor flying petals to the page (not the viewport): when the user
   // scrolls, shift each flying petal by the same amount so it stays put
@@ -178,13 +194,20 @@
     if (surfaceListAge > 1500) { rebuildSurfaceEls(); surfaceListAge = 0; }
     refreshSurfaceRects();
 
-    // Maintain a steady stream of new flying petals — settled ones never get replaced.
+    // Maintain a steady stream of new flying petals — they keep falling forever.
     let flyingCount = 0, settledCount = 0;
     for (let i = 0; i < petals.length; i++) {
       if (petals[i].settled) settledCount++;
       else flyingCount++;
     }
-    if (flyingCount < TARGET_FLYING && settledCount < SETTLED_CAP && t - lastSpawn > SPAWN_INTERVAL_MS) {
+    // Memory cap: drop oldest settled petal once we exceed the cap (FIFO).
+    if (settledCount > SETTLED_CAP) {
+      for (let i = 0; i < petals.length; i++) {
+        if (petals[i].settled) { petals.splice(i, 1); break; }
+      }
+    }
+    // Always keep the air populated with falling petals.
+    if (flyingCount < TARGET_FLYING && t - lastSpawn > SPAWN_INTERVAL_MS) {
       petals.push(new Petal(false));
       lastSpawn = t;
     }
