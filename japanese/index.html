@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../js/theme-init.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Kana — Basu Jindal</title>
+  <meta name="description" content="Beautiful interactive Japanese flashcards for learning hiragana ひらがな and katakana カタカナ — with mnemonics, spaced repetition, quizzes, and progress tracking.">
+  <meta name="keywords" content="Japanese, hiragana, katakana, kana, flashcards, learn Japanese, SRS, spaced repetition">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/japanese.css">
+</head>
+<body>
+  <canvas id="sakuraCanvas" class="sakura-canvas" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header></header>
+  </div>
+
+  <main class="jp-page">
+
+    <!-- Hero -->
+    <section class="jp-hero">
+      <div class="jp-hero-glyph" aria-hidden="true">
+        <span class="jp-hero-char jp-hero-char-1">あ</span>
+        <span class="jp-hero-char jp-hero-char-2">ア</span>
+      </div>
+      <div class="jp-hero-text">
+        <p class="jp-hero-eyebrow">日本語 · Japanese Kana</p>
+        <p class="jp-hero-quote" id="jpQuote">
+          <span class="jp-q-jp">千里の道も一歩から</span>
+          <span class="jp-q-en">Every journey of a thousand miles begins with a single step.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Daily fact (top) -->
+    <section class="jp-fact">
+      <div class="jp-fact-icon" data-icon="bulb"></div>
+      <div class="jp-fact-content">
+        <div class="jp-fact-label">Did you know?</div>
+        <div class="jp-fact-text" id="jpFact">Loading...</div>
+      </div>
+      <button class="jp-fact-next" id="factNext" aria-label="Next fact" title="Next fact" data-icon="chevron"></button>
+    </section>
+
+    <!-- Filters -->
+    <section class="jp-filters">
+      <div class="jp-filter-group">
+        <span class="jp-filter-label">Script</span>
+        <div class="jp-pills" data-group="script">
+          <button class="jp-pill active" data-value="hira">ひらがな <em>Hiragana</em></button>
+          <button class="jp-pill" data-value="kata">カタカナ <em>Katakana</em></button>
+          <button class="jp-pill" data-value="both">Both</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mode tabs -->
+    <nav class="jp-modes" role="tablist">
+      <button class="jp-mode active" data-mode="chart" role="tab">
+        <span class="jp-mode-icon" data-icon="chart"></span>
+        <span class="jp-mode-name">Chart</span>
+        <span class="jp-mode-sub">Browse all kana</span>
+      </button>
+      <button class="jp-mode" data-mode="study" role="tab">
+        <span class="jp-mode-icon" data-icon="study"></span>
+        <span class="jp-mode-name">Study</span>
+        <span class="jp-mode-sub">Flip & flow</span>
+      </button>
+      <button class="jp-mode" data-mode="quiz" role="tab">
+        <span class="jp-mode-icon" data-icon="quiz"></span>
+        <span class="jp-mode-name">Quiz</span>
+        <span class="jp-mode-sub">Test yourself</span>
+      </button>
+      <button class="jp-mode" data-mode="match" role="tab">
+        <span class="jp-mode-icon" data-icon="match"></span>
+        <span class="jp-mode-name">Match</span>
+        <span class="jp-mode-sub">Pair them up</span>
+      </button>
+      <button class="jp-mode" data-mode="words" role="tab">
+        <span class="jp-mode-icon" data-icon="words"></span>
+        <span class="jp-mode-name">Words</span>
+        <span class="jp-mode-sub">Essentials</span>
+      </button>
+    </nav>
+
+    <!-- ===== Chart mode ===== -->
+    <section class="jp-panel" id="panelChart">
+      <div class="jp-chart" id="kanaChart"></div>
+    </section>
+
+    <!-- ===== Study mode ===== -->
+    <section class="jp-panel hidden" id="panelStudy">
+      <div class="jp-study-deck" id="studyDeck">
+        <div class="jp-card" id="studyCard">
+          <div class="jp-card-inner">
+            <div class="jp-card-face jp-card-front">
+              <button class="jp-speak-btn" id="studySpeak" aria-label="Pronounce" title="Pronounce">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5L7 9H4a1 1 0 0 0-1 1zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 4.45v2.06c2.89.86 5 3.54 5 6.74s-2.11 5.88-5 6.74v2.06c4.01-.91 7-4.49 7-8.8 0-4.31-2.99-7.89-7-8.8z"/></svg>
+              </button>
+              <div class="jp-card-mini" id="studyMini"></div>
+              <div class="jp-card-glyph" id="studyGlyph">あ</div>
+              <div class="jp-card-hint">Tap to flip</div>
+            </div>
+            <div class="jp-card-face jp-card-back">
+              <div class="jp-card-romaji" id="studyRomaji">a</div>
+              <div class="jp-card-mnemonic" id="studyMnemonic"></div>
+              <div class="jp-card-example">
+                <div class="jp-ex-label">Example</div>
+                <div class="jp-ex-word" id="studyExWord"></div>
+                <div class="jp-ex-meaning" id="studyExMeaning"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="jp-study-actions">
+          <button class="jp-btn jp-btn-bad" id="studyAgain">
+            <span class="jp-btn-icon">↻</span>
+            <span class="jp-btn-label">Again</span>
+            <span class="jp-btn-sub">&lt; 1 min</span>
+          </button>
+          <button class="jp-btn jp-btn-mid" id="studyHard">
+            <span class="jp-btn-icon">~</span>
+            <span class="jp-btn-label">Hard</span>
+            <span class="jp-btn-sub">~6 min</span>
+          </button>
+          <button class="jp-btn jp-btn-good" id="studyGood">
+            <span class="jp-btn-icon">✓</span>
+            <span class="jp-btn-label">Good</span>
+            <span class="jp-btn-sub">10 min</span>
+          </button>
+          <button class="jp-btn jp-btn-easy" id="studyEasy">
+            <span class="jp-btn-icon">✦</span>
+            <span class="jp-btn-label">Easy</span>
+            <span class="jp-btn-sub">4 days</span>
+          </button>
+        </div>
+
+        <div class="jp-study-progress">
+          <div class="jp-study-counter"><span id="studyCount">0</span> reviewed today</div>
+          <div class="jp-progress-bar"><div class="jp-progress-fill" id="studyBar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Quiz mode ===== -->
+    <section class="jp-panel hidden" id="panelQuiz">
+      <div class="jp-quiz-header">
+        <div class="jp-quiz-mode-toggle">
+          <button class="jp-mini-pill active" data-quiz="kana2roma">Kana → Romaji</button>
+          <button class="jp-mini-pill" data-quiz="roma2kana">Romaji → Kana</button>
+        </div>
+        <div class="jp-quiz-meta">
+          <span class="jp-quiz-score">Score <strong id="quizScore">0</strong></span>
+          <span class="jp-quiz-divider">·</span>
+          <span class="jp-quiz-streak">Combo <strong id="quizCombo">0</strong>×</span>
+        </div>
+      </div>
+
+      <div class="jp-quiz-prompt">
+        <div class="jp-quiz-question" id="quizQuestion">あ</div>
+      </div>
+
+      <div class="jp-quiz-options" id="quizOptions"></div>
+
+      <div class="jp-quiz-feedback" id="quizFeedback"></div>
+    </section>
+
+    <!-- ===== Match mode ===== -->
+    <section class="jp-panel hidden" id="panelMatch">
+      <div class="jp-match-header">
+        <div class="jp-match-info">Tap a kana, then tap its romaji partner.</div>
+        <div class="jp-match-meta">
+          <span>Time <strong id="matchTimer">0.0</strong>s</span>
+          <span class="jp-quiz-divider">·</span>
+          <span>Best <strong id="matchBest">—</strong></span>
+        </div>
+      </div>
+      <div class="jp-match-grid" id="matchGrid"></div>
+      <button class="jp-restart-btn" id="matchRestart">New round</button>
+    </section>
+
+    <!-- ===== Words mode ===== -->
+    <section class="jp-panel hidden" id="panelWords">
+      <div class="jp-words-head">
+        <div class="jp-words-toggle">
+          <button class="jp-mini-pill" data-wordview="browse">Browse</button>
+          <button class="jp-mini-pill active" data-wordview="quiz">Quiz</button>
+        </div>
+        <label class="jp-romaji-toggle">
+          <input type="checkbox" id="wordRomajiToggle">
+          <span class="jp-romaji-toggle-track"><span class="jp-romaji-toggle-thumb"></span></span>
+          <span class="jp-romaji-toggle-label">Show romaji</span>
+        </label>
+        <div class="jp-words-meta">
+          <span>Revealed <strong id="wordSeen">0</strong>/<strong id="wordTotal">100</strong></span>
+        </div>
+      </div>
+
+      <div class="jp-word-cats hidden" id="wordCats"></div>
+
+      <!-- Browse view -->
+      <div class="jp-word-grid hidden" id="wordGrid"></div>
+
+      <!-- Quiz view (default) -->
+      <div class="jp-word-quiz" id="wordQuizPanel">
+        <div class="jp-quiz-prompt">
+          <div class="jp-word-quiz-question" id="wordQuizQuestion">こんにちは</div>
+          <div class="jp-word-quiz-romaji" id="wordQuizRomaji">konnichiwa</div>
+        </div>
+        <div class="jp-quiz-options" id="wordQuizOptions"></div>
+        <div class="jp-quiz-feedback" id="wordQuizFeedback"></div>
+      </div>
+    </section>
+
+    <!-- Compact stats — at the bottom -->
+    <section class="jp-stats jp-stats-compact" id="jpStats">
+      <div class="jp-stat">
+        <span class="jp-stat-icon" data-icon="flame"></span>
+        <span class="jp-stat-num" id="statStreak">0</span>
+        <span class="jp-stat-label">streak</span>
+      </div>
+      <div class="jp-stat">
+        <span class="jp-stat-icon" data-icon="star"></span>
+        <span class="jp-stat-num" id="statXp">0</span>
+        <span class="jp-stat-label">XP</span>
+      </div>
+      <div class="jp-stat">
+        <span class="jp-stat-icon" data-icon="sparkles"></span>
+        <span class="jp-stat-num"><span id="statMastered">0</span>/<span id="statTotal">142</span></span>
+        <span class="jp-stat-label">mastered</span>
+      </div>
+      <div class="jp-stat">
+        <span class="jp-stat-icon" data-icon="target"></span>
+        <span class="jp-stat-num"><span id="statAcc">—</span>%</span>
+        <span class="jp-stat-label">accuracy</span>
+      </div>
+    </section>
+
+    <!-- Tools row -->
+    <section class="jp-tools">
+      <button class="jp-tool-btn" id="resetProgress">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Reset progress
+      </button>
+      <button class="jp-tool-btn" id="exportProgress">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+    </section>
+
+  </main>
+
+  <!-- Card detail modal -->
+  <div class="jp-modal hidden" id="cardModal" role="dialog" aria-modal="true">
+    <div class="jp-modal-backdrop" data-close></div>
+    <div class="jp-modal-card">
+      <button class="jp-modal-close" data-close aria-label="Close">×</button>
+      <div class="jp-modal-glyph" id="modalGlyph">あ</div>
+      <div class="jp-modal-kanji hidden" id="modalKanji"></div>
+      <div class="jp-modal-romaji" id="modalRomaji">a</div>
+      <button class="jp-speak-btn jp-modal-speak" id="modalSpeak" aria-label="Pronounce">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5L7 9H4a1 1 0 0 0-1 1zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </button>
+      <div class="jp-modal-mnemonic" id="modalMnemonic"></div>
+      <div class="jp-modal-example">
+        <div class="jp-ex-label">Example word</div>
+        <div class="jp-ex-word" id="modalExWord"></div>
+        <div class="jp-ex-meaning" id="modalExMeaning"></div>
+      </div>
+      <div class="jp-modal-mastery" id="modalMastery"></div>
+    </div>
+  </div>
+
+  <!-- Confetti & toast -->
+  <div class="jp-confetti" id="confetti" aria-hidden="true"></div>
+  <div class="jp-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="container">
+    <footer></footer>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/japanese-data.js"></script>
+  <script src="../js/japanese.js"></script>
+  <script src="../js/japanese-petals.js"></script>
+</body>
+</html>

@@ -52,4 +52,8 @@
     <loc>https://basujindal.me/fp-visualizer/</loc>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://basujindal.me/japanese/</loc>
+    <priority>0.7</priority>
+  </url>
 </urlset>

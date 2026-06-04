@@ -149,46 +149,10 @@ A concise summary is:
 
 ### Memory access and coleascing
 
-The GPU supports 32B, 64B and 128B memory accesses instructions from GMEM. It makes sense to use the 128B ld instruction to make optimal use of GPU memory bandwidth.
+All operations are issued warp-wide, and this includes instructions that access memory. An individual CUDA thread can access 1,2,4,8,or 16 bytes in a single instruction or transaction. We can't request less than a byte or greater than 4bytes (float4) per thread. When considered warp-wide, that translates to 32 bytes (1byte per thread) all the way up to 512 bytes (float4 per thread). The GPU memory controller can typically issue requests to memory in granularities of 32 bytes, up to 128 bytes. Larger requests (say, 512 bytes, considered warp wide) will get issued via multiple "transactions" of typically no more than 128 bytes. 
 
-Sequential memory accesses by threads that are part of the same warp can be grouped and executed as one. This is referred to as global memory coalescing. Data within a warp can be easily broadcasted to other threads. So if each thread in a warp is accessing the same data, it will not access the same data it multiple times due.
+Modern DRAM memory has the design characteristic that you don't typically ask for a single byte, you request a "segment" typically of 32 bytes at a time for typical GPU designs. The division of memory into segments is fixed at design time. As a result, you can request either the first 32 bytes (the first segment) or the second 32 bytes (the second segment). You cannot request bytes 16-47 for example. This is all a function of the DRAM design, but it manifests in terms of memory behavior.
 
-But now let us look at the example below for adding the row or colums of a matrix. Intuitively, the row sum should be faster than the column sum because the memory access is more colaesced. But if we profile the code, we see that the column sum is faster than the row sum. This is because the column sum has a higher memory bandwidth usage.
-
-```cpp
-
-// matrix row-sum kernel
-__global__ void row_sums(const float *A, float *sums, size_t ds){
-
-  int idx = threadIdx.x + blockIdx.x*block_size;
-  if (idx < ds){
-    float sum = 0.0f;
-    for (size_t i = 0; i < ds; i++)
-      sum += A[i + idx*ds];
-    sums[idx] = sum;
-}}
-
-// matrix column-sum kernel
-__global__ void column_sums(const float *A, float *sums, size_t ds){
-
-  int idx = threadIdx.x + blockIdx.x*block_size;
-  if (idx < ds){
-    float sum = 0.0f;
-    for (size_t i = 0; i < ds; i++)
-      sum += A[i*ds + idx];  
-    sums[idx] = sum;
-}}
-
-```
-
-| Metric                     | Row Sums Kernel  | Column Sums Kernel |
-|----------------------------|------------------|---------------------|
-| Duration                   | 22.47 ms         | 4.69 ms             |
-| Memory Throughput          | 41.54%           | 86.47%              |
-| DRAM Throughput            | 19.49%           | 86.47%              |
-| L1/TEX Cache Throughput    | 83.08%           | 25.22%              |
-| L2 Cache Throughput        | 8.87%            | 31.95%              |
-| Achieved Occupancy         | 42.06%           | 52.95%              |
 
 ### Bank Conflicts
 
@@ -239,6 +203,121 @@ The behavior of `tcgen05.st` is undefined if all threads do not use the same val
 ### Moving data between memory types
 
 One of the ways to move data from GMEM to SMEM is to read from GMEM to thread register and then to store to SMEM. Recent architectures have specialized instructions for the same such as `ldmatrix` in Ampere which we will look in a later section. Loading from SMEM to TMEM can be done using ...
+
+
+## Async copies (`cp.async`)
+
+`cp.async` (introduced in Ampere) lets a thread issue a GMEM→SMEM copy and continue executing without waiting. The hardware tracks the in-flight copies per thread. To use it safely, three coordination primitives are needed: `commit_group`, `wait_group`, and a CTA-wide `barrier`.
+
+### Issuing the copy
+
+In CuTeDSL, the pattern is:
+
+```python
+copy_atom = cute.make_copy_atom(
+    cute.nvgpu.cpasync.CopyG2SOp(),   # GMEM → SMEM async
+    cutlass.BFloat16,
+    num_bits_per_copy=128,             # 16 bytes per cp.async op
+)
+
+cute.copy(copy_atom, src_gmem, dst_smem)   # this thread fires N cp.asyncs
+```
+
+Each thread issues some number of cp.asyncs. The copy executes in the background; the thread can keep running.
+
+### `commit_group()` — close the current batch
+
+`cp.async.commit_group` labels every cp.async this thread has issued since the last commit as a "group." Future cp.asyncs go into a new group.
+
+```
+Thread state after issuing 2 cp.asyncs and calling commit_group():
+
+   [ group 0 (in flight) ]   ← the 2 cp.asyncs are here
+```
+
+`commit_group()` is just punctuation — it does not block. It is per-thread.
+
+### `wait_group(N)` — drain until ≤ N groups remain
+
+`cp.async.wait_group N` blocks the calling thread until **at most N** of its groups are still in flight.
+
+```
+Before:   [group 0] [group 1] [group 2]   ← 3 in flight
+
+wait_group(2)   →   wait until ≤ 2 left → drains group 0
+After:              [group 1] [group 2]
+
+wait_group(0)   →   wait until 0 left → drains everything
+```
+
+So `wait_group(0)` is "drain all cp.asyncs of this thread." After this returns, the thread can read its own SMEM writes.
+
+The argument `N` is what enables pipelining. The producer side issues several stages of cp.asyncs; the consumer side calls `wait_group(K-1)` to drain the oldest while the next `K-1` stages remain in flight. A typical multi-stage pipeline:
+
+```python
+# Producer: issue K stages back-to-back
+for stage in range(K):
+    issue cp.asyncs for stage
+    cp_async_commit_group()
+
+# Consumer: drain one stage at a time, leaving the rest in flight
+for stage in range(K):
+    cp_async_wait_group(K - 1 - stage)   # at most K-1-stage groups remain
+    use stage's data
+```
+
+### `cute.arch.barrier()` — CTA-wide sync + memory fence
+
+`bar.sync 0` (a.k.a. `__syncthreads()`) does two things:
+1. Waits until every thread in the CTA reaches this point.
+2. Acts as a memory fence — SMEM writes by any thread before the barrier are visible to any thread after it.
+
+This is required for cross-thread visibility because cp.async tracking is **per-thread**: thread 0's `wait_group` only drains thread 0's queue. Other threads need the barrier to see thread 0's writes.
+
+### Why all three are needed
+
+A typical cooperative load (e.g., loading a small weight tensor from GMEM to SMEM at kernel start):
+
+```python
+if warp_idx == 0:
+    cute.copy(copy_atom, src, dst)         # warp 0 issues cp.async
+
+cute.arch.cp_async_commit_group()          # all threads tag pending cp.asyncs
+cute.arch.cp_async_wait_group(0)           # warp 0 drains; other warps no-op
+cute.arch.barrier()                        # CTA-wide sync, SMEM writes visible
+```
+
+| Op | Scope | Without it... |
+|----|-------|---------------|
+| `commit_group()` | per-thread | `wait_group` has no group to wait on |
+| `wait_group(0)` | per-thread | proceed before cp.async finishes → garbage reads |
+| `barrier()` | CTA-wide | other warps can't see warp 0's loads |
+
+### Deferred-wait pattern
+
+Because cp.async runs in the background, you can issue early and wait late, hiding the load latency under unrelated work:
+
+```python
+# Kernel start: issue but don't wait
+if warp_idx < 4:
+    cute.copy(copy_atom, src, dst)
+cute.arch.cp_async_commit_group()
+# (no wait yet — let cp.async drain in the background)
+
+# ... TMA warp / MMA warp do other work ...
+
+# Later, when the data is actually needed:
+cute.arch.cp_async_wait_group(0)
+cute.arch.barrier(barrier_id=1, num_threads=128)   # named barrier, only the warps that need it
+```
+
+Note that a CTA-wide `barrier()` cannot be used here once warp specialization has begun — TMA / MMA warps are off in their own loops and would never reach the barrier, causing a deadlock. A **named barrier** (`bar.sync N, num_threads`) gates only a specific warp group.
+
+### Summary
+
+- `commit_group` = label the current batch of cp.asyncs.
+- `wait_group(N)` = pace the producer; drain batches until ≤ N remain.
+- `barrier()` = make SMEM writes visible across the whole CTA.
 
 
 ## Reduction (Sum of elements in a vector)
@@ -556,3 +635,4 @@ Load BMxBK and BKxBN tiles from 64x64 fp16 (8192B) tiles from GMEM to SMEM. TMA 
 - [CUDA Mode Discord Lectures](https://github.com/cuda-mode/lectures)
 - [NVIDIA CUDA C Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capability)
 - Programming Massively Parallel Processors Book by David B. Kirk and Wen-mei W. Hwu 4th Edition
+- https://stackoverflow.com/questions/72147025/what-are-cuda-global-memory-32-64-and-128-byte-transactions

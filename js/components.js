@@ -18,6 +18,7 @@
       <a href="/job_search/">Search Jobs</a>
       <a href="/photography/">Astro Photography</a>
       <a href="/fp-visualizer/">FP Visualizer</a>
+      <a href="/japanese/">日本語</a>
     </nav>
   `;
 
@@ -111,6 +112,7 @@
           (pagePath.startsWith('job_search') && href.includes('job_search')) ||
           (pagePath.startsWith('thoughts') && href.includes('thoughts')) ||
           (pagePath.startsWith('stats') && href.includes('stats')) ||
+          (pagePath.startsWith('japanese') && href.includes('japanese')) ||
           (pagePath.startsWith('post') && href.includes('/blogs/'))) {
         link.classList.add('active');
       }

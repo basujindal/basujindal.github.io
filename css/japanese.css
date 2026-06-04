@@ -1,0 +1,418 @@
+/* Japanese Kana Flashcards — fancy, animated, themed */
+
+:root {
+  --jp-pink:    var(--border);
+  --jp-pink-2:  var(--text-secondary);
+  --jp-rose:    var(--accent);
+  --jp-deep:    var(--text-secondary);
+  --jp-gold:    #d4a24c;
+  --jp-ink:     #1a1a2e;
+  --jp-paper:   #fffaf5;
+  --jp-good:    #4caf50;
+  --jp-bad:     #ef4444;
+  --jp-mid:     #f59e0b;
+  --jp-easy:    #06b6d4;
+  --jp-glow:    transparent;
+  --jp-card-bg: #ffffff;
+  --jp-card-border: #e8e6e1;
+}
+[data-theme="dark"] {
+  --jp-pink:    var(--border);
+  --jp-pink-2:  var(--text-secondary);
+  --jp-rose:    var(--accent);
+  --jp-deep:    var(--text-secondary);
+  --jp-gold:    #f0c674;
+  --jp-paper:   #1a1419;
+  --jp-card-bg: #1c1c1c;
+  --jp-card-border: #2e2e2e;
+  --jp-glow:    transparent;
+}
+
+/* ========== Page ========== */
+.jp-page { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 4rem; position: relative; z-index: 1; }
+
+/* ========== Sakura petal canvas ========== */
+.sakura-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+@media (prefers-reduced-motion: reduce) { .sakura-canvas { display: none; } }
+
+/* ========== Hero ========== */
+.jp-hero { display: flex; align-items: center; gap: 2rem; padding: 1rem 0 1.5rem; position: relative; }
+.jp-hero-glyph { position: relative; flex-shrink: 0; width: 150px; height: 150px; }
+.jp-hero-char {
+  position: absolute; font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  font-size: 6rem; font-weight: 700; line-height: 1;
+  background: linear-gradient(135deg, var(--jp-rose), var(--jp-deep));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px var(--jp-glow));
+}
+.jp-hero-char-1 { top: 0; left: 0; transform: rotate(-6deg); animation: hero-float 6s ease-in-out infinite; }
+.jp-hero-char-2 { bottom: 0; right: 0; transform: rotate(8deg); opacity: 0.6; animation: hero-float 7s ease-in-out infinite reverse; font-size: 4rem; }
+@keyframes hero-float {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50%      { transform: rotate(-6deg) translateY(-10px); }
+}
+.jp-hero-text { flex: 1; }
+.jp-hero-eyebrow { color: var(--jp-rose); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 600; }
+.jp-hero-title { font-size: 2.4rem; line-height: 1.15; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.jp-hero-quote { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.6rem 0.85rem; border-left: 3px solid var(--jp-pink); background: linear-gradient(90deg, var(--jp-glow), transparent); border-radius: 0 8px 8px 0; }
+.jp-q-jp { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 1.05rem; color: var(--text); font-weight: 500; }
+.jp-q-en { font-size: 0.82rem; color: var(--text-secondary); font-style: italic; }
+
+/* ========== Stats ========== */
+.jp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 2rem; }
+.jp-stat { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 0.75rem; text-align: center; box-shadow: 0 2px 8px var(--shadow); transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+.jp-stat::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--jp-glow), transparent 60%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.jp-stat:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--shadow); }
+.jp-stat:hover::before { opacity: 1; }
+.jp-stat-icon { font-size: 1.4rem; margin-bottom: 0.3rem; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+.jp-stat-icon svg { width: 1.1rem; height: 1.1rem; }
+.jp-stat-num { font-size: 1.75rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.jp-stat-num.bump { animation: bump 0.5s ease-out; }
+.jp-stat-sub { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+.jp-stat-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.15rem; }
+@keyframes bump { 0% { transform: scale(1); } 50% { transform: scale(1.25); color: var(--jp-rose); } 100% { transform: scale(1); } }
+
+/* Compact variant — used at bottom of page */
+.jp-stats-compact { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+.jp-stats-compact .jp-stat { padding: 0.4rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 999px; box-shadow: none; background: var(--code-bg); border-color: transparent; }
+.jp-stats-compact .jp-stat::before { display: none; }
+.jp-stats-compact .jp-stat-icon { font-size: 0.95rem; margin: 0; display: inline; }
+.jp-stats-compact .jp-stat-num { font-size: 0.9rem; font-weight: 600; display: inline; color: var(--text); margin: 0; }
+.jp-stats-compact .jp-stat-label { font-size: 0.7rem; text-transform: lowercase; letter-spacing: 0.04em; margin: 0 0 0 0.1rem; color: var(--text-secondary); display: inline; font-weight: 500; }
+.jp-stats-compact .jp-stat:hover { transform: none; background: var(--card-bg); border-color: var(--border); }
+
+/* ========== Filters ========== */
+.jp-filters { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; padding: 0.5rem 0; }
+.jp-filter-group { display: flex; align-items: center; gap: 0.75rem; }
+.jp-filter-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); font-weight: 600; }
+.jp-pills { display: flex; gap: 0.4rem; background: var(--code-bg); padding: 4px; border-radius: 999px; }
+.jp-pill { background: transparent; border: 0; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.85rem; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; font-weight: 500; }
+.jp-pill em { font-style: normal; font-size: 0.7rem; opacity: 0.7; margin-left: 0.3rem; }
+.jp-pill:hover { color: var(--text); }
+.jp-pill.active { background: var(--card-bg); color: var(--jp-rose); box-shadow: 0 1px 3px var(--shadow); }
+
+/* ========== Mode tabs ========== */
+.jp-modes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+.jp-mode {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1rem 0.75rem; cursor: pointer; transition: all 0.25s;
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  position: relative; overflow: hidden;
+}
+.jp-mode::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 0; height: 3px; background: linear-gradient(90deg, var(--jp-pink), var(--jp-rose)); transition: width 0.3s, left 0.3s; }
+.jp-mode:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); border-color: var(--jp-pink); }
+.jp-mode.active { border-color: var(--jp-rose); background: linear-gradient(135deg, var(--jp-glow), var(--card-bg) 70%); }
+.jp-mode.active::after { width: 60%; left: 20%; }
+.jp-mode-icon { font-size: 1.5rem; margin-bottom: 0.2rem; transition: transform 0.3s; display: inline-flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+.jp-mode-icon svg { width: 1.5rem; height: 1.5rem; }
+.jp-mode.active .jp-mode-icon { color: var(--jp-rose); }
+.jp-mode:hover .jp-mode-icon, .jp-mode.active .jp-mode-icon { transform: scale(1.15) rotate(-5deg); }
+.jp-mode-name { font-weight: 600; color: var(--text); }
+.jp-mode-sub { font-size: 0.75rem; color: var(--text-secondary); }
+
+/* ========== Panels ========== */
+.jp-panel { animation: panel-in 0.4s ease-out; }
+.jp-panel.hidden { display: none; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== Chart (gojuon layout) ========== */
+.jp-chart { display: flex; flex-direction: column; gap: 1.75rem; margin-bottom: 2rem; }
+.jp-chart-heading { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.65rem; }
+.jp-chart-grid { display: grid; grid-template-columns: 32px repeat(5, minmax(0, 1fr)); gap: 0.4rem; align-items: stretch; }
+.jp-chart-corner, .jp-chart-collabel, .jp-chart-rowlabel { font-size: 0.75rem; text-align: center; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
+.jp-chart-collabel { padding-bottom: 0.2rem; }
+.jp-chart-rowlabel { font-family: 'Hiragino Mincho ProN', serif; font-size: 0.85rem; opacity: 0.75; }
+.jp-chart-empty { background: transparent; border: 1px dashed var(--border); border-radius: 10px; opacity: 0.25; min-width: 0; }
+.jp-chart-cell {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.25rem 0.4rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  min-width: 0;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+}
+.jp-chart-cell:hover { transform: translateY(-3px) scale(1.05); border-color: var(--jp-rose); box-shadow: 0 8px 20px var(--jp-glow), 0 4px 12px var(--shadow); z-index: 2; }
+.jp-chart-cell-glyph { font-size: 1.85rem; line-height: 1; color: var(--text); font-weight: 600; }
+.jp-chart-cell-romaji { font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.2rem; font-family: -apple-system, sans-serif; }
+.jp-chart-cell .jp-mastery-dot { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.jp-chart-cell[data-mastery="1"] .jp-mastery-dot { background: #fcd34d; }
+.jp-chart-cell[data-mastery="2"] .jp-mastery-dot { background: #fbbf24; }
+.jp-chart-cell[data-mastery="3"] .jp-mastery-dot { background: #f59e0b; }
+.jp-chart-cell[data-mastery="4"] .jp-mastery-dot { background: #84cc16; }
+.jp-chart-cell[data-mastery="5"] .jp-mastery-dot { background: var(--jp-good); box-shadow: 0 0 8px rgba(76,175,80,0.6); }
+
+/* ========== Study card (3D flip) ========== */
+.jp-study-deck { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.jp-card { width: 100%; max-width: 480px; aspect-ratio: 4/5; perspective: 1500px; cursor: pointer; }
+.jp-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(.4,.0,.2,1); transform-style: preserve-3d; }
+.jp-card.flipped .jp-card-inner { transform: rotateY(180deg); }
+.jp-card-face {
+  position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem 1.5rem; box-shadow: 0 12px 40px var(--shadow), 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.jp-card-front { background: var(--card-bg); }
+.jp-card-front::before {
+  content: ''; position: absolute; top: -40%; right: -30%; width: 220px; height: 220px;
+  background: radial-gradient(circle, var(--jp-glow) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.jp-card-back { transform: rotateY(180deg); background: var(--card-bg); }
+.jp-card-mini { position: absolute; top: 1rem; left: 1.25rem; font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; }
+.jp-card-glyph { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 11rem; line-height: 1; font-weight: 500; color: var(--text); animation: glyph-pop 0.4s ease-out; }
+.jp-card-hint { position: absolute; bottom: 1.25rem; font-size: 0.8rem; color: var(--text-secondary); opacity: 0.8; }
+.jp-card-romaji { font-size: 4rem; font-weight: 700; color: var(--jp-rose); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+.jp-card-mnemonic { text-align: center; font-size: 1rem; color: var(--text); line-height: 1.5; margin: 0 1rem 1.5rem; max-width: 90%; }
+.jp-card-example { width: 100%; max-width: 320px; padding: 1rem; background: var(--code-bg); border-radius: 12px; text-align: center; }
+.jp-ex-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); margin-bottom: 0.4rem; font-weight: 600; }
+.jp-ex-word { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 1.6rem; color: var(--text); margin-bottom: 0.2rem; font-weight: 500; }
+.jp-ex-meaning { font-size: 0.9rem; color: var(--text-secondary); font-style: italic; }
+@keyframes glyph-pop { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+
+.jp-speak-btn { position: absolute; top: 1rem; right: 1rem; width: 38px; height: 38px; border-radius: 50%; background: var(--code-bg); border: 1px solid var(--border); color: var(--jp-rose); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 5; }
+.jp-speak-btn:hover { background: var(--jp-pink); color: white; transform: scale(1.1); }
+.jp-speak-btn.playing { animation: pulse-ring 1s ease-out infinite; }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 var(--jp-glow); } 100% { box-shadow: 0 0 0 16px transparent; } }
+
+/* ========== Study buttons ========== */
+.jp-study-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; width: 100%; max-width: 600px; }
+.jp-btn { background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px; padding: 0.75rem 0.5rem; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.15rem; font-family: inherit; }
+.jp-btn:hover { transform: translateY(-2px); }
+.jp-btn-icon { font-size: 1.1rem; font-weight: 700; }
+.jp-btn-label { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+.jp-btn-sub { font-size: 0.7rem; color: var(--text-secondary); }
+.jp-btn-bad  { border-color: var(--jp-bad); }
+.jp-btn-bad:hover  { background: var(--jp-bad); border-color: var(--jp-bad); box-shadow: 0 6px 16px rgba(239,68,68,0.3); }
+.jp-btn-bad:hover .jp-btn-label, .jp-btn-bad:hover .jp-btn-sub, .jp-btn-bad:hover .jp-btn-icon { color: white; }
+.jp-btn-mid  { border-color: var(--jp-mid); }
+.jp-btn-mid:hover  { background: var(--jp-mid); box-shadow: 0 6px 16px rgba(245,158,11,0.3); }
+.jp-btn-mid:hover .jp-btn-label, .jp-btn-mid:hover .jp-btn-sub, .jp-btn-mid:hover .jp-btn-icon { color: white; }
+.jp-btn-good { border-color: var(--jp-good); }
+.jp-btn-good:hover { background: var(--jp-good); box-shadow: 0 6px 16px rgba(76,175,80,0.3); }
+.jp-btn-good:hover .jp-btn-label, .jp-btn-good:hover .jp-btn-sub, .jp-btn-good:hover .jp-btn-icon { color: white; }
+.jp-btn-easy { border-color: var(--jp-easy); }
+.jp-btn-easy:hover { background: var(--jp-easy); box-shadow: 0 6px 16px rgba(6,182,212,0.3); }
+.jp-btn-easy:hover .jp-btn-label, .jp-btn-easy:hover .jp-btn-sub, .jp-btn-easy:hover .jp-btn-icon { color: white; }
+
+.jp-study-progress { width: 100%; max-width: 600px; }
+.jp-study-counter { font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 0.5rem; }
+.jp-progress-bar { height: 6px; background: var(--code-bg); border-radius: 3px; overflow: hidden; }
+.jp-progress-fill { height: 100%; background: linear-gradient(90deg, var(--jp-pink), var(--jp-rose)); border-radius: 3px; transition: width 0.5s cubic-bezier(.4,.0,.2,1); width: 0%; }
+
+/* ========== Quiz ========== */
+.jp-quiz-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+.jp-quiz-mode-toggle { display: flex; gap: 0.4rem; background: var(--code-bg); padding: 4px; border-radius: 999px; }
+.jp-mini-pill { background: transparent; border: 0; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.8rem; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; font-weight: 500; }
+.jp-mini-pill.active { background: var(--card-bg); color: var(--jp-rose); box-shadow: 0 1px 3px var(--shadow); }
+.jp-quiz-meta { font-size: 0.9rem; color: var(--text-secondary); }
+.jp-quiz-meta strong { color: var(--text); font-weight: 700; font-size: 1.05em; }
+.jp-quiz-divider { margin: 0 0.5rem; opacity: 0.4; }
+
+.jp-quiz-prompt { display: flex; justify-content: center; padding: 2.5rem 1rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; margin-bottom: 1.25rem; box-shadow: 0 4px 16px var(--shadow); position: relative; overflow: hidden; }
+.jp-quiz-prompt::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, var(--jp-glow), transparent 70%); pointer-events: none; }
+.jp-quiz-question { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 7rem; line-height: 1; color: var(--text); font-weight: 500; position: relative; z-index: 1; }
+.jp-quiz-question.shake { animation: shake 0.4s; }
+.jp-quiz-question.pulse { animation: pulse-good 0.5s; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 40% { transform: translateX(12px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(8px); } }
+@keyframes pulse-good { 50% { transform: scale(1.1); color: var(--jp-good); } }
+
+.jp-quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+.jp-opt {
+  background: var(--card-bg); border: 2px solid var(--border); border-radius: 14px;
+  padding: 1.1rem; font-size: 1.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; color: var(--text);
+  position: relative; overflow: hidden;
+}
+.jp-opt:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--jp-pink); box-shadow: 0 8px 20px var(--jp-glow); }
+.jp-opt.correct { background: var(--jp-good); border-color: var(--jp-good); color: white; animation: pop 0.3s; }
+.jp-opt.wrong { background: var(--jp-bad); border-color: var(--jp-bad); color: white; animation: shake 0.4s; }
+.jp-opt:disabled { cursor: default; }
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+.jp-quiz-feedback { min-height: 2.5rem; text-align: center; font-size: 1rem; color: var(--text-secondary); padding: 0.5rem; }
+.jp-quiz-feedback.good { color: var(--jp-good); font-weight: 600; }
+.jp-quiz-feedback.bad  { color: var(--jp-bad); font-weight: 600; }
+
+/* ========== Match ========== */
+.jp-match-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.jp-match-info { font-size: 0.9rem; color: var(--text-secondary); }
+.jp-match-meta strong { color: var(--text); font-weight: 700; }
+.jp-match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+.jp-match-tile {
+  background: var(--card-bg); border: 2px solid var(--border); border-radius: 12px;
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  font-size: 1.6rem; cursor: pointer; transition: all 0.2s; user-select: none;
+}
+.jp-match-tile.romaji { font-family: -apple-system, sans-serif; font-size: 1.05rem; font-weight: 600; }
+.jp-match-tile:hover { border-color: var(--jp-pink); transform: translateY(-2px); }
+.jp-match-tile.selected { border-color: var(--jp-rose); background: linear-gradient(135deg, var(--jp-glow), var(--card-bg)); box-shadow: 0 6px 20px var(--jp-glow); }
+.jp-match-tile.matched { background: var(--jp-good); border-color: var(--jp-good); color: white; opacity: 0.5; cursor: default; transform: scale(0.95); pointer-events: none; }
+.jp-match-tile.miss { animation: shake 0.4s; border-color: var(--jp-bad); }
+.jp-restart-btn { margin: 0 auto; display: block; padding: 0.6rem 1.5rem; background: var(--jp-rose); color: white; border: 0; border-radius: 999px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.jp-restart-btn:hover { background: var(--jp-deep); transform: translateY(-2px); box-shadow: 0 6px 16px var(--shadow); }
+
+/* ========== Words mode ========== */
+.jp-words-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.jp-words-toggle { display: flex; gap: 0.4rem; background: var(--code-bg); padding: 4px; border-radius: 999px; }
+.jp-words-meta { font-size: 0.9rem; color: var(--text-secondary); }
+.jp-words-meta strong { color: var(--jp-rose); font-weight: 700; }
+
+.jp-word-cats { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.jp-word-cat { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; color: var(--text-secondary); font-family: inherit; }
+.jp-word-cat:hover { border-color: var(--jp-pink); color: var(--text); transform: translateY(-1px); }
+.jp-word-cat.active { background: linear-gradient(135deg, var(--jp-pink), var(--jp-rose)); color: white; border-color: var(--jp-rose); box-shadow: 0 4px 12px var(--jp-glow); }
+.jp-word-cat-icon { display: inline-flex; align-items: center; justify-content: center; }
+.jp-word-cat-icon svg { width: 0.95rem; height: 0.95rem; }
+.jp-word-cat-count { font-size: 0.75rem; opacity: 0.7; margin-left: 0.2rem; }
+
+.jp-word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
+.jp-word-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1rem 1rem 0.85rem; cursor: pointer; transition: all 0.25s;
+  display: flex; flex-direction: column; gap: 0.35rem;
+  position: relative; overflow: hidden; min-height: 130px;
+}
+.jp-word-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--jp-glow), transparent 70%); opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+.jp-word-card:hover { transform: translateY(-3px); border-color: var(--jp-pink); box-shadow: 0 10px 24px var(--jp-glow), 0 4px 12px var(--shadow); }
+.jp-word-card:hover::before { opacity: 1; }
+.jp-word-card.seen::after { content: '✓'; position: absolute; top: 0.5rem; right: 0.6rem; width: 18px; height: 18px; border-radius: 50%; background: var(--jp-good); color: white; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.jp-wc-kanji { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 0.85rem; color: var(--text-secondary); min-height: 1.2em; opacity: 0.75; }
+.jp-wc-kana { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 1.85rem; line-height: 1.1; color: var(--text); font-weight: 500; letter-spacing: 0.02em; }
+.jp-wc-romaji { font-size: 0.85rem; color: var(--jp-rose); font-weight: 600; }
+.jp-wc-meaning { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.35; margin-top: auto; }
+
+.jp-word-quiz.hidden { display: none; }
+.jp-word-grid.hidden { display: none; }
+.jp-word-cats.hidden { display: none; }
+.jp-word-quiz-question { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 3.4rem; font-weight: 500; color: var(--text); line-height: 1.1; }
+.jp-word-quiz-romaji { font-size: 1rem; color: var(--text-secondary); margin-top: 0.4rem; font-style: italic; }
+#wordQuizOptions .jp-opt { font-family: -apple-system, sans-serif; font-size: 0.95rem; line-height: 1.35; padding: 0.85rem 1rem; text-align: left; }
+
+.jp-modal-kanji { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 1.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; opacity: 0.85; letter-spacing: 0.05em; }
+.jp-modal-kanji.hidden { display: none; }
+
+/* Romaji toggle switch */
+.jp-romaji-toggle { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none; }
+.jp-romaji-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.jp-romaji-toggle-track { display: inline-flex; width: 36px; height: 20px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 999px; position: relative; transition: all 0.2s; }
+.jp-romaji-toggle-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-secondary); transition: all 0.2s cubic-bezier(.34,1.56,.64,1); }
+.jp-romaji-toggle input:checked ~ .jp-romaji-toggle-track { background: var(--jp-rose); border-color: var(--jp-rose); }
+.jp-romaji-toggle input:checked ~ .jp-romaji-toggle-track .jp-romaji-toggle-thumb { left: 18px; background: white; }
+.jp-romaji-toggle-label { font-size: 0.85rem; color: var(--text-secondary); }
+.jp-romaji-toggle:hover .jp-romaji-toggle-label { color: var(--text); }
+
+/* Hide romaji when toggle is off */
+body.hide-romaji #panelWords .jp-wc-romaji,
+body.hide-romaji #panelWords .jp-word-quiz-romaji { display: none; }
+
+/* ========== Mastery heatmap ========== */
+.jp-section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; margin-top: 2.5rem; }
+.jp-section-head h2 { font-size: 1.3rem; letter-spacing: -0.01em; }
+.jp-mastery-legend { display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.7rem; }
+.jp-mleg { padding: 0.2rem 0.6rem; border-radius: 999px; background: var(--code-bg); color: var(--text-secondary); }
+.jp-mleg.jp-m0 { background: var(--code-bg); }
+.jp-mleg.jp-m1 { background: rgba(252,211,77,0.2); color: #b45309; }
+.jp-mleg.jp-m2 { background: rgba(251,191,36,0.25); color: #b45309; }
+.jp-mleg.jp-m3 { background: rgba(245,158,11,0.25); color: #92400e; }
+.jp-mleg.jp-m4 { background: rgba(132,204,22,0.25); color: #3f6212; }
+.jp-mleg.jp-m5 { background: rgba(76,175,80,0.3); color: #166534; }
+[data-theme="dark"] .jp-mleg.jp-m1 { color: #fcd34d; }
+[data-theme="dark"] .jp-mleg.jp-m2 { color: #fbbf24; }
+[data-theme="dark"] .jp-mleg.jp-m3 { color: #f59e0b; }
+[data-theme="dark"] .jp-mleg.jp-m4 { color: #a3e635; }
+[data-theme="dark"] .jp-mleg.jp-m5 { color: #86efac; }
+.jp-mastery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(28px, 1fr)); gap: 4px; }
+.jp-heat-cell { aspect-ratio: 1; border-radius: 4px; background: var(--code-bg); transition: all 0.3s; cursor: help; position: relative; }
+.jp-heat-cell[data-m="1"] { background: rgba(252,211,77,0.4); }
+.jp-heat-cell[data-m="2"] { background: rgba(251,191,36,0.55); }
+.jp-heat-cell[data-m="3"] { background: rgba(245,158,11,0.7); }
+.jp-heat-cell[data-m="4"] { background: rgba(132,204,22,0.75); }
+.jp-heat-cell[data-m="5"] { background: var(--jp-good); box-shadow: 0 0 8px rgba(76,175,80,0.5); }
+.jp-heat-cell:hover { transform: scale(1.4); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+/* ========== Achievements ========== */
+.jp-ach-count { font-size: 0.9rem; color: var(--text-secondary); }
+.jp-ach-count span { color: var(--jp-rose); font-weight: 700; }
+.jp-achievement-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+.jp-ach { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 0.75rem; text-align: center; transition: all 0.25s; opacity: 0.45; filter: grayscale(0.7); position: relative; overflow: hidden; }
+.jp-ach.unlocked { opacity: 1; filter: none; border-color: var(--jp-pink); }
+.jp-ach.unlocked::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--jp-glow), transparent 70%); pointer-events: none; }
+.jp-ach.unlocked:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--jp-glow); }
+.jp-ach-icon { font-size: 1.8rem; margin-bottom: 0.3rem; }
+.jp-ach-name { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 0.15rem; }
+.jp-ach-desc { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; }
+
+/* ========== Daily fact ========== */
+.jp-fact { display: flex; gap: 1rem; align-items: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.25rem; margin: 0 0 1.5rem; box-shadow: 0 4px 16px var(--shadow); }
+.jp-fact-icon { font-size: 1.6rem; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--jp-rose); }
+.jp-fact-icon svg { width: 1.4rem; height: 1.4rem; }
+.jp-fact-content { flex: 1; }
+.jp-fact-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--jp-rose); font-weight: 700; margin-bottom: 0.3rem; }
+.jp-fact-text { font-size: 0.95rem; color: var(--text); line-height: 1.5; }
+.jp-fact-next { background: transparent; border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.jp-fact-next svg { width: 1.1rem; height: 1.1rem; }
+.jp-fact-next:hover { background: var(--jp-rose); color: white; border-color: var(--jp-rose); transform: rotate(180deg); }
+
+/* ========== Tools ========== */
+.jp-tools { display: flex; gap: 0.6rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+.jp-tool-btn { background: transparent; border: 1px solid var(--border); border-radius: 999px; padding: 0.5rem 1rem; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; font-family: inherit; }
+.jp-tool-btn:hover { background: var(--code-bg); color: var(--text); border-color: var(--jp-pink); }
+
+/* ========== Modal ========== */
+.jp-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.jp-modal.hidden { display: none; }
+.jp-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); animation: fade-in 0.25s; }
+.jp-modal-card { position: relative; background: var(--card-bg); border-radius: 24px; padding: 2.5rem 2rem 2rem; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: modal-in 0.35s cubic-bezier(.34,1.56,.64,1); }
+.jp-modal-close { position: absolute; top: 0.75rem; right: 0.75rem; width: 36px; height: 36px; border-radius: 50%; background: var(--code-bg); border: 0; color: var(--text-secondary); font-size: 1.4rem; cursor: pointer; transition: all 0.2s; }
+.jp-modal-close:hover { background: var(--jp-bad); color: white; }
+.jp-modal-glyph { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 9rem; line-height: 1; color: var(--text); margin-bottom: 0.25rem; animation: glyph-pop 0.5s; }
+.jp-modal-romaji { font-size: 2rem; font-weight: 700; color: var(--jp-rose); margin-bottom: 0.5rem; }
+.jp-modal-speak { position: relative; top: auto; right: auto; margin: 0 auto 1rem; }
+.jp-modal-mnemonic { font-size: 1rem; color: var(--text); margin-bottom: 1.25rem; line-height: 1.5; }
+.jp-modal-example { padding: 1rem; background: var(--code-bg); border-radius: 12px; margin-bottom: 1rem; }
+.jp-modal-mastery { font-size: 0.85rem; color: var(--text-secondary); }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: none; } }
+
+/* ========== Confetti & toast ========== */
+.jp-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+.confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; opacity: 0.9; animation: confetti-fall 1.6s cubic-bezier(.4,.6,.6,1) forwards; }
+@keyframes confetti-fall { 0% { transform: translateY(-20px) rotate(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+.jp-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 0.75rem 1.5rem; border-radius: 999px; font-size: 0.95rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3); opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(.34,1.56,.64,1); z-index: 1001; display: inline-flex; align-items: center; gap: 0.5rem; }
+.jp-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.jp-toast-icon { font-size: 1.2rem; }
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .jp-hero { flex-direction: column; text-align: center; gap: 1rem; padding: 0.5rem 0 1rem; }
+  .jp-hero-glyph { width: 100px; height: 100px; }
+  .jp-hero-char { font-size: 4.5rem; }
+  .jp-hero-char-2 { font-size: 3.2rem; }
+  .jp-hero-quote { text-align: left; }
+  .jp-modes { grid-template-columns: repeat(2, 1fr); }
+  .jp-stats:not(.jp-stats-compact) { grid-template-columns: repeat(2, 1fr); }
+  .jp-chart-grid { grid-template-columns: 24px repeat(5, 1fr); gap: 0.3rem; }
+  .jp-chart-cell-glyph { font-size: 1.75rem; }
+  .jp-chart-rowlabel { font-size: 0.75rem; }
+  .jp-card-glyph { font-size: 7.5rem; }
+  .jp-card-romaji { font-size: 3rem; }
+  .jp-quiz-question { font-size: 5rem; }
+  .jp-quiz-options { grid-template-columns: repeat(2, 1fr); }
+  .jp-match-grid { grid-template-columns: repeat(3, 1fr); }
+  .jp-modal-glyph { font-size: 7rem; }
+  .jp-study-actions { grid-template-columns: repeat(2, 1fr); }
+  .jp-modes { grid-template-columns: repeat(3, 1fr); }
+  .jp-modes .jp-mode:nth-child(n+4) { grid-column: span 1; }
+  .jp-word-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .jp-word-quiz-question { font-size: 2.5rem; }
+}
+@media (max-width: 480px) {
+  .jp-filters { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+  .jp-filter-group { width: 100%; flex-direction: column; align-items: flex-start; }
+  .jp-pills { width: 100%; }
+  .jp-pill { flex: 1; }
+}
