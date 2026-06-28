@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../js/theme-init.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacker News Alerts - Basu Jindal</title>
+  <meta name="description" content="Subscribe to push notifications for top Hacker News posts">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/images/basujindal.jpg">
+  <style>
+    .notify-card { margin-top: 1.5rem; }
+    .notify-lead { color: var(--text-secondary); margin-bottom: 0; }
+    .notify-status { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; }
+    .notify-status.success { color: #16a34a; }
+    .notify-status.error { color: #dc2626; }
+    .notify-action { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .notify-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 500; font-size: 0.95rem; cursor: pointer; border: none; transition: background 0.2s, transform 0.1s; }
+    .notify-btn.primary { background: var(--accent); color: var(--bg); }
+    .notify-btn.primary:hover { background: var(--accent-hover); }
+    .notify-btn.danger { background: transparent; color: #dc2626; border: 1px solid #dc2626; }
+    .notify-btn.danger:hover { background: rgba(220, 38, 38, 0.08); }
+    .notify-btn:disabled { opacity: 0.6; cursor: default; }
+    .notify-hint { margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header></header>
+
+    <main class="notify-wrap">
+      <h1 class="page-title">Hacker News Alerts</h1>
+      <p class="notify-lead">Get a push notification whenever a story hits the Hacker News front page and crosses a few hundred points.</p>
+
+      <div class="notify-card">
+        <div class="notify-status" id="notify-status">Checking…</div>
+        <div class="notify-action" id="notify-action"></div>
+        <div class="notify-hint">On iPhone or iPad, add this site to your Home Screen first (iOS 16.4+) for web push to work.</div>
+      </div>
+    </main>
+
+    <footer></footer>
+  </div>
+  <script src="../js/config.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/interactions-common.js"></script>
+  <script src="../js/notifications.js"></script>
+</body>
+</html>

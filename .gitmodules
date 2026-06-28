@@ -1,0 +1,6 @@
+[submodule "thoughts-api"]
+	path = thoughts-api
+	url = git@github.com:basujindal/server.git
+[submodule "private"]
+	path = private
+	url = git@github.com:basujindal/website.git

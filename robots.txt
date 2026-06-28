@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: //basujindal.me/sitemap.xml

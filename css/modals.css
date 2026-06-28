@@ -1,0 +1,50 @@
+/* Modals CSS - Modal Dialogs, Toasts, Image Lightbox */
+
+/* Image lightbox */
+.image-lightbox { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+.image-lightbox.active { opacity: 1; visibility: visible; }
+.image-lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
+.image-lightbox-close { position: absolute; top: 1rem; right: 1rem; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.image-lightbox-close:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* Toast notifications */
+.toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 1001; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast { padding: 0.875rem 1.25rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px var(--shadow); display: flex; align-items: center; gap: 0.75rem; min-width: 280px; max-width: 400px; animation: slideIn 0.3s ease; }
+.toast.success { border-left: 3px solid #27ae60; }
+.toast.error { border-left: 3px solid #e74c3c; }
+.toast.info { border-left: 3px solid var(--accent); }
+.toast-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.toast.success .toast-icon { color: #27ae60; }
+.toast.error .toast-icon { color: #e74c3c; }
+.toast.info .toast-icon { color: var(--accent); }
+.toast-message { flex: 1; font-size: 0.9rem; color: var(--text); }
+.toast-close { background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem; line-height: 1; font-size: 1.25rem; }
+.toast-close:hover { color: var(--text); }
+
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+/* Modal dialog */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1002; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; max-width: 400px; width: 90%; box-shadow: 0 8px 32px var(--shadow); transform: scale(0.95); transition: transform 0.2s; }
+.modal-overlay.active .modal { transform: scale(1); }
+.modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+.modal-message { color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5; }
+.modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+.modal-btn { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.modal-btn.cancel { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+.modal-btn.cancel:hover { background: var(--code-bg); color: var(--text); }
+.modal-btn.confirm { background: #e74c3c; border: none; color: white; }
+.modal-btn.confirm:hover { background: #c0392b; }
+.modal-btn.primary { background: var(--accent); border: none; color: white; }
+.modal-btn.primary:hover { background: var(--accent-hover); }
+.modal-textarea { width: 100%; min-height: 120px; max-height: 400px; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 1rem; line-height: 1.5; resize: none; overflow-y: auto; margin-bottom: 1rem; white-space: pre-wrap; word-wrap: break-word; }
+.modal-textarea:focus { outline: none; border-color: var(--accent); }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .toast-container { bottom: 1rem; right: 1rem; left: 1rem; }
+  .toast { min-width: auto; max-width: none; }
+  .modal { width: 95%; margin: 1rem; }
+}

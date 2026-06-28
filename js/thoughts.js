@@ -1,0 +1,661 @@
+// Thoughts - Twitter-like feed functionality
+// Uses shared InteractionsCommon and ThoughtsUI modules
+(function() {
+  // Wait for common modules to load
+  if (typeof InteractionsCommon === 'undefined') {
+    console.error('InteractionsCommon not loaded');
+    return;
+  }
+
+  const { API_BASE, getAuthState, setAuthState, clearAuthState, formatTimeAgo,
+          getInitials, escapeHtml, processContent, loadTwitterWidgets } = InteractionsCommon;
+  const { showToast, showModal, closeModal, showLoading } = window.ThoughtsUI;
+
+  // GitHub mark used as the avatar fallback (instead of initials / "BJ").
+  const GITHUB_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
+
+  // Avatar inner HTML for the current user: their GitHub photo, else the GitHub mark.
+  function avatarInner(user) {
+    if (user && user.avatar) {
+      return `<img src="${escapeHtml(user.avatar)}" alt="${escapeHtml(user.name || 'You')}">`;
+    }
+    return GITHUB_ICON;
+  }
+
+  // API endpoints
+  const API = {
+    getPosts: (page, limit) => `${API_BASE}/get_posts?page=${page}&limit=${limit}`,
+    submit: `${API_BASE}/submit`,
+    like: `${API_BASE}/like`,
+    comment: `${API_BASE}/comment`,
+    githubLogin: `${API_BASE}/auth/github`,
+    deletePost: (id) => `${API_BASE}/post/${id}`,
+    deleteComment: (id) => `${API_BASE}/comment/${id}`,
+    editPost: (id) => `${API_BASE}/post/${id}`,
+    postComments: (id) => `${API_BASE}/post/${id}/comments`
+  };
+
+  // State
+  let posts = [];
+  let authToken = null; // Kept for UI checks; actual auth is via HttpOnly cookie
+  let isOwner = false;
+  let currentUser = null;
+  let selectedImages = [];
+  let currentPage = 1;
+  let hasMore = false;
+  let totalPosts = 0;
+
+  // DOM Elements
+  const feed = document.getElementById('thoughts-feed');
+  const composeBox = document.getElementById('compose-box');
+  const composeAvatar = document.getElementById('compose-avatar');
+  const composeTextarea = document.getElementById('compose-text');
+  const composeSubmit = document.getElementById('compose-submit');
+  const imageInput = document.getElementById('image-input');
+  const imagePreviewContainer = document.getElementById('image-preview-container');
+  const lightbox = document.getElementById('image-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const loginBtn = document.getElementById('github-login-btn');
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', init);
+
+  function init() {
+    handleAuthCallback();
+    loadPosts();
+    setupEventListeners();
+    updateAuthUI();
+  }
+
+  // Handle OAuth callback - check for auth params in URL
+  function handleAuthCallback() {
+    const result = InteractionsCommon.handleAuthCallback();
+
+    if (result) {
+      if (result.success) {
+        authToken = true;
+        isOwner = result.isOwner;
+        currentUser = result.user;
+      } else if (result.error) {
+        showToast(result.error, 'error');
+      }
+    } else {
+      // Check for existing auth state
+      const authState = getAuthState();
+      authToken = InteractionsCommon.isLoggedIn();
+      isOwner = authState.isOwner;
+      currentUser = authState.user;
+    }
+  }
+
+  // Update UI based on auth state
+  function updateAuthUI() {
+    const isAuthenticated = !!authToken;
+
+    if (composeBox) {
+      composeBox.classList.toggle('hidden', !isAuthenticated || !isOwner);
+    }
+    if (loginBtn) {
+      loginBtn.classList.toggle('hidden', isAuthenticated);
+    }
+    if (composeAvatar) {
+      composeAvatar.innerHTML = avatarInner(currentUser);
+    }
+  }
+
+  // Login with GitHub
+  function loginWithGitHub() {
+    window.location.href = API.githubLogin;
+  }
+
+  // Logout (triggered automatically on 401/403). The explicit logout button now
+  // lives in the shared header account menu; this just resets in-page state.
+  function logout() {
+    clearAuthState();
+    authToken = null;
+    isOwner = false;
+    currentUser = null;
+    currentPage = 1;
+    hasMore = false;
+    updateAuthUI();
+    loadPosts();
+  }
+
+  // Auto-resize textarea based on content
+  function autoResizeTextarea(textarea) {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const maxHeight = parseInt(getComputedStyle(textarea).maxHeight) || 400;
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    textarea.style.height = newHeight + 'px';
+  }
+
+  // Setup event listeners
+  function setupEventListeners() {
+    if (loginBtn) {
+      loginBtn.addEventListener('click', loginWithGitHub);
+    }
+
+    if (composeSubmit) {
+      composeSubmit.addEventListener('click', submitPost);
+    }
+
+    if (composeTextarea) {
+      composeTextarea.addEventListener('input', () => {
+        updateSubmitButton();
+        autoResizeTextarea(composeTextarea);
+      });
+      composeTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          if (!composeSubmit.disabled) {
+            submitPost();
+          }
+        }
+      });
+    }
+
+    if (imageInput) {
+      imageInput.addEventListener('change', handleImageSelect);
+    }
+
+    if (composeTextarea) {
+      composeTextarea.addEventListener('paste', handlePaste);
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('image-lightbox-close')) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (lightbox.classList.contains('active')) {
+            closeLightbox();
+          }
+          const modalOverlay = document.getElementById('modal-overlay');
+          if (modalOverlay && modalOverlay.classList.contains('active')) {
+            closeModal();
+          }
+        }
+      });
+    }
+  }
+
+  // ===== LOADING STATES =====
+
+  function showFeedLoading() { showLoading(feed); }
+
+  function showLoginRequired() {
+    if (feed) feed.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6V7a4 4 0 10-8 0v4h8z"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg><h3>Login to View Thoughts</h3><p>Sign in with GitHub to see posts, like, and comment.</p></div><div class="login-preview"><div class="login-preview-title">Preview of what you'll see</div><div class="preview-post"><div class="preview-avatar"></div><div class="preview-content"><div class="preview-line"></div><div class="preview-line"></div><div class="preview-line"></div></div></div></div>`;
+  }
+
+  // Load posts from API
+  async function loadPosts(append = false) {
+    if (!append) showFeedLoading();
+    if (!authToken) { showLoginRequired(); return; }
+
+    try {
+      const response = await fetch(API.getPosts(currentPage, 10), { credentials: 'include' });
+      if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
+      if (!response.ok) throw new Error('Failed to load posts');
+      const data = await response.json();
+      if (append) {
+        posts = posts.concat(data.posts);
+      } else {
+        posts = data.posts;
+      }
+      hasMore = data.has_more;
+      totalPosts = data.total;
+      renderPosts();
+    } catch (error) {
+      console.error('Error loading posts:', error);
+      showError('Failed to load posts. Please try again later.');
+    }
+  }
+
+  // Render posts
+  function renderPosts() {
+    if (!feed) return;
+    if (posts.length === 0) {
+      feed.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><h3>No thoughts yet</h3><p>Check back later for updates.</p></div>`;
+      return;
+    }
+    let html = posts.map(post => renderPost(post)).join('');
+    if (hasMore) {
+      html += `<div class="load-more-container"><button class="load-more-btn" id="load-more-btn">Load more</button></div>`;
+    }
+    feed.innerHTML = html;
+    attachPostEventListeners();
+    loadTwitterWidgets();
+
+    // Attach load more listener
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => {
+        currentPage++;
+        loadMoreBtn.textContent = 'Loading...';
+        loadMoreBtn.disabled = true;
+        loadPosts(true);
+      });
+    }
+  }
+
+  // Render single post
+  function renderPost(post) {
+    const postDate = new Date(post.created_at);
+    const timeAgo = formatTimeAgo(postDate);
+    const fullDate = postDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const images = post.images || [], comments = post.comments || [];
+    const likeCount = post.likes || 0, commentCount = post.comment_count || comments.length, isLiked = post.user_liked || false;
+
+    const avatarContent = post.author_avatar ? `<img src="${escapeHtml(post.author_avatar)}" alt="${escapeHtml(post.author)}">` : getInitials(post.author);
+
+    const imageClass = images.length === 1 ? 'single' : images.length === 2 ? 'double' : images.length === 3 ? 'triple' : 'quad';
+    const imagesHTML = images.length ? `<div class="post-images-container"><div class="post-images ${imageClass}">${images.slice(0, 4).map(img => `<img src="${escapeHtml(img)}" alt="Post image" class="post-image" onclick="thoughts.openLightbox('${escapeHtml(img)}')">`).join('')}</div></div>` : '';
+
+    const deleteBtn = `<button class="comment-delete-btn" data-comment-id="\${c.id}" data-post-id="${post.id}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>`;
+
+    const commentsHTML = comments.map(c => {
+      const cAvatar = c.author_avatar ? `<img src="${escapeHtml(c.author_avatar)}" alt="${escapeHtml(c.author)}">` : getInitials(c.author);
+      return `<div class="comment" data-comment-id="${c.id}"><div class="comment-avatar">${cAvatar}</div><div class="comment-content"><span class="comment-author">${escapeHtml(c.author)}</span><p class="comment-text">${escapeHtml(c.text)}</p><span class="comment-time">${formatTimeAgo(new Date(c.created_at))}</span></div>${isOwner ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${post.id}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : ''}</div>`;
+    }).join('');
+
+    const showAllCommentsBtn = (commentCount > comments.length) ?
+      `<button class="show-all-comments-btn" data-post-id="${post.id}" data-comment-count="${commentCount}">Show all ${commentCount} comments</button>` : '';
+
+    const ownerBtns = isOwner ? `<button class="post-edit-btn" data-post-id="${post.id}" title="Edit post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="post-delete-btn" data-post-id="${post.id}" title="Delete post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : '';
+
+    const userAvatar = currentUser?.avatar ? `<img src="${escapeHtml(currentUser.avatar)}" alt="Your avatar">` : getInitials(currentUser?.name || 'You');
+
+    return `<article class="post-card fade-in" data-post-id="${post.id}">
+      <div class="post-header"><div class="post-avatar">${avatarContent}</div><div class="post-meta"><div class="post-author">${escapeHtml(post.author)}</div><div class="post-time" data-tooltip="${fullDate}">${timeAgo}</div></div><div style="margin-left:auto;display:flex;gap:0.25rem;">${ownerBtns}</div></div>
+      <div class="post-body"><div class="post-content">${processContent(post.text, post.link_previews || [])}</div></div>
+      ${imagesHTML}
+      <div class="post-actions">
+        <button class="post-action like-btn ${isLiked ? 'liked' : ''}" data-post-id="${post.id}"><svg viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="post-action-count">${likeCount > 0 ? likeCount : ''}</span></button>
+        <button class="post-action comment-btn" data-post-id="${post.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="post-action-count">${commentCount > 0 ? commentCount : ''}</span></button>
+        <button class="post-action share-btn" data-post-id="${post.id}" title="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+      </div>
+      <div class="post-comments hidden" data-post-id="${post.id}">${commentsHTML}${showAllCommentsBtn}<div class="comment-input-container"><div class="comment-input-avatar">${userAvatar}</div><input type="text" class="comment-input" placeholder="Write a comment..." data-post-id="${post.id}"><button class="comment-submit" data-post-id="${post.id}">Post</button></div></div>
+    </article>`;
+  }
+
+  // Attach event listeners to posts
+  function attachPostEventListeners() {
+    const addListeners = (selector, handler, ...args) => {
+      document.querySelectorAll(selector).forEach(el => el.addEventListener('click', () => handler(el.dataset.postId || el.dataset.commentId, ...args)));
+    };
+    addListeners('.like-btn', handleLike);
+    addListeners('.comment-btn', toggleComments);
+    addListeners('.share-btn', handleShare);
+    addListeners('.comment-submit', submitComment);
+    addListeners('.post-edit-btn', handleEditPost);
+    addListeners('.post-delete-btn', handleDeletePost);
+
+    document.querySelectorAll('.comment-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleDeleteComment(btn.dataset.commentId, btn.dataset.postId));
+    });
+    document.querySelectorAll('.comment-input').forEach(input => {
+      input.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submitComment(input.dataset.postId); } });
+    });
+
+    // "Show all comments" buttons
+    document.querySelectorAll('.show-all-comments-btn').forEach(btn => {
+      btn.addEventListener('click', () => loadAllComments(btn.dataset.postId, btn));
+    });
+  }
+
+  // Load all comments for a post
+  async function loadAllComments(postId, btn) {
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+    try {
+      const response = await fetch(API.postComments(postId), { credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to load comments');
+      const allComments = await response.json();
+
+      // Update the post's comments in local state
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        post.comments = allComments;
+        post.comment_count = allComments.length;
+      }
+
+      // Re-render just the comments section
+      const commentsContainer = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+      if (commentsContainer) {
+        const inputContainer = commentsContainer.querySelector('.comment-input-container');
+        const commentsHTML = allComments.map(c => {
+          const cAvatar = c.author_avatar ? `<img src="${escapeHtml(c.author_avatar)}" alt="${escapeHtml(c.author)}">` : getInitials(c.author);
+          return `<div class="comment" data-comment-id="${c.id}"><div class="comment-avatar">${cAvatar}</div><div class="comment-content"><span class="comment-author">${escapeHtml(c.author)}</span><p class="comment-text">${escapeHtml(c.text)}</p><span class="comment-time">${formatTimeAgo(new Date(c.created_at))}</span></div>${isOwner ? `<button class="comment-delete-btn" data-comment-id="${c.id}" data-post-id="${postId}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : ''}</div>`;
+        }).join('');
+        commentsContainer.innerHTML = commentsHTML;
+        commentsContainer.appendChild(inputContainer);
+
+        // Re-attach delete listeners
+        commentsContainer.querySelectorAll('.comment-delete-btn').forEach(delBtn => {
+          delBtn.addEventListener('click', () => handleDeleteComment(delBtn.dataset.commentId, delBtn.dataset.postId));
+        });
+        commentsContainer.querySelector('.comment-input')?.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submitComment(postId); }
+        });
+      }
+    } catch (error) {
+      console.error('Error loading comments:', error);
+      showToast('Failed to load comments.', 'error');
+      btn.textContent = 'Retry';
+      btn.disabled = false;
+    }
+  }
+
+  // ===== SHARE FUNCTIONALITY =====
+  async function handleShare(postId) {
+    const url = `${window.location.origin}${window.location.pathname}#post-${postId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+    showToast('Link copied to clipboard!', 'success');
+  }
+
+  // ===== EDIT POST =====
+  function handleEditPost(postId) {
+    const post = posts.find(p => p.id == postId);
+    if (!post) return;
+    const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+    const contentEl = postCard?.querySelector('.post-content');
+    if (!contentEl) return;
+
+    const originalText = post.text;
+    const textarea = document.createElement('textarea');
+    textarea.className = 'inline-edit-textarea';
+    textarea.value = originalText;
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'inline-edit-actions';
+    actionsDiv.innerHTML = `<button class="inline-edit-cancel">Cancel</button><button class="inline-edit-save">Save</button>`;
+
+    contentEl.style.display = 'none';
+    contentEl.parentNode.insertBefore(textarea, contentEl.nextSibling);
+    contentEl.parentNode.insertBefore(actionsDiv, textarea.nextSibling);
+
+    autoResizeTextarea(textarea);
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+
+    const restore = () => { textarea.remove(); actionsDiv.remove(); contentEl.style.display = ''; };
+
+    actionsDiv.querySelector('.inline-edit-cancel').addEventListener('click', restore);
+    actionsDiv.querySelector('.inline-edit-save').addEventListener('click', async () => {
+      const newText = textarea.value.trim();
+      const hasImages = post.images && post.images.length > 0;
+      if (!newText && !hasImages) { showToast('Post cannot be empty', 'error'); return; }
+      if (newText === originalText) { restore(); return; }
+
+      const saveBtn = actionsDiv.querySelector('.inline-edit-save');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      try {
+        const response = await fetch(API.editPost(postId), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: newText }),
+          credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Failed to edit post');
+        const updatedPost = await response.json();
+        post.text = updatedPost.text;
+        post.link_previews = updatedPost.link_previews || [];
+        contentEl.innerHTML = processContent(post.text, post.link_previews);
+        restore();
+        showToast('Post updated successfully!', 'success');
+      } catch (error) {
+        console.error('Error editing post:', error);
+        showToast('Failed to edit post. Please try again.', 'error');
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      }
+    });
+
+    textarea.addEventListener('keydown', e => {
+      if (e.key === 'Escape') restore();
+      else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); actionsDiv.querySelector('.inline-edit-save').click(); }
+    });
+  }
+
+  // Handle like
+  async function handleLike(postId) {
+    const btn = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
+    const countSpan = btn.querySelector('.post-action-count');
+    const isLiked = btn.classList.contains('liked');
+    const svg = btn.querySelector('svg');
+
+    btn.classList.toggle('liked');
+    svg.setAttribute('fill', isLiked ? 'none' : 'currentColor');
+    const currentCount = parseInt(countSpan.textContent) || 0;
+    const newCount = isLiked ? currentCount - 1 : currentCount + 1;
+    countSpan.textContent = newCount > 0 ? newCount : '';
+
+    try {
+      const response = await fetch(API.like, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, unlike: isLiked }),
+        credentials: 'include'
+      });
+      if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
+      if (!response.ok) throw new Error('Failed to like post');
+
+      const data = await response.json();
+      const post = posts.find(p => p.id == postId);
+      if (post) { post.likes = data.likes; post.user_liked = data.user_liked; }
+      countSpan.textContent = data.likes > 0 ? data.likes : '';
+      btn.classList.toggle('liked', data.user_liked);
+      svg.setAttribute('fill', data.user_liked ? 'currentColor' : 'none');
+    } catch (error) {
+      console.error('Error liking post:', error);
+      btn.classList.toggle('liked');
+      svg.setAttribute('fill', isLiked ? 'currentColor' : 'none');
+      countSpan.textContent = currentCount > 0 ? currentCount : '';
+    }
+  }
+
+  // Toggle comments section
+  function toggleComments(postId) {
+    const section = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+    if (section) { section.classList.toggle('hidden'); if (!section.classList.contains('hidden')) section.querySelector('.comment-input').focus(); }
+  }
+
+  // Submit comment
+  async function submitComment(postId) {
+    const input = document.querySelector(`.comment-input[data-post-id="${postId}"]`);
+    const text = input.value.trim();
+    if (!text) return;
+
+    const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+    if (wordCount > 100) { showToast(`Comment too long (${wordCount} words). Maximum is 100 words.`, 'error'); return; }
+
+    const submitBtn = document.querySelector(`.comment-submit[data-post-id="${postId}"]`);
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+
+    try {
+      const response = await fetch(API.comment, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, text }),
+        credentials: 'include'
+      });
+      if (response.status === 401 || response.status === 403) { logout(); showLoginRequired(); return; }
+      if (!response.ok) throw new Error('Failed to post comment');
+
+      const newComment = await response.json();
+      const commentsSection = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+      const inputContainer = commentsSection.querySelector('.comment-input-container');
+      const cAvatar = newComment.author_avatar ? `<img src="${escapeHtml(newComment.author_avatar)}" alt="${escapeHtml(newComment.author)}">` : getInitials(newComment.author);
+      const deleteBtn = isOwner ? `<button class="comment-delete-btn" data-comment-id="${newComment.id}" data-post-id="${postId}" title="Delete comment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>` : '';
+
+      inputContainer.insertAdjacentHTML('beforebegin', `<div class="comment" data-comment-id="${newComment.id}"><div class="comment-avatar">${cAvatar}</div><div class="comment-content"><span class="comment-author">${escapeHtml(newComment.author)}</span><p class="comment-text">${escapeHtml(newComment.text)}</p><span class="comment-time">Just now</span></div>${deleteBtn}</div>`);
+
+      if (isOwner) {
+        const newEl = commentsSection.querySelector(`.comment[data-comment-id="${newComment.id}"] .comment-delete-btn`);
+        if (newEl) newEl.addEventListener('click', () => handleDeleteComment(newComment.id, postId));
+      }
+
+      input.value = '';
+      const countSpan = document.querySelector(`.comment-btn[data-post-id="${postId}"] .post-action-count`);
+      countSpan.textContent = (parseInt(countSpan.textContent) || 0) + 1;
+      showToast('Comment posted!', 'success');
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      showToast('Failed to post comment. Please try again.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Post';
+    }
+  }
+
+  // Delete a post (owner only)
+  async function handleDeletePost(postId) {
+    if (!await showModal('Delete Post', 'Are you sure you want to delete this post? This action cannot be undone.', { confirmText: 'Delete', confirmClass: 'confirm' })) return;
+
+    try {
+      const response = await fetch(API.deletePost(postId), { method: 'DELETE', credentials: 'include' });
+      if (response.status === 401 || response.status === 403) { showToast('You do not have permission to delete this post.', 'error'); return; }
+      if (!response.ok) throw new Error('Failed to delete post');
+
+      document.querySelector(`.post-card[data-post-id="${postId}"]`)?.remove();
+      posts = posts.filter(p => p.id != postId);
+      if (posts.length === 0) renderPosts();
+      showToast('Post deleted successfully.', 'success');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      showToast('Failed to delete post. Please try again.', 'error');
+    }
+  }
+
+  // Delete a comment (owner only)
+  async function handleDeleteComment(commentId, postId) {
+    if (!await showModal('Delete Comment', 'Are you sure you want to delete this comment?', { confirmText: 'Delete', confirmClass: 'confirm' })) return;
+
+    try {
+      const response = await fetch(API.deleteComment(commentId), { method: 'DELETE', credentials: 'include' });
+      if (response.status === 401 || response.status === 403) { showToast('You do not have permission to delete this comment.', 'error'); return; }
+      if (!response.ok) throw new Error('Failed to delete comment');
+
+      document.querySelector(`.comment[data-comment-id="${commentId}"]`)?.remove();
+      const countSpan = document.querySelector(`.comment-btn[data-post-id="${postId}"] .post-action-count`);
+      const count = (parseInt(countSpan.textContent) || 0) - 1;
+      countSpan.textContent = count > 0 ? count : '';
+      showToast('Comment deleted.', 'success');
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      showToast('Failed to delete comment. Please try again.', 'error');
+    }
+  }
+
+  // Submit new post
+  async function submitPost() {
+    if (!composeTextarea || !authToken) return;
+    const text = composeTextarea.value.trim();
+    if (!text && selectedImages.length === 0) return;
+
+    composeSubmit.disabled = true;
+    composeSubmit.textContent = 'Posting...';
+
+    try {
+      const formData = new FormData();
+      if (text) formData.append('text', text);
+      selectedImages.forEach((file, i) => formData.append(`image_${i}`, file));
+
+      const response = await fetch(API.submit, { method: 'POST', credentials: 'include', body: formData });
+      if (response.status === 401) { showToast('Session expired. Please login again.', 'error'); logout(); return; }
+      if (!response.ok) throw new Error('Failed to submit post');
+
+      posts.unshift(await response.json());
+      renderPosts();
+      composeTextarea.value = '';
+      composeTextarea.style.height = 'auto';
+      selectedImages = [];
+      imagePreviewContainer.innerHTML = '';
+      updateSubmitButton();
+      composeSubmit.classList.add('success');
+      setTimeout(() => composeSubmit.classList.remove('success'), 600);
+      showToast('Posted successfully!', 'success');
+    } catch (error) {
+      console.error('Error submitting post:', error);
+      showToast('Failed to post. Please try again.', 'error');
+    } finally {
+      composeSubmit.disabled = false;
+      composeSubmit.textContent = 'Post';
+    }
+  }
+
+  // Handle image selection
+  function handleImageSelect(e) { processImageFiles(Array.from(e.target.files)); e.target.value = ''; }
+
+  // Handle paste event for images
+  function handlePaste(e) {
+    const files = [...(e.clipboardData?.items || [])].filter(item => item.type.startsWith('image/')).map(item => item.getAsFile()).filter(Boolean);
+    if (files.length) { e.preventDefault(); processImageFiles(files); }
+  }
+
+  // Process image files
+  function processImageFiles(files) {
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
+    files.slice(0, 4 - selectedImages.length).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      if (file.size > MAX_FILE_SIZE) { showToast(`Image "${file.name}" is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Maximum size is 20MB.`, 'error'); return; }
+      selectedImages.push(file);
+      addImagePreview(file);
+    });
+    updateSubmitButton();
+  }
+
+  // Add image preview
+  function addImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const preview = document.createElement('div');
+      preview.className = 'image-preview';
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview"><button class="image-preview-remove" type="button">&times;</button>`;
+      preview.querySelector('.image-preview-remove').addEventListener('click', () => {
+        const idx = selectedImages.indexOf(file);
+        if (idx > -1) selectedImages.splice(idx, 1);
+        preview.remove();
+        updateSubmitButton();
+      });
+      imagePreviewContainer.appendChild(preview);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Update submit button state
+  function updateSubmitButton() {
+    if (composeSubmit && composeTextarea) composeSubmit.disabled = !(composeTextarea.value.trim().length > 0 || selectedImages.length > 0);
+  }
+
+  // Lightbox functions
+  function openLightbox(src) { if (lightbox && lightboxImg) { lightboxImg.src = src; lightbox.classList.add('active'); document.body.style.overflow = 'hidden'; } }
+  function closeLightbox() { if (lightbox) { lightbox.classList.remove('active'); document.body.style.overflow = ''; } }
+
+  // Show error
+  function showError(message) {
+    if (feed) feed.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Something went wrong</h3><p>${escapeHtml(message)}</p></div>`;
+  }
+
+  // Expose necessary functions globally
+  window.thoughts = { openLightbox, refresh: loadPosts };
+})();

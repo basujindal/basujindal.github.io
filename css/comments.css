@@ -1,0 +1,30 @@
+/* Comments CSS - Post Comments Styling */
+
+/* Comments section */
+.post-comments { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.post-comments.hidden { display: none; }
+
+/* Comment item */
+.comment { display: flex; gap: 0.75rem; padding: 0.75rem 0; }
+.comment:not(:last-child) { border-bottom: 1px solid var(--border); }
+.comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--code-bg); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-weight: 500; font-size: 0.8rem; flex-shrink: 0; overflow: hidden; }
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-content { flex: 1; }
+.comment-author { font-weight: 600; font-size: 0.85rem; color: var(--text); }
+.comment-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; margin-top: 0.25rem; }
+.comment-time { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+/* Comment delete button */
+.comment-delete-btn { padding: 0.3rem; background: transparent; border: none; border-radius: 50%; color: var(--text-secondary); cursor: pointer; transition: background 0.2s, color 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0; }
+.comment:hover .comment-delete-btn { opacity: 1; }
+.comment-delete-btn:hover { background: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+.comment-delete-btn svg { width: 14px; height: 14px; }
+
+/* Comment input */
+.comment-input-container { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+.comment-input { flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); color: var(--text); font-size: 0.9rem; font-family: inherit; }
+.comment-input:focus { outline: none; border-color: var(--accent); }
+.comment-submit { padding: 0.5rem 1.25rem; background: transparent; color: var(--text); border: 2px solid var(--accent); border-radius: 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.2s, color 0.2s; }
+.comment-submit:hover { background: var(--code-bg); }
+.comment-input-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 0.7rem; flex-shrink: 0; overflow: hidden; }
+.comment-input-avatar img { width: 100%; height: 100%; object-fit: cover; }

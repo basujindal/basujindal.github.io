@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../js/theme-init.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blogs - Basu Jindal</title>
+  <meta name="description" content="Blog posts on AI, ML, and more by Basu Jindal">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <div class="container">
+    <header></header>
+
+    <main>
+      <h1 class="page-title fade-in">Blogs</h1>
+
+      <div class="blog-grid" id="blog-grid">
+      </div>
+    </main>
+
+    <footer></footer>
+  </div>
+  <script src="../js/config.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    window.BLOG_LIST_CONFIG = {
+      items: [
+        { slug: 'diffusion', description: 'Understanding diffusion models' },
+        { slug: 'generative_models', description: 'Overview of image generative models.' },
+        { slug: 'parameter_estimation', description: 'Notes on parameter estimation techniques.' },
+        { slug: 'probability_statistics', description: 'Foundations of probability and statistics.' },
+        { slug: 'quantization_injection', description: 'Hiding dual behavior in LLMs via quantization.' },
+      ],
+      folder: 'blog-posts',
+      section: 'blogs',
+      defaultShow: true
+    };
+  </script>
+  <script src="../js/blog-list.js"></script>
+</body>
+</html>
