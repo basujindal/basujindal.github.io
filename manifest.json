@@ -1,7 +1,7 @@
 {
   "name": "Basu Jindal",
   "short_name": "Basu Jindal",
-  "start_url": "/notifications/",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#161616",

@@ -15,12 +15,12 @@
       <a href="/blogs/">Blogs</a>
       <a href="/thoughts/">Thoughts</a>
       <a href="/diffchecker/">Diff Checker</a>
-      <a href="/notifications/">HN Alerts</a>
       <!-- Hidden for now — uncomment to restore
       <a href="/job_search/">Search Jobs</a>
       <a href="/photography/">Astro Photography</a>
-      -->
+      <a href="/notifications/">HN Alerts</a>
       <a href="/fp-visualizer/">FP Visualizer</a>
+      -->
       <a href="/japanese/">日本語</a>
     </nav>
   `;

@@ -37,15 +37,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://basujindal.me/fp-visualizer/</loc>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://basujindal.me/japanese/</loc>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://basujindal.me/notifications/</loc>
-    <priority>0.5</priority>
   </url>
 </urlset>
