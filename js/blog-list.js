@@ -1,5 +1,7 @@
 // Shared blog/draft listing logic
 // Reads window.BLOG_LIST_CONFIG = { items, folder, section, defaultShow }
+// An item with a `url` is an externally hosted post: it carries its own
+// title/date/description and opens in a new tab instead of /post/.
 (function() {
   const config = window.BLOG_LIST_CONFIG;
   if (!config) return;
@@ -9,6 +11,9 @@
   async function loadItems() {
     const grid = document.getElementById('blog-grid');
     const data = (await Promise.all(items.map(async (item) => {
+      if (item && item.url) {
+        return { url: item.url, title: item.title, date: item.date, show: item.show !== false, description: item.description || '' };
+      }
       const slug = typeof item === 'string' ? item : item.slug;
       const description = typeof item === 'string' ? '' : (item.description || '');
       const res = await fetch(`../${folder}/${slug}.md`);
@@ -37,14 +42,16 @@
       const dateObj = new Date(item.date + 'T00:00:00');
       const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const delay = Math.min(index + 2, 5);
+      const href = item.url || `/post/?section=${section}&p=${item.slug}`;
+      const linkAttrs = item.url ? ' target="_blank" rel="noopener noreferrer"' : '';
       grid.innerHTML += `
-        <a href="/post/?section=${section}&p=${item.slug}" class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
+        <a href="${href}"${linkAttrs} class="blog-card fade-in" style="animation-delay: ${delay * 0.1}s; opacity: 0;">
           <div class="blog-card-content">
             <time datetime="${item.date}">${formatted}</time>
             <h2>${item.title}</h2>
             ${item.description ? `<p>${item.description}</p>` : ''}
           </div>
-          <span class="blog-card-arrow">&rarr;</span>
+          <span class="blog-card-arrow">${item.url ? '&#8599;' : '&rarr;'}</span>
         </a>
       `;
     });

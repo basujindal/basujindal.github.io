@@ -1,5 +1,5 @@
 const CACHE_NAME = 'basujindal-v3';
-const STATIC_CACHE = 'static-v3';
+const STATIC_CACHE = 'static-v4';
 const CDN_CACHE = 'cdn-v1';
 const BLOG_CACHE = 'blog-v1';
 
